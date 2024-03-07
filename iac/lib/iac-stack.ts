@@ -1,16 +1,26 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
-
 export class IacStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    const restAPI = new cdk.aws_apigateway.RestApi(this, 'restAPI', {
+      restApiName: 'CoilRestAPI',
+      description: 'This is the REST API for the Coil application',
+      defaultCorsPreflightOptions: {
+        allowOrigins: cdk.aws_apigateway.Cors.ALL_ORIGINS,
+        allowMethods: cdk.aws_apigateway.Cors.ALL_METHODS,
+        allowHeaders: ['*']
+      }
+    })
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'IacQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    const restAPIResource = restAPI.root.addResource('coil', {
+      defaultCorsPreflightOptions: {
+        allowOrigins: cdk.aws_apigateway.Cors.ALL_ORIGINS,
+        allowMethods: cdk.aws_apigateway.Cors.ALL_METHODS,
+        allowHeaders: ['*']
+      }
+    })
+    
   }
 }
