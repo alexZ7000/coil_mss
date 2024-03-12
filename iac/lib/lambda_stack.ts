@@ -1,12 +1,12 @@
-import * as path from "path";
 import { Construct } from "constructs";
-import { aws_lambda_nodejs as lambda_node, aws_apigateway as apigw, Duration, aws_lambda as lambda} from "aws-cdk-lib";
+import { aws_lambda as lambda, aws_apigateway as apigw, aws_iam as iam, Duration} from "aws-cdk-lib";
 
 export class LambdaStack extends Construct {
 
-    public get_user: lambda_node.NodejsFunction;
+    private create_user: lambda.Function;
+    private get_user: lambda.Function;
+    
 
-    // Create a lambda function and add it to the API Gateway
     private create_lambda(
         function_name: string,
         environment_variables: { [key: string]: string; },
@@ -26,15 +26,15 @@ export class LambdaStack extends Construct {
         layers = [];
         layers = more_layers.length > 0 ? layers.concat(more_layers) : layers;
 
-        function_lambda = new lambda_node.NodejsFunction(
+        function_lambda = new lambda.Function(
             this,
             toTittle(function_name + "_coil"),
             {
                 functionName: toTittle(function_name + "_coil"),
-                entry: path.join(`../src/modules/${function_name}/app/${function_name}.ts`),
-                handler: `handler`,
+                code: lambda.Code.fromAsset("../src/modules/" + function_name),
+                handler: `${function_name}.handler`,
                 environment: environment_variables,
-                runtime: lambda.Runtime.NODEJS_20_X,
+                runtime: lambda.Runtime.NODEJS_14_X,
                 layers: layers,
                 timeout: Duration.seconds(15),
                 memorySize: 256,
@@ -54,12 +54,8 @@ export class LambdaStack extends Construct {
 
 
     constructor(scope: Construct, id: string,
-        environment_variables: { [key: string]: string; }, restapi_resource: apigw.Resource,) {
+        environment_variables: Record<string, string>, restapi_resource: apigw.Resource,) {
         super(scope, id);
-
-        this.get_user = this.create_lambda("get_user", environment_variables, "GET", restapi_resource);
-        this.create_user = this.create_lambda("create_user", environment_variables, "POST", restapi_resource);
-        
     }
 
     
