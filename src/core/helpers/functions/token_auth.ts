@@ -1,6 +1,8 @@
 import https from 'https';
+import dotenv from 'dotenv';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 
+dotenv.config();
 
 class AzureProps {
     displayName: string;
@@ -12,7 +14,7 @@ export class TokenAuth {
     secret: string;
 
     constructor() {
-        this.secret = process.env.SECRET || "";
+        this.secret = process.env.SECRET_KEY || "";
     }
 
     async generate_token(user_id: string): Promise<string> {
@@ -30,9 +32,10 @@ export class TokenAuth {
 
     async verify_azure_token(token): Promise<AzureProps> {
         const url = process.env.AZURE_URL || "";
+        console.log('url', url);
         const options = {
             headers: {
-                Authorizaiton: `Bearer ${token}`
+                Authorization: `Bearer ${token}`
             }
         };
 
@@ -44,6 +47,7 @@ export class TokenAuth {
                 });
                 res.on('end', () => {
                     data = JSON.parse(data);
+                    console.log('data', data);
                     resolve({
                         displayName: data["displayName"],
                         mail: data["mail"] 

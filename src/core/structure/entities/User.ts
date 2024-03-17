@@ -77,10 +77,8 @@ export class User {
     }
     
     private validate_set_course(course: string | null) {
-        if ((course == null || course == "") && this.user_type == UserTypeEnum.STUDENT) {
+        if (course == null || course == "") {
             return null;
-        } else if (course == null || course == "") {
-            throw new EntityError("Parameter course is required");
         }
         if (typeof course !== "string") {
             throw new EntityError("Parameter course is not a string");
@@ -90,7 +88,7 @@ export class User {
     
     private validate_set_semester_course(semester_course: number | null) {
         if (semester_course == null) {
-            throw new EntityError("Parameter semester_course is required");
+            return null;
         }
         if (typeof semester_course !== "number") {
             throw new EntityError("Parameter semester_course is not a number");

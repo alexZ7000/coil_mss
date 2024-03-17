@@ -29,16 +29,18 @@ export class AuthUserUsecase {
         (response => {
             return response;
         }).catch(error => {
-            throw new UserNotAuthenticated('Token Expired or Invalid.');
+            throw new UserNotAuthenticated(error.message);
         });
 
         const padrao: RegExp = /@maua\.br$/;
+        console.log('token_response.mail', token_response);
         if (!padrao.test(token_response.mail)) {
             throw new UserNotAuthenticated('Invalid Email, must be a maua.br domain.');
         }
 
         let user: User;
         const get_user = await this.database_repo.get_user_by_email(token_response.mail);
+        
         if (get_user) {
             user = new User({
                 id: get_user.id,

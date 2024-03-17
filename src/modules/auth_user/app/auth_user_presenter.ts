@@ -1,5 +1,3 @@
-import { Handler } from 'aws-lambda';
-
 import { AuthUserUsecase } from './auth_user_usecase';
 import { AuthUserController } from './auth_user_controller';
 
@@ -20,7 +18,7 @@ if (stage === 'test') {
 const usecase = new AuthUserUsecase(database_repo);
 const controller = new AuthUserController(usecase);
 
-export const handler: Handler = async (event, context) => {
+export const handler = async (event: any, context: any) => {
     let request = new HttpRequest(event);
     let response  = await controller.execute(request);
     return response.to_dict();
