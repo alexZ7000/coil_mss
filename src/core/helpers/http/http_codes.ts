@@ -10,9 +10,9 @@ export class HttpResponse {
         'Content-Type': 'application/json';
         'Access-Control-Allow-Origin': string;
     };
-    body: { "message": string; "data": { [key: string]: any } };
+    body: { "message": string; "data": { [key: string]: any } | null };
 
-    constructor(statusCode: number, body: { [key: string]: any }, message: string) {
+    constructor(statusCode: number, body: { [key: string]: any } | null, message: string) {
         this.statusCode = statusCode;
         this.headers = {
             'Content-Type': 'application/json',
@@ -21,6 +21,14 @@ export class HttpResponse {
         this.body = {
             "message": message,
             "data": body
+        };
+    }
+
+    public to_dict(): { [key: string]: any } {
+        return {
+            statusCode: this.statusCode,
+            headers: this.headers,
+            body: JSON.stringify(this.body)
         };
     }
 }
@@ -76,37 +84,37 @@ export class Created extends HttpResponse {
 }
 
 export class BadRequest extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(400, body, message);
+    constructor(message: string) {
+        super(400, null, message);
     }
 }
 
 export class Unauthorized extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(401, body, message);
+    constructor(message: string) {
+        super(401, null, message);
     }
 }
 
 export class Forbidden extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(403, body, message);
+    constructor(message: string) {
+        super(403, null, message);
     }
 }
 
 export class NotFound extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(404, body, message);
+    constructor(message: string) {
+        super(404, null, message);
     }
 }
 
 export class ParameterError extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(422, body, message);
+    constructor(message: string) {
+        super(422, null, message);
     }
 }
 
 export class InternalServerError extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(500, body, message);
+    constructor(message: string) {
+        super(500, null, message);
     }
 }

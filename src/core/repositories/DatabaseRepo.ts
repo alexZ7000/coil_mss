@@ -1,28 +1,24 @@
-import { PrismaClient, User } from "@prisma/client";
-import { DatabaseInterface } from "./Interfaces/DatabaseInterface";
+import { PrismaClient } from 'prisma/prisma-client';
+
+import { User } from "../structure/entities/User";
 import { InternalServerError } from "../helpers/http/http_codes";
+import { DatabaseInterface } from "./Interfaces/DatabaseInterface";
 
 export class DatabaseRepo implements DatabaseInterface {
-  protected prisma: PrismaClient;
 
-  constructor() {
-    this.prisma = new PrismaClient();
-  }
-  
-  public get_user(id: string) {
-    let user = this.prisma.user.findUnique({
-      where: {
-        id: id
-      }
-    });
+    public get_user(id: string): Promise<User | null> {
+        throw new Error("Method not implemented.");
+    }
 
-    this.close();
-    return user;
-  }
+    public get_user_by_email(email: string): Promise<User | null> {
+        throw new Error("Method not implemented.");
+    }
 
-  private async close() {
-    await this.prisma.$disconnect().catch((error) => {
-      throw new InternalServerError(error);
-    });
-  }
+    public create_user(user: User): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
+    public update_user(user: User): Promise<User> {
+        throw new Error("Method not implemented.");
+    }
 }
