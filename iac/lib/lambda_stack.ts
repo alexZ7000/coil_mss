@@ -3,8 +3,10 @@ import { aws_lambda as lambda, aws_apigateway as apigw, aws_iam as iam, Duration
 
 export class LambdaStack extends Construct {
 
-    private create_user: lambda.Function;
-    private get_user: lambda.Function;
+    private core_layer: lambda.LayerVersion;
+
+    private auth_user: lambda.Function;
+    private create_moderator: lambda.Function;
     
 
     private create_lambda(
@@ -23,8 +25,7 @@ export class LambdaStack extends Construct {
         let layers: lambda.ILayerVersion[]
         let function_lambda: lambda.Function;
 
-        layers = [];
-        layers = more_layers.length > 0 ? layers.concat(more_layers) : layers;
+        layers = [this.core_layer, ...more_layers];
 
         function_lambda = new lambda.Function(
             this,
@@ -32,9 +33,9 @@ export class LambdaStack extends Construct {
             {
                 functionName: toTittle(function_name + "_coil"),
                 code: lambda.Code.fromAsset("../src/modules/" + function_name),
-                handler: `${function_name}.handler`,
+                handler: `app.${function_name}_presenter.handler`,
                 environment: environment_variables,
-                runtime: lambda.Runtime.NODEJS_14_X,
+                runtime: lambda.Runtime.NODEJS_20_X,
                 layers: layers,
                 timeout: Duration.seconds(15),
                 memorySize: 256,
@@ -56,8 +57,28 @@ export class LambdaStack extends Construct {
     constructor(scope: Construct, id: string,
         environment_variables: Record<string, string>, restapi_resource: apigw.Resource,) {
         super(scope, id);
-    }
 
-    
-    
+        this.core_layer = new lambda.LayerVersion(
+            this, "Coil_Mss_Core_Layer",
+            {
+                code: lambda.Code.fromAsset("../src/core"),
+                compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+                description: "Coil MSS Core Layer",
+            }
+        );
+
+        this.create_moderator = this.create_lambda(
+            "create_moderator",
+            environment_variables,
+            "POST",
+            restapi_resource
+        );
+
+        this.auth_user = this.create_lambda(
+            "auth_user",
+            environment_variables,
+            "GET",
+            restapi_resource
+        );
+    }
 }
