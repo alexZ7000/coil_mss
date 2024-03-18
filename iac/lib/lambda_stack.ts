@@ -1,12 +1,13 @@
 import { Construct } from "constructs";
-import { aws_lambda as lambda, aws_apigateway as apigw, aws_iam as iam, Duration} from "aws-cdk-lib";
+import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as apigw, aws_iam as iam, Duration} from "aws-cdk-lib";
+import path from "path";
 
 export class LambdaStack extends Construct {
 
     private core_layer: lambda.LayerVersion;
 
-    private auth_user: lambda.Function;
-    private create_moderator: lambda.Function;
+    private auth_user: lambda_js.NodejsFunction;
+    private create_moderator: lambda_js.NodejsFunction;
     
 
     private create_lambda(
@@ -27,13 +28,13 @@ export class LambdaStack extends Construct {
 
         layers = [this.core_layer, ...more_layers];
 
-        function_lambda = new lambda.Function(
+        function_lambda = new lambda_js.NodejsFunction(
             this,
             toTittle(function_name + "_coil"),
             {
                 functionName: toTittle(function_name + "_coil"),
-                code: lambda.Code.fromAsset("../src/modules/" + function_name),
-                handler: `app.${function_name}_presenter.handler`,
+                entry: `../src/modules/${function_name}/app/${function_name}_presenter.ts`,
+                handler: `handler`,
                 environment: environment_variables,
                 runtime: lambda.Runtime.NODEJS_20_X,
                 layers: layers,
