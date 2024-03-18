@@ -22,6 +22,7 @@ jobs:
       - name: Install CDK dependencies
         run: |
           echo "Installing CDK dependencies"
+          npm install -g aws-cdk
           npm install
           cd iac
           npm install
@@ -29,7 +30,7 @@ jobs:
       - name: Install SRC dependencies
         run: |
           echo "Installing SRC dependencies"
-          cp -r src/core iac/src/
+          cp -r main/src/core iac/src/
 
       - name: AWS Credentials
         run: |
