@@ -22,6 +22,7 @@ jobs:
       - name: Install CDK dependencies
         run: |
           echo "Installing CDK dependencies"
+          npm install -g aws-cdk
           npm install
           cd iac
           npm install
@@ -29,14 +30,14 @@ jobs:
       - name: Install SRC dependencies
         run: |
           echo "Installing SRC dependencies"
-          cp -r main/src/core iac/src/
+          cp -r src/core iac/src/
 
       - name: AWS Credentials
         run: |
           echo "Configuring AWS Credentials"
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY }}
           aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws configure set default.region ${{ vars.AWS_REGION }}
+          aws configure set default.region ${{ secrets.AWS_REGION }}
           aws configure set default.output json
 
       - name: CDK Bootstrap
@@ -44,7 +45,7 @@ jobs:
           echo "CDK Bootstrap"
           cd iac
           aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
-            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/${{ vars.AWS_REGION }}
+            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/${{ secrets.AWS_REGION }}
 
 
       - name: CDK Deploy
@@ -53,9 +54,9 @@ jobs:
           cd iac
           cdk deploy --require-approval never
         env:
-          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
           STAGE: ${{ github.ref_name }}
           AZURE_URL: ${{ secrets.AZURE_URL }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
