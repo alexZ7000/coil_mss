@@ -9,8 +9,15 @@ export class IacStack extends cdk.Stack {
     super(scope, id, props);
 
     const ENVIROMMENT_VARIABLES = {
-      "STAGE": process.env.STAGE || "dev",
-      "DOMAIN": process.env.DOMAIN || "localhost",
+      "DOMAIN": process.env.DOMAIN || "",
+      "STAGE": process.env.STAGE || "test",
+      "AZURE_URL": process.env.AZURE_URL || "",
+      "SECRET_KEY": process.env.SECRET_KEY || "",
+      "AWS_REGION": process.env.AWS_REGION || "",
+      "DATABASE_URL": process.env.DATABASE_URL || "",
+      "AWS_ACCOUNT_ID": process.env.AWS_ACCOUNT_ID || "",
+      "AWS_ACCESS_KEY_ID": process.env.AWS_ACCESS_KEY_ID || "",
+      "AWS_SECRET_ACCESS_KEY": process.env.AWS_SECRET_ACCESS_KEY || "",
     };
 
     const restapi = new RestApi(

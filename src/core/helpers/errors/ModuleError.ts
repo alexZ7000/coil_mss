@@ -2,8 +2,12 @@ import { MainError } from "./MainError";
 
 
 export class InvalidRequest extends MainError {
-    constructor() {
-        super("No request found.");
+    constructor(parameter?: string) {
+        if (parameter) {
+            super(parameter + " not found.");
+        } else {
+            super("No request found.");
+        }
     }
 }
 

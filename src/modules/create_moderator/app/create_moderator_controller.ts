@@ -1,4 +1,4 @@
-import { AuthUserUsecase } from './auth_user_usecase';
+import { CreateModeratorUsecase } from "./create_moderator_usecase";
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
 import { Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
@@ -6,13 +6,14 @@ import { InvalidParameter, InvalidRequest, UserNotAuthenticated } from '../../..
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
 
 
-export class AuthUserController {
-    usecase: AuthUserUsecase;
+export class CreateModeratorController {
+    public usecase: CreateModeratorUsecase;
 
-    constructor(usecase: AuthUserUsecase) {
+    constructor(usecase: CreateModeratorUsecase) {
         this.usecase = usecase;
     }
-    async execute(request: HttpRequest): Promise<HttpResponse>  {
+
+    public async execute(request: HttpRequest): Promise<HttpResponse> {
         try {
             if (!request) {
                 throw new InvalidRequest();
@@ -20,22 +21,21 @@ export class AuthUserController {
             if (!request.headers) {
                 throw new InvalidRequest("Headers");
             }
-
-            let response = await this.usecase.execute(request.headers)
-
-            if (response.created_user) {
-                return new Created({token: response.token}, "User created successfully");
+            if (!request.body) {
+                throw new InvalidRequest("Body");
             }
-            return new OK({token: response.token}, "User authenticated successfully");     
+            
+            let response = await this.usecase.execute(request.headers, request.body.body);
+            return new Created(response, "Moderator created successfully");
 
         } catch (error) {
-            if (error instanceof EntityError) {
+            if (error instanceof InvalidRequest) {
                 return new BadRequest(error.message);
             }
             if (error instanceof UserNotAuthenticated) {
                 return new Unauthorized(error.message);
             }
-            if (error instanceof InvalidRequest) {
+            if (error instanceof EntityError) {
                 return new BadRequest(error.message);
             }
             if (error instanceof InvalidParameter) {

@@ -24,7 +24,7 @@ export class HttpResponse {
         };
     }
 
-    public to_dict(): { [key: string]: any } {
+    public to_format(): { [key: string]: any } {
         return {
             statusCode: this.statusCode,
             headers: this.headers,

@@ -4,7 +4,6 @@ import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
 export class UserMock {
     public users: User[];
-    public user: User;
 
     constructor() {
         this.users = [

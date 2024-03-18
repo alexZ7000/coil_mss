@@ -18,7 +18,7 @@ export class AuthUserUsecase {
 
     public async execute(headers: { [key: string]: any }): Promise<{ token: string, created_user: boolean }> {
         if (!headers) {
-            throw new InvalidRequest();
+            throw new InvalidRequest("Headers");
         }
         if (!headers.Authorization) {
             throw new UserNotAuthenticated();
@@ -33,7 +33,6 @@ export class AuthUserUsecase {
         });
 
         const padrao: RegExp = /@maua\.br$/;
-        console.log('token_response.mail', token_response);
         if (!padrao.test(token_response.mail)) {
             throw new UserNotAuthenticated('Invalid Email, must be a maua.br domain.');
         }
@@ -55,7 +54,7 @@ export class AuthUserUsecase {
         } else {
             user = new User({
                 id: randomUUID(),
-                name: token_response.displayName,
+                name: token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "), // title case
                 email: token_response.mail,
                 course: null,
                 semester_course: null,
@@ -65,7 +64,7 @@ export class AuthUserUsecase {
             });
             this.database_repo.create_user(user);
         }
-        
+
         return {
             token: await this.token_auth.generate_token(user.id),
             created_user: !get_user
