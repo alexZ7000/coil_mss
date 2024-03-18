@@ -4,7 +4,7 @@ import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { DatabaseInterface } from '../../../core/repositories/Interfaces/DatabaseInterface';
-import { InvalidRequest, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class AuthUserUsecase {
@@ -21,12 +21,13 @@ export class AuthUserUsecase {
             throw new InvalidRequest("Headers");
         }
         if (!headers.Authorization) {
-            throw new UserNotAuthenticated();
+            throw new MissingParameter("Authorization");
         }
         
         const token_response = await this.token_auth.verify_azure_token(headers.Authorization)
         .then
         (response => {
+            console.log('response', response)
             return response;
         }).catch(error => {
             throw new UserNotAuthenticated(error.message);

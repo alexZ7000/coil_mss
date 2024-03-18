@@ -1,9 +1,9 @@
 import { AuthUserUsecase } from './auth_user_usecase';
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
-import { Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
-import { InvalidParameter, InvalidRequest, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
+import { Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
+import { InvalidParameter, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class AuthUserController {
@@ -39,6 +39,9 @@ export class AuthUserController {
                 return new BadRequest(error.message);
             }
             if (error instanceof InvalidParameter) {
+                return new ParameterError(error.message);
+            }
+            if (error instanceof MissingParameter) {
                 return new ParameterError(error.message);
             }
             return new InternalServerError(error.message);

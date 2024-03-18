@@ -34,24 +34,24 @@ export class HttpResponse {
 }
 
 export class HttpRequest {
-    headers: {
-        "Authorization": string | null;
-    };
+    headers: { [key: string]: any };
     body: {
         body: { [key: string]: any };
         queryStringParameters: { [key: string]: any };
     };
     constructor(event: event) {
-        this.headers = { Authorization: this.get_authorization(event.headers) };
+        this.headers = this.get_headers(event);
         this.body = this.get_body(event);
     }
 
-    private get_authorization(headers: event["headers"]) {
-        if (!headers) return null;
-        if (typeof headers === "string") {
-            headers = JSON.parse(headers);
+    private get_headers(event: event) {
+        let headers: { [key: string]: any } = {};
+        if (typeof event.headers === "string") {
+            headers = JSON.parse(event.headers);
+        } else {
+            headers = event.headers;
         }
-        return headers["Authorization"] || null;
+        return headers;
     }
 
     private get_body(event: event) {
@@ -104,6 +104,12 @@ export class Forbidden extends HttpResponse {
 export class NotFound extends HttpResponse {
     constructor(message: string) {
         super(404, null, message);
+    }
+}
+
+export class Conflict extends HttpResponse {
+    constructor(message: string) {
+        super(409, null, message);
     }
 }
 

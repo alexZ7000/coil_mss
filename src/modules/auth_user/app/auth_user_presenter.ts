@@ -1,16 +1,16 @@
 import { AuthUserUsecase } from './auth_user_usecase';
 import { AuthUserController } from './auth_user_controller';
 
+import { MockRepo } from '../../../core/repositories/MockRepo';
 import { HttpRequest } from '../../../core/helpers/http/http_codes';
 import { DatabaseRepo } from "../../../core/repositories/DatabaseRepo";
 import { DatabaseInterface } from '../../../core/repositories/Interfaces/DatabaseInterface';
-import { UserMock } from '../../../core/structure/mocks/UserMock';
 
 const stage = process.env.STAGE || 'test';
 var database_repo: DatabaseInterface;
 
 if (stage === 'test') {
-    database_repo = new UserMock();
+    database_repo = new MockRepo();
 } else {
     database_repo = new DatabaseRepo();
 }

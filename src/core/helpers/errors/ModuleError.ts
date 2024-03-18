@@ -32,3 +32,9 @@ export class UserNotAuthenticated extends MainError {
         }
     }
 }
+
+export class ConflictError extends MainError {
+    constructor(message: string) {
+        super(message);
+    }
+}
