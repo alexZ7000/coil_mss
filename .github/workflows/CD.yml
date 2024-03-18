@@ -3,52 +3,59 @@ name: CD
 on:
   push:
     branches:
-      - 'prod'
-      - 'dev'
-  pull_request:
-    branches:
-      - 'prod'
-      - 'dev'
+      - dev
+      - prod
 
 jobs:
-  Deployment_to_AWS:
-    environment: 
-        name: ${{ github.event_name }}
+  Deploy_to_AWS:
     runs-on: ubuntu-latest
-    permissions: 
-        contents: read
-        packages: write
-        actions: write
-    
+
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup AWS CLI
-        run: |
-          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          aws configure set region ${{ secrets.AWS_REGION }}
-          
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v1
         with:
           node-version: '20.x'
 
-      - name: Install dependencies
+      - name: Install CDK dependencies
         run: |
+          echo "Installing CDK dependencies"
           npm install
           cd iac
           npm install
 
-      - name: Deploy to AWS
+      - name: Install SRC dependencies
         run: |
+          echo "Installing SRC dependencies"
+          cp -r main/src/core iac/src/
+
+      - name: AWS Credentials
+        run: |
+          echo "Configuring AWS Credentials"
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws configure set default.region ${{ vars.AWS_REGION }}
+          aws configure set default.output json
+
+      - name: CDK Bootstrap
+        run: |
+          echo "CDK Bootstrap"
           cd iac
-          cdk synth
+          aws cloudformation describe-stacks --stack-name CDKToolkit 2>&1 > /dev/null || \
+            cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/${{ vars.AWS_REGION }}
+
+
+      - name: CDK Deploy
+        run: |
+          echo "CDK Deploy"
+          cd iac
           cdk deploy --require-approval never
         env:
-            STAGE: ${{ github.event_name }}
-            AZURE_URL: ${{ secrets.AZURE_URL }}
-            SECRET_KEY: ${{ secrets.SECRET_KEY }}
-            AWS_REGION: ${{ secrets.AWS_REGION }}
-            AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
-            AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-            AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          STAGE: ${{ github.ref_name }}
+          AZURE_URL: ${{ secrets.AZURE_URL }}
