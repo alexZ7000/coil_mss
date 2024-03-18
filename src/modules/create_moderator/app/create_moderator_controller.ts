@@ -1,8 +1,8 @@
 import { CreateModeratorUsecase } from "./create_moderator_usecase";
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
-import { Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
-import { InvalidParameter, InvalidRequest, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { Conflict, Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
+import { ConflictError, InvalidParameter, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
 
 
@@ -35,10 +35,16 @@ export class CreateModeratorController {
             if (error instanceof UserNotAuthenticated) {
                 return new Unauthorized(error.message);
             }
+            if (error instanceof ConflictError) {
+                return new Conflict(error.message);
+            }
             if (error instanceof EntityError) {
-                return new BadRequest(error.message);
+                return new ParameterError(error.message);
             }
             if (error instanceof InvalidParameter) {
+                return new ParameterError(error.message);
+            }
+            if (error instanceof MissingParameter) {
                 return new ParameterError(error.message);
             }
             return new InternalServerError(error.message);

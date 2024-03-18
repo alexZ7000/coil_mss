@@ -33,7 +33,7 @@ export class UserMock {
                 {
                     id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
                     name: "Felipe Carillo",
-                    email: "felipecarillo@outlook.com",
+                    email: "felipecarillo@maua.br",
                     user_type: UserTypeEnum.MODERATOR,
                     course: null,
                     semester_course: null,

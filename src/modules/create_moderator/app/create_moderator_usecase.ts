@@ -1,9 +1,10 @@
-import { DatabaseInterface } from "../../../core/repositories/Interfaces/DatabaseInterface";
+import { randomUUID } from "crypto";
+
 import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
-import { randomUUID } from "crypto";
+import { DatabaseInterface } from "../../../core/repositories/Interfaces/DatabaseInterface";
+import { ConflictError, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 
@@ -24,7 +25,7 @@ export class CreateModeratorUsecase {
             throw new InvalidRequest("Body");
         }
         if (!headers.Authorization) {
-            throw new UserNotAuthenticated();
+            throw new MissingParameter("Authorization");
         }
         if (!body.name) {
             throw new MissingParameter("Name");
@@ -42,10 +43,14 @@ export class CreateModeratorUsecase {
 
         const user_admin = await this.database_repo.get_user(user_admin_id);
         if (!user_admin) {
-            throw new UserNotAuthenticated("User not found.");
+            throw new UserNotAuthenticated("User not found in .");
         }
         if (user_admin.user_type !== UserTypeEnum.ADMIN) {
             throw new UserNotAuthenticated();
+        }
+
+        if (await this.database_repo.get_user_by_email(body.email)) {
+            throw new ConflictError("Email already in use.");
         }
 
         const moderator = new User({

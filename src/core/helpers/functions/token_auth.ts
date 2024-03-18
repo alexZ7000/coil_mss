@@ -1,6 +1,7 @@
 import https from 'https';
 import dotenv from 'dotenv';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { UserNotAuthenticated } from '../errors/ModuleError';
 
 dotenv.config();
 
@@ -21,8 +22,11 @@ export class TokenAuth {
         return jwt.sign({ user_id }, this.secret, { expiresIn: '1d' });
     }
 
-    async decode_token(token: string): Promise<string > {
+    async decode_token(token: string): Promise<string> {
         const decode_token = jwt.verify(token, this.secret) as JwtPayload;
+        if (!decode_token.user_id) {
+            throw new UserNotAuthenticated('Invalid or expired token.');
+        }
         return decode_token.user_id;
     }
 
@@ -43,7 +47,9 @@ export class TokenAuth {
                 });
                 res.on('end', () => {
                     data = JSON.parse(data);
-                    console.log('data', data);
+                    if (!data["displayName"] || !data["mail"]) {
+                        reject(new UserNotAuthenticated('Invalid or expired token.'));
+                    }
                     resolve({
                         displayName: data["displayName"],
                         mail: data["mail"] 
