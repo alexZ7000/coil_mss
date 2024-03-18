@@ -35,15 +35,12 @@ export class CreateModeratorUsecase {
 
         const user_admin_id = await this.token_auth.decode_token(headers.Authorization)
         .then(response => {
-            if (!response) {
-                throw new UserNotAuthenticated("Invalid or expired token.");
-            }
-            return response.sub;
+            return response;
         }).catch(error => {
             throw new UserNotAuthenticated("Invalid or expired token.");
         });
 
-        const user_admin = await this.database_repo.get_user(user_admin_id as string);
+        const user_admin = await this.database_repo.get_user(user_admin_id);
         if (!user_admin) {
             throw new UserNotAuthenticated("User not found.");
         }

@@ -21,13 +21,9 @@ export class TokenAuth {
         return jwt.sign({ user_id }, this.secret, { expiresIn: '1d' });
     }
 
-    async decode_token(token: string): Promise<string | JwtPayload | null> {
-        try {
-            return jwt.verify(token, this.secret);
-        }
-        catch (error) {
-            return null;
-        }
+    async decode_token(token: string): Promise<string > {
+        const decode_token = jwt.verify(token, this.secret) as JwtPayload;
+        return decode_token.user_id;
     }
 
     async verify_azure_token(token): Promise<AzureProps> {

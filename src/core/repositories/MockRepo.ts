@@ -5,8 +5,8 @@ import { DatabaseInterface } from './Interfaces/DatabaseInterface';
 export class MockRepo implements DatabaseInterface {
     public user_mock: UserMock;
 
-    constructor() {
-        this.user_mock = new UserMock();
+    constructor(user_mock: UserMock) {
+        this.user_mock = user_mock;
     }
     
     public get_user(id: string): Promise<User | null>{

@@ -2,8 +2,9 @@ import { CreateModeratorUsecase } from "./create_moderator_usecase";
 import { CreateModeratorController } from "./create_moderator_controller";
 
 import { MockRepo } from "../../../core/repositories/MockRepo";
-import { DatabaseRepo } from "../../../core/repositories/DatabaseRepo";
+import { UserMock } from "../../../core/structure/mocks/UserMock";
 import { HttpRequest } from "../../../core/helpers/http/http_codes";
+import { DatabaseRepo } from "../../../core/repositories/DatabaseRepo";
 import { DatabaseInterface } from "../../../core/repositories/Interfaces/DatabaseInterface";
 
 
@@ -11,7 +12,7 @@ const stage = process.env.STAGE || 'test';
 var database_repo: DatabaseInterface;
 
 if (stage === 'test') {
-    database_repo = new MockRepo();
+    database_repo = new UserMock();
 } else {
     database_repo = new DatabaseRepo();
 }

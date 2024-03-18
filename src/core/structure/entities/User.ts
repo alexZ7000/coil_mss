@@ -63,7 +63,6 @@ export class User {
         if (typeof email !== "string") {
             throw new EntityError("Parameter email is not a string");
         }
-        console.log(email);
         let padrao: RegExp = /^[a-zA-Z0-9._%+-]+@maua\.br$/;
         if (!padrao.test(email)) {
             throw new EntityError("Invalid Email, must be a maua.br domain.");
