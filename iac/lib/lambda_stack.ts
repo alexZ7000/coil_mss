@@ -8,11 +8,13 @@ export class LambdaStack extends Construct {
 
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+
+    public functions_need_dynamodb_access: lambda.Function[] = [];
     
 
     private create_lambda(
         function_name: string,
-        environment_variables: { [key: string]: string; },
+        environment_variables: {[key: string]: string},
         method: string,
         restapi_resource: apigw.Resource,
         origins: string[] = apigw.Cors.ALL_ORIGINS,
@@ -85,5 +87,9 @@ export class LambdaStack extends Construct {
             "GET",
             restapi_resource
         );
+
+        this.functions_need_dynamodb_access = [
+
+        ]
     }
 }
