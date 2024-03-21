@@ -1,15 +1,15 @@
-import { User } from '../structure/entities/User';
-import { UserMock } from '../structure/mocks/UserMock';
-import { DatabaseInterface } from './Interfaces/DatabaseInterface';
+import { IUserRepo } from '../interfaces/IUserRepo';
+import { User } from '../../structure/entities/User';
+import { UserMock } from '../../structure/mocks/UserMock';
 
-export class MockRepo implements DatabaseInterface {
+export class UserRepoMock implements IUserRepo {
     public user_mock: UserMock;
 
     constructor() {
         this.user_mock = new UserMock();
     }
-    
-    public get_user(id: string): Promise<User | null>{
+
+    public get_user(id: string): Promise<User | null> {
         return new Promise((resolve, reject) => {
             const user = this.user_mock.users.find(user => user.id === id);
             resolve(user || null);

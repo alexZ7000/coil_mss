@@ -1,10 +1,7 @@
-import { PrismaClient } from 'prisma/prisma-client';
+import { IUserRepo } from "../interfaces/IUserRepo";
+import { User } from "../../structure/entities/User";
 
-import { User } from "../structure/entities/User";
-import { InternalServerError } from "../helpers/http/http_codes";
-import { DatabaseInterface } from "./Interfaces/DatabaseInterface";
-
-export class DatabaseRepo implements DatabaseInterface {
+export class UserRepo implements IUserRepo {
 
     public get_user(id: string): Promise<User | null> {
         throw new Error("Method not implemented.");
