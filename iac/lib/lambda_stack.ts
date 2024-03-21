@@ -55,8 +55,12 @@ export class LambdaStack extends Construct {
     }
 
 
-    constructor(scope: Construct, id: string,
-        environment_variables: Record<string, string>, restapi_resource: apigw.Resource,) {
+    constructor(
+        scope: Construct,
+        id: string,
+        environment_variables: {[key: string]: string },
+        restapi_resource: apigw.Resource
+        ) {
         super(scope, id);
 
         this.core_layer = new lambda.LayerVersion(
