@@ -27,5 +27,6 @@ jobs:
       - name: Run tests
         run: npm test
         env:
+          STAGE: test
           AZURE_URL: ${{ secrets.AZURE_URL }}
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
