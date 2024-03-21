@@ -1,6 +1,6 @@
 import { User } from '../../structure/entities/User';	
 
-export interface DatabaseInterface {
+export interface IUserRepo {
     create_user(user: User): Promise<boolean>;
     update_user(user: User): Promise<User>;
     get_user(id: string): Promise<User | null>;

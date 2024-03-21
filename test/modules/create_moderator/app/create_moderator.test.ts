@@ -12,6 +12,7 @@ describe("Testing Create Moderator Presenter", () => {
         name: "Moderator Test",
         email: "moderador@maua.br"
     };
+    
     it("should create a moderator", async () => {
         var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
 
