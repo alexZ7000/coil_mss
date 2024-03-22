@@ -2,7 +2,6 @@
   "name": "coil_mss",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "test": "vitest"
   },
