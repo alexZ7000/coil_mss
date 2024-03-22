@@ -14,7 +14,7 @@ export class DynamoStack extends Construct {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
 
-    new CfnOutput(this, "CoilProjectTable", {
+    new CfnOutput(this, "ProjectTableName", {
       value: this.project_table.tableName,
     });
   }
