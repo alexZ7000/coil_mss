@@ -1,8 +1,8 @@
-import { User } from "../structure/entities/User";
-import { UserMock } from "../structure/mocks/UserMock";
-import { DatabaseInterface } from "./Interfaces/DatabaseInterface";
+import { User } from "../../structure/entities/User";
+import { IUserRepo } from "../interfaces/IUserRepo";
+import { UserMock } from "../../structure/mocks/UserMock";
 
-export class MockRepo implements DatabaseInterface {
+export class UserRepoMock implements IUserRepo {
   public user_mock: UserMock;
 
   constructor() {

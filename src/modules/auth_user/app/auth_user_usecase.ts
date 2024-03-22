@@ -3,15 +3,15 @@ import { randomUUID } from 'crypto';
 import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import { DatabaseInterface } from '../../../core/repositories/Interfaces/DatabaseInterface';
+import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class AuthUserUsecase {
     public token_auth: TokenAuth;
-    public database_repo: DatabaseInterface;
+    public database_repo: IUserRepo;
 
-    constructor(database_repo: DatabaseInterface) {
+    constructor(database_repo: IUserRepo) {
         this.token_auth = new TokenAuth();
         this.database_repo = database_repo;
     }

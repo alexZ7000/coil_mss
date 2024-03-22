@@ -1,20 +1,12 @@
-import { HttpRequest } from "../../../core/helpers/http/http_codes";
-import { DatabaseRepo } from "../../../core/repositories/DatabaseRepo";
-import { DatabaseInterface } from "../../../core/repositories/Interfaces/DatabaseInterface";
-import { MockRepo } from "../../../core/repositories/MockRepo";
 import { CreateModeratorController } from "../../create_moderator/app/create_moderator_controller";
 import { CreateModeratorUsecase } from "../../create_moderator/app/create_moderator_usecase";
 
-const stage = process.env.STAGE || "test";
-var database_repo: DatabaseInterface;
+import { Repository } from "../../../core/repositories/Repository";
+import { HttpRequest } from "../../../core/helpers/http/http_codes";
 
-if (stage === "test") {
-  database_repo = new MockRepo();
-} else {
-  database_repo = new DatabaseRepo();
-}
+const repository = new Repository({user_repo: true, project_repo: false});
 
-const usecase = new CreateModeratorUsecase(database_repo);
+const usecase = new CreateModeratorUsecase(repository.UserRepo);
 const controller = new CreateModeratorController(usecase);
 
 export const handler = async (event: any, context: any) => {
