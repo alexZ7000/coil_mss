@@ -21,25 +21,25 @@ export class UserRepoMock implements IUserRepo {
     return Promise.resolve(true);
   }
 
-public update_user(
-    userId: string,
-    course: string,
-    semester_course: number
-): Promise<User | null> {
-    return new Promise((resolve, reject) => {
-        const userIndex = this.user_mock.users.findIndex(
-            (user) => user.id === userId
-        );
-        if (userIndex === -1) {
-            resolve(null); 
-        } else {
-            this.user_mock.users[userIndex].course = course;
-            this.user_mock.users[userIndex].semester_course = semester_course;
+  public update_user(
+      userId: string,
+      course: string,
+      semester_course: number
+  ): Promise<User | null> {
+      return new Promise((resolve, reject) => {
+          const userIndex = this.user_mock.users.findIndex(
+              (user) => user.id === userId
+          );
+          if (userIndex === -1) {
+              resolve(null); 
+          } else {
+              this.user_mock.users[userIndex].course = course;
+              this.user_mock.users[userIndex].semester_course = semester_course;
 
-            resolve(this.user_mock.users[userIndex]);
-        }
-    });
-}
+              resolve(this.user_mock.users[userIndex]);
+          }
+      });
+  }
 
   public get_user_by_email(email: string): Promise<User | null> {
     return new Promise((resolve, reject) => {
@@ -48,3 +48,4 @@ public update_user(
     });
   }
 }
+
