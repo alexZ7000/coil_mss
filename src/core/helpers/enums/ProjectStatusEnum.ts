@@ -5,4 +5,5 @@ export enum ProjectStatusEnum {
     WAITING_FOR_RESULTS, //When closed to apply but results are not done.
     ENDED, //When is closed to apply and results are out.
     CANCELED, //When project is canceled, meaning it will not be happening.
+    NEEDS_MORE_DATA //When project is missing some data to be active.
 }

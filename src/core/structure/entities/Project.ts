@@ -16,8 +16,8 @@ class ProjectProps {
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[];
-    accepted: User[];
+    applicants: User[] | null;
+    accepted: User[] | null;
 }
 
 export class Project {
@@ -32,8 +32,8 @@ export class Project {
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[];
-    accepted: User[];
+    applicants: User[] | null;
+    accepted: User[] | null;
 
     constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, accepted }: ProjectProps) {
         this.id = this.validate_set_id(id);
@@ -155,20 +155,14 @@ export class Project {
         return updated_at;
     }
 
-    private validate_set_applicants(applicants: User[]) {
-        if (applicants == null || applicants.length === 0) {
-            throw new EntityError("Parameter applicants is required");
-        }
+    private validate_set_applicants(applicants: User[] | null) {
         if (!Array.isArray(applicants)) {
             throw new EntityError("Parameter applicants is not an array");
         }
         return applicants;
     }
 
-    private validate_set_accepted(accepted: User[]) {
-        if (accepted == null || accepted.length === 0) {
-            throw new EntityError("Parameter accepted is required");
-        }
+    private validate_set_accepted(accepted: User[] | null) {
         if (!Array.isArray(accepted)) {
             throw new EntityError("Parameter accepted is not an array");
         }
