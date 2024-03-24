@@ -66,7 +66,7 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(401);
-        expect(JSON.parse(response.body).message).toBe("User not authenticated.");
+        expect(JSON.parse(response.body).message).toBe("User not authentificated.");
     });
 
     it("should not create a moderator with invalid email", async () => {
