@@ -7,7 +7,7 @@ class RepositoryProps {
 }
 
 export class Repository {
-    public UserRepo: UserRepo | UserRepoMock | null;
+    public UserRepo: UserRepo | UserRepoMock;
 
     constructor({ user_repo = false, project_repo = false }: RepositoryProps) {
         if (user_repo) {
