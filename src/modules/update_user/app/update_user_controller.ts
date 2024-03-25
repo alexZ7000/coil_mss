@@ -10,7 +10,9 @@ import {
 import {
   BadRequest,
   Conflict,
+  HttpRequest,
   InternalServerError,
+  OK,
   ParameterError,
   Unauthorized,
 } from "../../../core/helpers/http/http_codes";
@@ -23,32 +25,22 @@ export class UpdateUserController {
     this.usecase = usecase;
   }
 
-  public async execute(
-    headers: { [key: string]: string },
-    body: { [key: string]: any }
-  ) {
+  public async execute(request: HttpRequest) {
     try {
-      if (!headers || !headers.Authorization) {
-        throw new Error("Missing Authorization header");
-      }
       if (!request) {
         throw new InvalidRequest();
       }
-      if (!body) {
-        throw new InvalidRequest("Body");
-      }
-      if (!body.id) {
-        throw new InvalidRequest("Id");
-      }
-      if (!body.course) {
-        throw new InvalidRequest("Course");
-      }
-      if (!body.semester_course) {
-        throw new InvalidRequest("Semester");
+
+      if (!request.headers) {
+        throw new InvalidRequest("Headers");
       }
 
-      const updatedUser = await this.usecase.execute(headers, body);
-      return updatedUser;
+      if (!request.body) {
+        throw new InvalidRequest("Body");
+      }
+
+      const updatedUser = await this.usecase.execute(request.headers, request.body.body);
+      return new OK(updatedUser.to_json(), "User updated successfully.");
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
