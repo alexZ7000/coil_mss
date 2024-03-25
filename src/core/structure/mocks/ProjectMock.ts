@@ -19,7 +19,8 @@ export class ProjectMock {
                 created_at: new Date(),
                 updated_at: new Date(),
                 applicants: [],
-                accepted: []
+                accepted: [],
+                feedbacks: []
             }),
             new Project(
                 {
@@ -35,7 +36,8 @@ export class ProjectMock {
                     created_at: new Date(),
                     updated_at: new Date(),
                     applicants: [],
-                    accepted: []
+                    accepted: [],
+                    feedbacks: []
                 }
             ),
             new Project(
@@ -52,7 +54,8 @@ export class ProjectMock {
                     created_at: new Date(),
                     updated_at: new Date(),
                     applicants: [],
-                    accepted: []
+                    accepted: [],
+                    feedbacks: []
                 }
             )
         ];

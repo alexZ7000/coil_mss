@@ -3,6 +3,7 @@ import { ProjectStatusEnum } from "../../helpers/enums/ProjectStatusEnum";
 import { User } from "./User";
 import { Institution } from "./Institution";
 import { Criteria } from "./Criteria";
+import { Feedback } from "./Feedback";
 
 class ProjectProps {
     id: number;
@@ -18,6 +19,7 @@ class ProjectProps {
     updated_at: Date;
     applicants: User[] | null;
     accepted: User[] | null;
+    feedbacks: Feedback[] | null;
 }
 
 export class Project {
@@ -34,8 +36,9 @@ export class Project {
     updated_at: Date;
     applicants: User[] | null;
     accepted: User[] | null;
+    feedbacks: Feedback[] | null;
 
-    constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, accepted }: ProjectProps) {
+    constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, accepted, feedbacks }: ProjectProps) {
         this.id = this.validate_set_id(id);
         this.title = this.validate_set_title(title);
         this.start_date = this.validate_set_start_date(start_date);
@@ -49,6 +52,7 @@ export class Project {
         this.updated_at = this.validate_set_updated_at(updated_at);
         this.applicants = this.validate_set_applicants(applicants);
         this.accepted = this.validate_set_accepted(accepted);
+        this.feedbacks= this.validate_set_feedbacks(feedbacks);
     }
 
     private validate_set_id(id: number) {
@@ -167,5 +171,12 @@ export class Project {
             throw new EntityError("Parameter accepted is not an array");
         }
         return accepted;
+    }
+
+    private validate_set_feedbacks(feedbacks: string[] | null) {
+        if (!Array.isArray(feedbacks)) {
+            throw new EntityError("Parameter feedbacks is not an array");
+        }
+        return feedbacks;
     }
 }
