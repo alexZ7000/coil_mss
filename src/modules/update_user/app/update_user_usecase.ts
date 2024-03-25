@@ -1,4 +1,5 @@
 import {
+  InvalidRequest,
   MissingParameter,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
@@ -20,10 +21,10 @@ export class UpdateUserUsecase {
     body: { [key: string]: any }
   ) {
     if (!headers) {
-      throw new MissingParameter("Headers");
+      throw new InvalidRequest("Headers");
     }
     if (!body) {
-      throw new MissingParameter("Body");
+      throw new InvalidRequest("Body");
     }
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
@@ -48,17 +49,9 @@ export class UpdateUserUsecase {
     if (!user_student) {
       throw new UserNotAuthenticated("User not found.");
     }
-    if (user_student.user_type !== UserTypeEnum.STUDENT) {
-      throw new UserNotAuthenticated("User is not a student.");
-    }
-
-    const user = await this.database_repo.get_user(body.id);
-    if (!user) {
-      throw new UserNotAuthenticated("User not found.");
-    }
 
     const updatedUser = await this.database_repo.update_user(
-      body.id, // Fixed here from body.userId to body.id
+      user_student_id, 
       body.course,
       body.semester_course
     );
