@@ -32,7 +32,6 @@ export class TokenAuth {
 
     async verify_azure_token(token): Promise<AzureProps> {
         const url = process.env.AZURE_URL || "";
-        console.log('url', url);
         const options = {
             headers: {
                 Authorization: `Bearer ${token}`

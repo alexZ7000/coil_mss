@@ -30,7 +30,6 @@ export class UserRepoMock implements IUserRepo {
       const user_index = this.user_mock.users.findIndex(
         (user) => user.id === userId
       );
-      // console.log(user_index);
       this.user_mock.users[user_index].course = course;
       this.user_mock.users[user_index].semester_course = semester_course;
       resolve(this.user_mock.users[user_index]);

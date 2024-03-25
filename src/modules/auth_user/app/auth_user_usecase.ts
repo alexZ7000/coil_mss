@@ -27,7 +27,6 @@ export class AuthUserUsecase {
         const token_response = await this.token_auth.verify_azure_token(headers.Authorization)
         .then
         (response => {
-            console.log('response', response)
             return response;
         }).catch(error => {
             throw new UserNotAuthenticated(error.message);
