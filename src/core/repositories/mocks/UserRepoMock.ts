@@ -25,18 +25,16 @@ export class UserRepoMock implements IUserRepo {
     userId: string,
     course: string,
     semester_course: number
-  ): Promise<User | null> {
+  ): Promise<User> {
     return new Promise((resolve, reject) => {
       const user_index = this.user_mock.users.findIndex(
         (user) => user.id === userId
       );
-      if (user_index === -1) {
-        resolve(null);
-      } else {
-        this.user_mock.users[user_index].course = course;
-        this.user_mock.users[user_index].semester_course = semester_course;
-        resolve(this.user_mock.users[user_index]);
-      }
+      // console.log(user_index);
+      this.user_mock.users[user_index].course = course;
+      this.user_mock.users[user_index].semester_course = semester_course;
+      resolve(this.user_mock.users[user_index]);
+      
     });
   }
 
