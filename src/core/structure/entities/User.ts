@@ -33,6 +33,19 @@ export class User {
         this.updated_at = this.validate_set_updated_at(updated_at);
     }
 
+    public to_json() {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            user_type: this.user_type,
+            course: this.course,
+            semester_course: this.semester_course,
+            created_at: this.created_at,
+            updated_at: this.updated_at
+        }
+    }
+
     private validate_set_id(id: string) {
         if (id == null || id == "") {
             throw new EntityError("Parameter id is required");
