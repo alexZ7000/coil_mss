@@ -89,7 +89,7 @@ describe("Testing Update User Usecase", () => {
 
   it("should not update a user with invalid user type", async () => {
     var token = (
-      await new TokenAuth().generate_token(user_student.id)
+      await new TokenAuth().generate_token('5126873490124')
     ).toString();
     const user_repo = new UserRepoMock();
     const update_user = new UpdateUserUsecase(user_repo);
@@ -100,7 +100,6 @@ describe("Testing Update User Usecase", () => {
           Authorization: token,
         },
         {
-          id: "non_existing_user_id", 
           course: updatedUser.course,
           semester_course: updatedUser.semester_course,
         }

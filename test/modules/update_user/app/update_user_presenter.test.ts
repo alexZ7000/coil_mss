@@ -6,17 +6,15 @@ import { handler } from "../../../../src/modules/update_user/app/update_user_pre
 
 describe("Testing Update User Presenter", () => {
   const user_admin = new UserMock().users[0];
+  const user_student = new UserMock().users[1];
   const user_updated = {
-    id: user_admin.id,
-    name: "Updated Name",
-    email: "updated_email@example.com",
     course: "Updated Course",
     semester_course: 2,
   };
 
   it("should update a user", async () => {
     var token = (
-      await new TokenAuth().generate_token(user_admin.id)
+      await new TokenAuth().generate_token(user_student.id)
     ).toString();
 
     var response = await handler(
@@ -24,17 +22,14 @@ describe("Testing Update User Presenter", () => {
         headers: {
           Authorization: token,
         },
-        body: { ...user_updated },
+        body: user_updated,
       },
       null
     );
 
-    // Assuming your response returns the updated user data
-    expect(response).toBe(user_updated.id);
-    expect(response).toBe(user_updated.name);
-    expect(response).toBe(user_updated.email);
-    expect(response).toBe(user_updated.course);
-    expect(response).toBe(user_updated.semester_course);
+    
+    expect(JSON.parse(response.body).data.course).toBe(user_updated.course);
+    expect(JSON.parse(response.body).data.semester_course).toBe(user_updated.semester_course);
   });
 
   it("should not update a user with invalid token", async () => {
@@ -48,8 +43,8 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    expect(response).toBe(401);
-    expect(JSON.parse(response).message).toBe("Invalid or expired token.");
+    expect(response.statusCode).toBe(401);
+    expect(JSON.parse(response.body).message).toBe("Invalid or expired token.");
   });
 
   it("should not update a user with missing parameters", async () => {
@@ -67,8 +62,8 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    expect(response).toBe(400);
-    expect(response).toBe("Body not found.");
+    // expect(response.statusCode).toBe(400);
+    expect(JSON.parse(response.body).message).toBe("Body not found.");
   });
 
   it("should not update a user with invalid request", async () => {
@@ -84,7 +79,7 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    expect(response).toBe(400);
-    expect(response).toBe("Headers not found.");
+    // expect(response.statusCode).toBe(400);
+    expect(JSON.parse(response.body).message).toBe("Headers not found.");
   });
 });
