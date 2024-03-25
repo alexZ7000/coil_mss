@@ -11,8 +11,7 @@ const controller = new UpdateUserController(usecase);
 
 export const handler = async (event: any, context: any) => {
   let request = new HttpRequest(event);
-  let response = await controller.execute(request.headers, request.body);
+  let response = await controller.execute(request);
 
-  const jsonResponse = JSON.stringify(response);
-  return jsonResponse;
+  return response.to_json();
 };
