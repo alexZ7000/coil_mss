@@ -44,9 +44,7 @@ export class UpdateUserUsecase {
         throw new UserNotAuthenticated("Invalid or expired token.");
       });
 
-    const user_student = await this.database_repo.get_user(
-      user_student_id
-    );
+    const user_student = await this.database_repo.get_user(user_student_id);
     if (!user_student) {
       throw new UserNotAuthenticated("User not found.");
     }
@@ -60,7 +58,7 @@ export class UpdateUserUsecase {
     }
 
     const updatedUser = await this.database_repo.update_user(
-      body.userId,
+      body.id, // Fixed here from body.userId to body.id
       body.course,
       body.semester_course
     );
