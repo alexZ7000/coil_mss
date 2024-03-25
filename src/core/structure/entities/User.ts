@@ -33,6 +33,38 @@ export class User {
         this.updated_at = this.validate_set_updated_at(updated_at);
     }
 
+    get getId() {
+        return this.id;
+    }
+
+    get getName() {
+        return this.name;
+    }
+
+    get getEmail() {
+        return this.email;
+    }
+
+    get getUserType() {
+        return this.user_type;
+    }
+
+    get getCourse() {
+        return this.course;
+    }
+
+    get getSemesterCourse() {
+        return this.semester_course;
+    }
+
+    get getCreatedAt() {
+        return this.created_at;
+    }
+
+    get getUpdatedAt() {
+        return this.updated_at;
+    }
+
     public to_json() {
         return {
             id: this.id,
