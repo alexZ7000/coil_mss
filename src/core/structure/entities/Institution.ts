@@ -5,6 +5,7 @@
         name: string;
         email: string;
         country: string;
+        images: string[];
         social_medias:{
             media: string,
             link: string
@@ -16,16 +17,18 @@
         name: string;
         email: string;
         country: string;
+        images: string[];
         social_medias:{
             media: string,
             link: string
         }
 
-        constructor({id, name, email, country, social_medias}: InstitutionProps){
+        constructor({id, name, email, country, images ,social_medias}: InstitutionProps){
             this.id = this.validate_set_id(id);
             this.name = this.validate_set_name(name);
             this.email = this.validate_set_email(email);
             this.country = this.validate_set_country(country);
+            this.images = this.validate_set_images(images);
             this.social_medias = social_medias;
         }
 
@@ -67,6 +70,7 @@
             return email;
         }
 
+        
         private validate_set_country(country: string){
             if (country == null || country == ""){
                 throw new EntityError("Parameter country is required")
@@ -75,5 +79,17 @@
                 throw new EntityError("Parameter country has to be a string")
             }
             return country;
+        }
+      
+        private validate_set_images(images: string[]) {
+            if (!images || !Array.isArray(images)) {
+                throw new EntityError("Parameter images must be an array of strings");
+            }
+            for (const image of images) {
+                if (typeof image !== "string") {
+                    throw new EntityError("Each image in the images array must be a string");
+                }
+            }
+            return images;
         }
     }

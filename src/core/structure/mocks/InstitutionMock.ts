@@ -14,7 +14,8 @@ export class InstitutionMock {
                 social_medias: {
                     media: "Twitter",
                     link: "https://twitter.com/example"
-                }
+                },
+                images: "asldkf;"
             }),
             new Institution({
                 id: "2b968d1e-df34-49db-86d7-4c69a75e07c4",
