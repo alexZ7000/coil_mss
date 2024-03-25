@@ -23,7 +23,7 @@ export class UpdateUserController {
     this.usecase = usecase;
   }
 
-  public async handle(
+  public async execute(
     headers: { [key: string]: string },
     body: { [key: string]: any }
   ) {
@@ -49,7 +49,6 @@ export class UpdateUserController {
 
       const updatedUser = await this.usecase.execute(headers, body);
       return updatedUser;
-
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
