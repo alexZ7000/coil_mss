@@ -6,8 +6,8 @@ import { EntityError } from '../../../../src/core/helpers/errors/EntityError';
 import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
 
 describe("Testing User Entity", () => {
-    const user_mock = new UserMock().users;
     it("should create a user", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
 
         expect(user.id).toBe(user_mock[1].id);
@@ -21,93 +21,103 @@ describe("Testing User Entity", () => {
     });
 
     it("should not create a user without id", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.id = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter id is required");
     });
 
     it("should not create a user without name", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.name = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter name is required");
     });
 
     it("should not create a user without email", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.email = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("Parameter email is required");
     });
 
     it("should not create a user without user type", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.user_type = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter user_type is required");
     });
 
     it("should not create a user without created_at", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.created_at = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter created_at is required");
     });
 
     it("should not create a user without updated_at", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.updated_at = null;
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter updated_at is required");
     });
 
     it("should not create a user with invalid email", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.email = "invalid_email";
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Invalid Email, must be a maua.br domain");
     });
 
     it("should not create a user with invalid user type", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.user_type = "invalid_user_type";
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter user_type is not a UserTypeEnum");
     });
 
     it("should not create a user with invalid created_at", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.created_at = "invalid_created_at";
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter created_at is not a Date");
     });
 
     it("should not create a user with invalid updated_at", async () => {
+        const user_mock = new UserMock().users;
         var user = user_mock[1];
         user.updated_at = "invalid_updated_at";
 
-        expect(() => {
+        expect(async () => {
             new User(user);
-        }).toThrowError(EntityError);
+        }).rejects.toThrow("EntityError: Parameter updated_at is not a Date");
     });
 }); 
 
