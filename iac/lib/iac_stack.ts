@@ -28,7 +28,7 @@ export class IacStack extends cdk.Stack {
       }
     });
 
-    // const dynamodb_stack = new DynamoStack(this); 
+    const dynamodb_stack = new DynamoStack(this); 
 
     const ENVIROMMENT_VARIABLES: {[key: string]: string} = {
       "DOMAIN": process.env.DOMAIN || "",
@@ -36,8 +36,7 @@ export class IacStack extends cdk.Stack {
       "AZURE_URL": process.env.AZURE_URL || "",
       "SECRET_KEY": process.env.SECRET_KEY || "",
       "DATABASE_URL": process.env.DATABASE_URL || "",
-      // "PROJECT_TABLE": dynamodb_stack.project_table.tableName,
-      // "DYNAMO_URL": dynamodb_stack.project_table.tableArn,
+      "PROJECT_TABLE": dynamodb_stack.project_table.tableName,
     };
 
     const lambda_stack = new LambdaStack(
@@ -47,8 +46,8 @@ export class IacStack extends cdk.Stack {
       coil_resource
     );
 
-    // for (let function_lambda of lambda_stack.functions_need_dynamodb_access) {
-    //   dynamodb_stack.project_table.grantReadWriteData(function_lambda);
-    // }
+    for (let function_lambda of lambda_stack.functions_need_dynamodb_access) {
+      dynamodb_stack.project_table.grantReadWriteData(function_lambda);
+    }
   }
 }
