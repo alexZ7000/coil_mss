@@ -12,14 +12,14 @@ class ProjectProps {
     end_date: Date;
     description: string;
     languages: string[];
-    partner_institutions: Institution[];
+    partner_institutions: Institution[] | [];
     criterias: Criteria[];
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[] | null;
-    accepted: User[] | null;
-    feedbacks: Feedback[] | null;
+    applicants: User[] | [];
+    accepted: User[] | [];
+    feedbacks: Feedback[] | [];
 }
 
 export class Project {
@@ -28,15 +28,15 @@ export class Project {
     start_date: Date;
     end_date: Date;
     description: string;
-    languages: string[];
-    partner_institutions: Institution[];
-    criterias: Criteria[];
+    languages: string[] | [];
+    partner_institutions: Institution[] | [];
+    criterias: Criteria[] | [];
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[] | null;
-    accepted: User[] | null;
-    feedbacks: Feedback[] | null;
+    applicants: User[] | [];
+    accepted: User[] | [];
+    feedbacks: Feedback[] | [];
 
     constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, accepted, feedbacks }: ProjectProps) {
         this.id = this.validate_set_id(id);
@@ -99,9 +99,9 @@ export class Project {
         return description;
     }
 
-    private validate_set_languages(languages: string[]) {
+    private validate_set_languages(languages: string[] | []) {
         if (languages == null || languages.length === 0) {
-            throw new EntityError("Parameter languages is required");
+            return [];
         }
         if (!Array.isArray(languages)) {
             throw new EntityError("Parameter languages is not an array");
@@ -109,9 +109,9 @@ export class Project {
         return languages;
     }
 
-    private validate_set_partner_institutions(partner_institutions: Institution[]) {
+    private validate_set_partner_institutions(partner_institutions: Institution[] | []) {
         if (partner_institutions == null || partner_institutions.length === 0) {
-            throw new EntityError("Parameter partner_institutions is required");
+            return [];
         }
         if (!Array.isArray(partner_institutions)) {
             throw new EntityError("Parameter partner_institutions is not an array");
@@ -119,9 +119,9 @@ export class Project {
         return partner_institutions;
     }
 
-    private validate_set_criterias(criterias: Criteria[]) {
+    private validate_set_criterias(criterias: Criteria[] | []) {
         if (criterias == null || criterias.length === 0) {
-            throw new EntityError("Parameter criterias is required");
+            return [];
         }
         if (!Array.isArray(criterias)) {
             throw new EntityError("Parameter criterias is not an array");
@@ -159,21 +159,30 @@ export class Project {
         return updated_at;
     }
 
-    private validate_set_applicants(applicants: User[] | null) {
+    private validate_set_applicants(applicants: User[] | []) {
+        if (applicants == null || applicants.length === 0) {
+            return [];
+        }
         if (!Array.isArray(applicants)) {
             throw new EntityError("Parameter applicants is not an array");
         }
         return applicants;
     }
 
-    private validate_set_accepted(accepted: User[] | null) {
+    private validate_set_accepted(accepted: User[] | []) {
+        if (accepted == null || accepted.length === 0) {
+            return [];
+        }
         if (!Array.isArray(accepted)) {
             throw new EntityError("Parameter accepted is not an array");
         }
         return accepted;
     }
 
-    private validate_set_feedbacks(feedbacks: string[] | null) {
+    private validate_set_feedbacks(feedbacks: string[] | []) {
+        if (feedbacks == null || feedbacks.length === 0) {
+            return [];
+        }
         if (!Array.isArray(feedbacks)) {
             throw new EntityError("Parameter feedbacks is not an array");
         }
