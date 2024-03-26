@@ -11,10 +11,10 @@ export class InstitutionMock {
                 name: "Example University",
                 email: "example@example.com",
                 country: "CountryName",
-                social_medias: {
+                social_medias: [{
                     media: "Twitter",
                     link: "https://twitter.com/example"
-                },
+                }],
                 images: [
                     "https://example.com/image1.jpg",
                     "https://example.com/image2.jpg"
@@ -25,10 +25,10 @@ export class InstitutionMock {
                 name: "Another University",
                 email: "another@example.com",
                 country: "AnotherCountry",
-                social_medias: {
+                social_medias: [{
                     media: "Facebook",
                     link: "https://facebook.com/another"
-                },
+                }],
                 images: [
                     "https://another.com/image1.jpg",
                     "https://another.com/image2.jpg"

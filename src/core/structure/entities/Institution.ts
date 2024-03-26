@@ -6,10 +6,7 @@
         email: string;
         country: string;
         images: string[];
-        social_medias:{
-            media: string,
-            link: string
-        }[]
+        social_medias: { media: string, link: string }[] | [];
     }
 
     export class Institution {
@@ -18,10 +15,7 @@
         email: string;
         country: string;
         images: string[];
-        social_medias:{
-            media: string,
-            link: string
-        }[]
+        social_medias: { media: string, link: string }[] | [];
 
         constructor({id, name, email, country, images ,social_medias}: InstitutionProps){
             this.id = this.validate_set_id(id);
@@ -104,8 +98,11 @@
             return images;
         }
 
-        private validate_set_social_medias(social_medias: {media: string, link: string}[]){
-            if (!social_medias || !Array.isArray(social_medias)){
+        private validate_set_social_medias(social_medias: {media: string, link: string}[] | []){
+            if (social_medias == null || social_medias.length == 0){
+                return [];
+            }
+            if (!Array.isArray(social_medias)){
                 throw new EntityError("Parameter social_medias must be an array of objects")
             }
             for (const social_media of social_medias){
