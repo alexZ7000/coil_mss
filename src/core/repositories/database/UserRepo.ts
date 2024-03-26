@@ -18,38 +18,34 @@ export class UserRepo implements IUserRepo {
     throw new Error("Method not implemented.");
   }
 
-  public async update_user(
-    userId: string,
-    course: string,
-    semester_course: number
-  ): Promise<User> {
+  public async update_user(updatedUser: User): Promise<User> {
     try {
-
-      const updatedUser = await prisma.user.update({
-        where: { id: userId },
+      const prismaUser = await prisma.user.update({
+        where: { id: updatedUser.id },
         data: {
-          courseId: Number(course), 
-          semesterCourse: semester_course,
-          updatedAt: new Date(), 
+          courseId: updatedUser.course ? Number(updatedUser.course) : null,
+          semesterCourse: updatedUser.semester_course,
+          updatedAt: new Date(),
         },
-      })
+      });
 
-    const userConvert = new User({
-        id: updatedUser.id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        user_type: updatedUser.userTypeId as unknown as UserTypeEnum,
-        course: updatedUser.courseId ? updatedUser.courseId.toString() : null,
-        semester_course: updatedUser.semesterCourse,
-        created_at: updatedUser.createdAt,
-        updated_at: updatedUser.updatedAt,
-    });
-
-    return userConvert;
-      
+      return this.convertToUser(prismaUser);
     } catch (error) {
-      console.error("Erro ao atualizar usuário:", error);
+      console.error("Error updating user:", error);
       throw error;
     }
+  }
+
+  private convertToUser(prismaUser: any): User {
+    return new User({
+      id: prismaUser.id,
+      name: prismaUser.name,
+      email: prismaUser.email,
+      user_type: prismaUser.userTypeId as unknown as UserTypeEnum,
+      course: prismaUser.courseId ? prismaUser.courseId.toString() : null,
+      semester_course: prismaUser.semesterCourse,
+      created_at: prismaUser.createdAt,
+      updated_at: prismaUser.updatedAt,
+    });
   }
 }
