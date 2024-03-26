@@ -17,8 +17,7 @@ class ProjectProps {
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[] | [];
-    accepted: User[] | [];
+    applicants: {user: User, status: boolean}[] | [];;
     feedbacks: Feedback[] | [];
 }
 
@@ -34,11 +33,10 @@ export class Project {
     status_project: ProjectStatusEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: User[] | [];
-    accepted: User[] | [];
+    applicants: {user: User, status: boolean}[] | [];
     feedbacks: Feedback[] | [];
 
-    constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, accepted, feedbacks }: ProjectProps) {
+    constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, feedbacks }: ProjectProps) {
         this.id = this.validate_set_id(id);
         this.title = this.validate_set_title(title);
         this.start_date = this.validate_set_start_date(start_date);
@@ -51,8 +49,25 @@ export class Project {
         this.created_at = this.validate_set_created_at(created_at);
         this.updated_at = this.validate_set_updated_at(updated_at);
         this.applicants = this.validate_set_applicants(applicants);
-        this.accepted = this.validate_set_accepted(accepted);
         this.feedbacks = this.validate_set_feedbacks(feedbacks);
+    }
+
+    public to_json(): {[key: string]: any}{
+        return {
+            id: this.id,
+            title: this.title,
+            start_date: this.start_date,
+            end_date: this.end_date,
+            description: this.description,
+            languages: this.languages,
+            partner_institutions: this.partner_institutions,
+            criterias: this.criterias,
+            status_project: this.status_project,
+            created_at: this.created_at,
+            updated_at: this.updated_at,
+            applicants: this.applicants.map((applicant: {user: User, status: boolean}) => {return {user: applicant.user.to_json(), status: applicant.status}}),
+            feedbacks: this.feedbacks.map((feedback: Feedback) => feedback.to_json())
+        };
     }
 
     private validate_set_id(id: string) {
@@ -183,15 +198,15 @@ export class Project {
         return updated_at;
     }
 
-    private validate_set_applicants(applicants: User[] | []) {
+    private validate_set_applicants(applicants: {user: User, status: boolean}[] | []) {
         if (applicants == null || applicants.length === 0) {
             return [];
         }
         if (!Array.isArray(applicants)) {
             throw new EntityError("Parameter applicants is not an array");
         }
-        if (applicants.some((user) => !(user instanceof User))) {
-            throw new EntityError("Parameter applicants must be an array of User objects");
+        if (applicants.some((applicant) => !(applicant.user instanceof User) || typeof applicant.status !== "boolean")) {
+            throw new EntityError("Parameter applicants must be an array of objects with user as User and status as boolean");
         }
         return applicants;
     }

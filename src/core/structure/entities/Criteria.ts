@@ -18,6 +18,13 @@ export class Criteria{
         this.criteria = this.validate_set_criteria(criteria);
     }
 
+    public to_json() {
+        return {
+            id: this.id,
+            project_id: this.project_id,
+            criteria: this.criteria
+        }
+    }
 
     private validate_set_id(id: string) {
         if (id == null || id == "") {

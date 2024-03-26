@@ -9,7 +9,7 @@
         social_medias:{
             media: string,
             link: string
-        }
+        }[]
     }
 
     export class Institution {
@@ -21,7 +21,7 @@
         social_medias:{
             media: string,
             link: string
-        }
+        }[]
 
         constructor({id, name, email, country, images ,social_medias}: InstitutionProps){
             this.id = this.validate_set_id(id);
@@ -29,7 +29,18 @@
             this.email = this.validate_set_email(email);
             this.country = this.validate_set_country(country);
             this.images = this.validate_set_images(images);
-            this.social_medias = social_medias;
+            this.social_medias = this.validate_set_social_medias(social_medias);
+        }
+
+        public to_json(){
+            return {
+                id: this.id,
+                name: this.name,
+                email: this.email,
+                country: this.country,
+                images: this.images,
+                social_medias: this.social_medias
+            }
         }
 
         private validate_set_id(id: string) {
@@ -91,5 +102,17 @@
                 }
             }
             return images;
+        }
+
+        private validate_set_social_medias(social_medias: {media: string, link: string}[]){
+            if (!social_medias || !Array.isArray(social_medias)){
+                throw new EntityError("Parameter social_medias must be an array of objects")
+            }
+            for (const social_media of social_medias){
+                if (typeof social_media.media !== "string" || typeof social_media.link !== "string"){
+                    throw new EntityError("Each social media object must have a media and a link")
+                }
+            }
+            return social_medias;
         }
     }
