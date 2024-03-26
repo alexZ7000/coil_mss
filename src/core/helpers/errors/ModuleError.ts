@@ -28,7 +28,7 @@ export class UserNotAuthenticated extends MainError {
         if (message) {
             super(message);
         } else {
-            super("User not authenticated.");
+            super("User not authentificated.");
         }
     }
 }

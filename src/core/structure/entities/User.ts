@@ -3,7 +3,7 @@ import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
 class UserProps {
     id: string;
-    name: string;
+    name: string | null;
     email: string;
     user_type: UserTypeEnum;
     course: string | null;
@@ -14,7 +14,7 @@ class UserProps {
 
 export class User {
     id: string; // UUID
-    name: string; 
+    name: string | null; 
     email: string; 
     user_type: UserTypeEnum;
     course: string | null;
@@ -24,13 +24,26 @@ export class User {
 
     constructor({ id, name, email, user_type, course, semester_course, created_at, updated_at }: UserProps) {
         this.id = this.validate_set_id(id);
-        this.name = this.validate_set_name(name);
+        this.name = this.validate_set_name(name, user_type);
         this.email = this.validate_set_email(email);
         this.user_type = this.validate_set_user_type(user_type);
         this.course = this.validate_set_course(course);
         this.semester_course = this.validate_set_semester_course(semester_course);
         this.created_at = this.validate_set_created_at(created_at);
         this.updated_at = this.validate_set_updated_at(updated_at);
+    }
+
+    public to_json() {
+        return {
+            id: this.id,
+            name: this.name,
+            email: this.email,
+            user_type: this.user_type,
+            course: this.course,
+            semester_course: this.semester_course,
+            created_at: this.created_at,
+            updated_at: this.updated_at
+        }
     }
 
     private validate_set_id(id: string) {
@@ -46,8 +59,10 @@ export class User {
         return id;
     }
 
-    private validate_set_name(name: string) {
-        if (name == null || name == "") {
+    private validate_set_name(name: string | null, user_type: UserTypeEnum) {
+        if (user_type == UserTypeEnum.MODERATOR && name == null) {
+            return null;
+        } else if ((user_type != UserTypeEnum.MODERATOR && (name == null || name == ""))) {
             throw new EntityError("Parameter name is required");
         }
         if (typeof name !== "string") {
@@ -65,7 +80,7 @@ export class User {
         }
         let padrao: RegExp = /^[a-zA-Z0-9._%+-]+@maua\.br$/;
         if (!padrao.test(email)) {
-            throw new EntityError("Invalid Email, must be a maua.br domain.");
+            throw new EntityError("Invalid Email, must be a maua.br domain");
         }
         return email;
     }

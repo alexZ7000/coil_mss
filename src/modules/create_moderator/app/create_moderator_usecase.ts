@@ -3,16 +3,16 @@ import { randomUUID } from "crypto";
 import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import { DatabaseInterface } from "../../../core/repositories/Interfaces/DatabaseInterface";
+import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { ConflictError, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 
 export class CreateModeratorUsecase {
     public token_auth: TokenAuth;
-    public database_repo: DatabaseInterface;
+    public database_repo: IUserRepo;
     
-    constructor(database_repo: DatabaseInterface) {
+    constructor(database_repo: IUserRepo) {
         this.token_auth = new TokenAuth();
         this.database_repo = database_repo;
     }
@@ -26,9 +26,6 @@ export class CreateModeratorUsecase {
         }
         if (!headers.Authorization) {
             throw new MissingParameter("Authorization");
-        }
-        if (!body.name) {
-            throw new MissingParameter("Name");
         }
         if (!body.email) {
             throw new MissingParameter("Email");
@@ -55,7 +52,7 @@ export class CreateModeratorUsecase {
 
         const moderator = new User({
             id: randomUUID(),
-            name: body.name,
+            name: null,
             email: body.email,
             course: null,
             semester_course: null,
@@ -67,7 +64,6 @@ export class CreateModeratorUsecase {
         await this.database_repo.create_user(moderator);
 
         return {
-            name: moderator.name,
             email: moderator.email,
         }
     }
