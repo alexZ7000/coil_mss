@@ -6,12 +6,12 @@ import { Criteria } from "./Criteria";
 import { Feedback } from "./Feedback";
 
 class ProjectProps {
-    id: number;
+    id: string;
     title: string;
     start_date: Date;
     end_date: Date;
     description: string;
-    languages: string[];
+    languages: string[] | [];
     partner_institutions: Institution[] | [];
     criterias: Criteria[];
     status_project: ProjectStatusEnum;
@@ -23,7 +23,7 @@ class ProjectProps {
 }
 
 export class Project {
-    id: number;
+    id: string;
     title: string;
     start_date: Date;
     end_date: Date;
@@ -52,15 +52,18 @@ export class Project {
         this.updated_at = this.validate_set_updated_at(updated_at);
         this.applicants = this.validate_set_applicants(applicants);
         this.accepted = this.validate_set_accepted(accepted);
-        this.feedbacks= this.validate_set_feedbacks(feedbacks);
+        this.feedbacks = this.validate_set_feedbacks(feedbacks);
     }
 
-    private validate_set_id(id: number) {
+    private validate_set_id(id: string) {
         if (id == null) {
             throw new EntityError("Parameter id is required");
         }
-        if (typeof id !== "number") {
-            throw new EntityError("Parameter id must be a number");
+        if (typeof id !== "string") {
+            throw new EntityError("Parameter id must be a string");
+        }
+        if (id.length !== 36) {
+            throw new EntityError("Parameter id must be a valid UUID string");
         }
         return id;
     }
@@ -79,6 +82,9 @@ export class Project {
         if (!(start_date instanceof Date)) {
             throw new EntityError("Parameter start_date must be a Date object");
         }
+        if (start_date < new Date()) {
+            throw new EntityError("Parameter start_date must be a date in the future");
+        }
         return start_date;
     }
 
@@ -88,6 +94,9 @@ export class Project {
         }
         if (!(end_date instanceof Date)) {
             throw new EntityError("Parameter end_date must be a Date object");
+        }
+        if (end_date < this.start_date) {
+            throw new EntityError("Parameter end_date must be greater than start_date");
         }
         return end_date;
     }
@@ -106,6 +115,9 @@ export class Project {
         if (!Array.isArray(languages)) {
             throw new EntityError("Parameter languages is not an array");
         }
+        if (languages.some((language) => typeof language !== "string")) {
+            throw new EntityError("Parameter languages must be an array of strings");
+        }
         return languages;
     }
 
@@ -116,6 +128,9 @@ export class Project {
         if (!Array.isArray(partner_institutions)) {
             throw new EntityError("Parameter partner_institutions is not an array");
         }
+        if (partner_institutions.some((institution) => !(institution instanceof Institution))) {
+            throw new EntityError("Parameter partner_institutions must be an array of Institution objects");
+        }
         return partner_institutions;
     }
 
@@ -125,6 +140,9 @@ export class Project {
         }
         if (!Array.isArray(criterias)) {
             throw new EntityError("Parameter criterias is not an array");
+        }
+        if (criterias.some((criteria) => !(criteria instanceof Criteria))) {
+            throw new EntityError("Parameter criterias must be an array of Criteria objects");
         }
         return criterias;
     }
@@ -146,6 +164,9 @@ export class Project {
         if (!(created_at instanceof Date)) {
             throw new EntityError("Parameter created_at must be a Date object");
         }
+        if (created_at > new Date()) {
+            throw new EntityError("Parameter created_at must be a date in the past");
+        }
         return created_at;
     }
 
@@ -155,6 +176,9 @@ export class Project {
         }
         if (!(updated_at instanceof Date)) {
             throw new EntityError("Parameter updated_at must be a Date object");
+        }
+        if (updated_at < this.created_at) {
+            throw new EntityError("Parameter updated_at must be greater than created_at");
         }
         return updated_at;
     }
@@ -166,6 +190,9 @@ export class Project {
         if (!Array.isArray(applicants)) {
             throw new EntityError("Parameter applicants is not an array");
         }
+        if (applicants.some((user) => !(user instanceof User))) {
+            throw new EntityError("Parameter applicants must be an array of User objects");
+        }
         return applicants;
     }
 
@@ -176,15 +203,21 @@ export class Project {
         if (!Array.isArray(accepted)) {
             throw new EntityError("Parameter accepted is not an array");
         }
+        if (accepted.some((user) => !(user instanceof User))) {
+            throw new EntityError("Parameter accepted must be an array of User objects");
+        }
         return accepted;
     }
 
-    private validate_set_feedbacks(feedbacks: string[] | []) {
+    private validate_set_feedbacks(feedbacks: Feedback[] | []) {
         if (feedbacks == null || feedbacks.length === 0) {
             return [];
         }
         if (!Array.isArray(feedbacks)) {
             throw new EntityError("Parameter feedbacks is not an array");
+        }
+        if (feedbacks.some((feedback) => !(feedback instanceof Feedback))) {
+            throw new EntityError("Parameter feedbacks must be an array of Feedback objects");
         }
         return feedbacks;
     }

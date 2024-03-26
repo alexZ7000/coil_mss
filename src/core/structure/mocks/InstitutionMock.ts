@@ -1,5 +1,5 @@
 import { Institution } from "../entities/Institution";
-import { EntityError } from "../../helpers/errors/EntityError";
+
 
 export class InstitutionMock {
     public institutions: Institution[];
@@ -15,7 +15,10 @@ export class InstitutionMock {
                     media: "Twitter",
                     link: "https://twitter.com/example"
                 },
-                images: "asldkf;"
+                images: [
+                    "https://example.com/image1.jpg",
+                    "https://example.com/image2.jpg"
+                ]
             }),
             new Institution({
                 id: "2b968d1e-df34-49db-86d7-4c69a75e07c4",
@@ -25,49 +28,12 @@ export class InstitutionMock {
                 social_medias: {
                     media: "Facebook",
                     link: "https://facebook.com/another"
-                }
+                },
+                images: [
+                    "https://another.com/image1.jpg",
+                    "https://another.com/image2.jpg"
+                ]
             })
         ];
-    }
-
-    public get_institution(id: string): Promise<Institution | null> {
-        return new Promise((resolve, reject) => {
-            const institution = this.institutions.find(inst => inst.id === id);
-            resolve(institution || null);
-        });
-    }
-
-    public create_institution(institution: Institution): Promise<boolean> {
-        this.institutions.push(institution);
-        return Promise.resolve(true);
-    }
-
-    public update_institution(institution: Institution): Promise<Institution> {
-        const index = this.institutions.findIndex(inst => inst.id === institution.id);
-        if (index !== -1) {
-            this.institutions[index] = institution;
-            return Promise.resolve(institution);
-        }
-        return Promise.reject(new EntityError("Institution not found"));
-    }
-
-    public delete_institution(id: string): Promise<boolean> {
-        const index = this.institutions.findIndex(inst => inst.id === id);
-        if (index !== -1) {
-            this.institutions.splice(index, 1);
-            return Promise.resolve(true);
-        }
-        return Promise.reject(new EntityError("Institution not found"));
-    }
-
-    public get_all_institutions(): Promise<Institution[]> {
-        return Promise.resolve(this.institutions);
-    }
-
-    public get_institution_by_email(email: string): Promise<Institution | null> {
-        return new Promise((resolve, reject) => {
-            const institution = this.institutions.find(inst => inst.email === email);
-            resolve(institution || null);
-        });
     }
 }
