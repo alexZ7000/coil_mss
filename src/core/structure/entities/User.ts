@@ -14,7 +14,7 @@ class UserProps {
 }
 
 export class User {
-  id: string; // UUID
+  id: string;
   name: string | null;
   email: string;
   user_type: UserTypeEnum;
@@ -23,24 +23,15 @@ export class User {
   created_at: Date;
   updated_at: Date;
 
-  constructor({
-    id,
-    name,
-    email,
-    user_type,
-    course,
-    semester_course,
-    created_at,
-    updated_at,
-  }: UserProps) {
-    this.id = this.validate_set_id(id);
-    this.name = this.validate_set_name(name, user_type);
-    this.email = this.validate_set_email(email);
-    this.user_type = this.validate_set_user_type(user_type);
-    this.course = this.validate_set_course(course);
-    this.semester_course = this.validate_set_semester_course(semester_course);
-    this.created_at = this.validate_set_created_at(created_at);
-    this.updated_at = this.validate_set_updated_at(updated_at);
+  constructor(props: UserProps) {
+    this.id = this.validate_set_id(props.id);
+    this.name = this.validate_set_name(props.name, props.user_type);
+    this.email = this.validate_set_email(props.email);
+    this.user_type = this.validate_set_user_type(props.user_type);
+    this.course = this.validate_set_course(props.course);
+    this.semester_course = this.validate_set_semester_course(props.semester_course);
+    this.created_at = this.validate_set_created_at(props.created_at);
+    this.updated_at = this.validate_set_updated_at(props.updated_at);
   }
 
   public to_json() {

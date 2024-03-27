@@ -1,11 +1,12 @@
-import { EntityError } from "../../helpers/errors/EntityError";
-import { ProjectStatusEnum } from "../../helpers/enums/ProjectStatusEnum";
 import { User } from "./User";
-import { Institution } from "./Institution";
+import { Course } from "./Course";
 import { Criteria } from "./Criteria";
-import { Feedback } from "./Feedback";
+import { Institution } from "./Institution";
+import { EntityError } from "../../helpers/errors/EntityError";
+import { ActivityTypeEnum } from "../../helpers/enums/ActivityTypeEnum";
+import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 
-class ProjectProps {
+class ActivityProps {
     id: string;
     title: string;
     start_date: Date;
@@ -14,14 +15,15 @@ class ProjectProps {
     languages: string[] | [];
     partner_institutions: Institution[] | [];
     criterias: Criteria[];
-    status_project: ProjectStatusEnum;
+    status_activity: ActivityStatusEnum;
+    type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {user: User, status: boolean}[] | [];;
-    feedbacks: Feedback[] | [];
+    applicants: {user: User, status: boolean}[] | [];
+    courses: Course[] | [];
 }
 
-export class Project {
+export class Activity {
     id: string;
     title: string;
     start_date: Date;
@@ -30,26 +32,28 @@ export class Project {
     languages: string[] | [];
     partner_institutions: Institution[] | [];
     criterias: Criteria[] | [];
-    status_project: ProjectStatusEnum;
+    status_activity: ActivityStatusEnum;
+    type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
     applicants: {user: User, status: boolean}[] | [];
-    feedbacks: Feedback[] | [];
+    courses: Course[] | [];
 
-    constructor({ id, title, start_date, end_date, description, languages, partner_institutions, criterias, status_project, created_at, updated_at, applicants, feedbacks }: ProjectProps) {
-        this.id = this.validate_set_id(id);
-        this.title = this.validate_set_title(title);
-        this.start_date = this.validate_set_start_date(start_date);
-        this.end_date = this.validate_set_end_date(end_date);
-        this.description = this.validate_set_description(description);
-        this.languages = this.validate_set_languages(languages);
-        this.partner_institutions = this.validate_set_partner_institutions(partner_institutions);
-        this.criterias = this.validate_set_criterias(criterias);
-        this.status_project = this.validate_set_status_project(status_project);
-        this.created_at = this.validate_set_created_at(created_at);
-        this.updated_at = this.validate_set_updated_at(updated_at);
-        this.applicants = this.validate_set_applicants(applicants);
-        this.feedbacks = this.validate_set_feedbacks(feedbacks);
+    constructor(props: ActivityProps) {
+        this.id = this.validate_set_id(props.id);
+        this.title = this.validate_set_title(props.title);
+        this.start_date = this.validate_set_start_date(props.start_date);
+        this.end_date = this.validate_set_end_date(props.end_date);
+        this.description = this.validate_set_description(props.description);
+        this.languages = this.validate_set_languages(props.languages);
+        this.partner_institutions = this.validate_set_partner_institutions(props.partner_institutions);
+        this.criterias = this.validate_set_criterias(props.criterias);
+        this.status_activity = this.validate_set_status_activity(props.status_activity);
+        this.type_activity = this.validate_set_type_activity(props.type_activity);
+        this.created_at = this.validate_set_created_at(props.created_at);
+        this.updated_at = this.validate_set_updated_at(props.updated_at);
+        this.applicants = this.validate_set_applicants(props.applicants);
+        this.courses = this.validate_set_courses(props.courses);
     }
 
     public to_json(): {[key: string]: any}{
@@ -62,11 +66,12 @@ export class Project {
             languages: this.languages,
             partner_institutions: this.partner_institutions,
             criterias: this.criterias,
-            status_project: this.status_project,
+            status_activity: this.status_activity,
+            type_activity: this.type_activity,
             created_at: this.created_at,
             updated_at: this.updated_at,
             applicants: this.applicants.map((applicant: {user: User, status: boolean}) => {return {user: applicant.user.to_json(), status: applicant.status}}),
-            feedbacks: this.feedbacks.map((feedback: Feedback) => feedback.to_json())
+            courses: this.courses.map((course: Course) => course.to_json())
         };
     }
 
@@ -162,14 +167,24 @@ export class Project {
         return criterias;
     }
 
-    private validate_set_status_project(status_project: ProjectStatusEnum) {
-        if (status_project == null) {
+    private validate_set_status_activity(status_activity: ActivityStatusEnum) {
+        if (status_activity == null) {
             throw new EntityError("Parameter status_project is required");
         }
-        if (!(status_project in ProjectStatusEnum)) {
-            throw new EntityError("Parameter status_project is not a valid ProjectStatusEnum value");
+        if (!(status_activity in ActivityStatusEnum)) {
+            throw new EntityError("Parameter status_project is not a valid ActivityStatusEnum value");
         }
-        return status_project;
+        return status_activity;
+    }
+
+    private validate_set_type_activity(type_activity: ActivityTypeEnum) {
+        if (type_activity == null) {
+            throw new EntityError("Parameter type_activity is required");
+        }
+        if (!(type_activity in ActivityTypeEnum)) {
+            throw new EntityError("Parameter type_activity is not a valid ActivityTypeEnum value");
+        }
+        return type_activity;
     }
 
     private validate_set_created_at(created_at: Date) {
@@ -211,29 +226,16 @@ export class Project {
         return applicants;
     }
 
-    private validate_set_accepted(accepted: User[] | []) {
-        if (accepted == null || accepted.length === 0) {
+    private validate_set_courses(courses: Course[] | []) {
+        if (courses == null || courses.length === 0) {
             return [];
         }
-        if (!Array.isArray(accepted)) {
-            throw new EntityError("Parameter accepted is not an array");
+        if (!Array.isArray(courses)) {
+            throw new EntityError("Parameter courses is not an array");
         }
-        if (accepted.some((user) => !(user instanceof User))) {
-            throw new EntityError("Parameter accepted must be an array of User objects");
+        if (courses.some((course) => !(course instanceof Course))) {
+            throw new EntityError("Parameter courses must be an array of Course objects");
         }
-        return accepted;
-    }
-
-    private validate_set_feedbacks(feedbacks: Feedback[] | []) {
-        if (feedbacks == null || feedbacks.length === 0) {
-            return [];
-        }
-        if (!Array.isArray(feedbacks)) {
-            throw new EntityError("Parameter feedbacks is not an array");
-        }
-        if (feedbacks.some((feedback) => !(feedback instanceof Feedback))) {
-            throw new EntityError("Parameter feedbacks must be an array of Feedback objects");
-        }
-        return feedbacks;
+        return courses;
     }
 }

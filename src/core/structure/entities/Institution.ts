@@ -17,13 +17,13 @@
         images: string[];
         social_medias: { media: string, link: string }[] | [];
 
-        constructor({id, name, email, country, images ,social_medias}: InstitutionProps){
-            this.id = this.validate_set_id(id);
-            this.name = this.validate_set_name(name);
-            this.email = this.validate_set_email(email);
-            this.country = this.validate_set_country(country);
-            this.images = this.validate_set_images(images);
-            this.social_medias = this.validate_set_social_medias(social_medias);
+        constructor(props: InstitutionProps){
+            this.id = this.validate_set_id(props.id);
+            this.name = this.validate_set_name(props.name);
+            this.email = this.validate_set_email(props.email);
+            this.country = this.validate_set_country(props.country);
+            this.images = this.validate_set_images(props.images);
+            this.social_medias = this.validate_set_social_medias(props.social_medias);
         }
 
         public to_json(){

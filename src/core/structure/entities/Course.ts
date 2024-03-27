@@ -12,6 +12,13 @@ export class Course {
         this.name = this.validate_set_name(props.name);
     }
 
+    public to_json(): CourseProps {
+        return {
+            id: this.id,
+            name: this.name,
+        };
+    }
+
     private validate_set_name(name: string): string {
         if (name.length < 3) {
             throw new Error("Course name must have at least 3 characters");

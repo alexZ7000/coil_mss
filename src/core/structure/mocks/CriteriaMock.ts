@@ -1,4 +1,4 @@
-import { ProjectMock } from "./ProjectMock";
+import { ProjectMock } from "./ActivityMock";
 import { Criteria } from "../entities/Criteria";
 
 
@@ -11,50 +11,43 @@ export class CriteriaMock {
         this.criterias = [
             new Criteria(
                 {
-                    id: "365556ad-69d2-43cd-b98c-287bf7606fba",
-                    project_id: projectMock.projects[0].id,
+                    id: 1,
                     criteria: "Knows how to never give you up"
                 },
             ),
             new Criteria(
                 {
-                    id: "2c7e1cbb-fff5-4572-998e-283381537512",
-                    project_id: projectMock.projects[0].id,
+                    id: 2,
                     criteria: "Knows how to never let you down"
                 }
             ),
             new Criteria(
                 {
-                    id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
-                    project_id: projectMock.projects[0].id,
+                    id: 3,
                     criteria: "Knows how to never run around and desert you"
                 }
             ),
             new Criteria(
                 {
-                    id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
-                    project_id: projectMock.projects[0].id,
+                    id: 4,
                     criteria: "Knows how to never make you cry"
                 }
             ),
             new Criteria(
                 {
-                    id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
-                    project_id: projectMock.projects[1].id,
+                    id: 5,
                     criteria: "Knows how to never say goodbye"
                 }
             ),
             new Criteria(
                 {
-                    id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
-                    project_id: projectMock.projects[1].id,
+                    id: 6,
                     criteria: "Knows how to never tell a lie"
                 }
             ),
             new Criteria(
                 {
-                    id: "6033c5ca-1401-426f-b2b6-d2a08d144633",
-                    project_id: projectMock.projects[1].id,
+                    id: 7,
                     criteria: "Knows how to never hurt you"
                 }
             )
