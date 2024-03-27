@@ -4,10 +4,7 @@ import { UserMock } from "../../../../src/core/structure/mocks/UserMock";
 import { TokenAuth } from "../../../../src/core/helpers/functions/token_auth";
 import { UserRepoMock } from "../../../../src/core/repositories/mocks/UserRepoMock";
 import { UpdateUserUsecase } from "../../../../src/modules/update_user/app/update_user_usecase";
-import {
-  MissingParameter,
-  UserNotAuthenticated,
-} from "../../../../src/core/helpers/errors/ModuleError";
+
 
 describe("Testing Update User Usecase", () => {
 
