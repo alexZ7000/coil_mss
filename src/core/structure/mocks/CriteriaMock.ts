@@ -1,13 +1,10 @@
-import { ProjectMock } from "./ActivityMock";
 import { Criteria } from "../entities/Criteria";
 
 
 export class CriteriaMock {
     public criterias: Criteria[];
-    
 
     constructor() {
-        const projectMock = new ProjectMock();
         this.criterias = [
             new Criteria(
                 {

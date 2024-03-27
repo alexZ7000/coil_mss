@@ -169,10 +169,10 @@ export class Activity {
 
     private validate_set_status_activity(status_activity: ActivityStatusEnum) {
         if (status_activity == null) {
-            throw new EntityError("Parameter status_project is required");
+            throw new EntityError("Parameter status_activity is required");
         }
         if (!(status_activity in ActivityStatusEnum)) {
-            throw new EntityError("Parameter status_project is not a valid ActivityStatusEnum value");
+            throw new EntityError("Parameter status_activity is not a valid ActivityStatusEnum value");
         }
         return status_activity;
     }
