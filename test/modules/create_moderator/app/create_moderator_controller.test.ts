@@ -42,7 +42,7 @@ describe("Testing Create Moderator Controller", () => {
         }));
 
         expect(response.statusCode).toBe(401);
-        expect(response.body.message).toBe("Invalid or expired token.");
+        expect(response.body.message).toBe("Invalid or expired token");
     });
 
     it("should not create a moderator with missing parameter email", async () => {
@@ -78,6 +78,6 @@ describe("Testing Create Moderator Controller", () => {
         }));
 
         expect(response.statusCode).toBe(401);
-        expect(response.body.message).toBe("User not authentificated.");
+        expect(response.body.message).toBe("User not authentificated");
     });
 });
