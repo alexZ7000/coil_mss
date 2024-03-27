@@ -1,5 +1,5 @@
-import { UserRepo } from "./database/UserRepo";
 import { UserRepoMock } from "./mocks/UserRepoMock";
+import { UserRepo } from "./database/repositories/UserRepo";
 
 class RepositoryProps {
     user_repo: boolean = false;
