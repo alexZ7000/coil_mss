@@ -8,14 +8,14 @@ describe("Testing Update User Presenter", () => {
   const user_admin = new UserMock().users[0];
   const user_student = new UserMock().users[1];
   const user_updated = {
-    course: "Updated Course",
-    semester_course: 2,
+    course: "Ciência da Computação",
+    semester_course: 6,
   };
 
   it("should update a user", async () => {
     var token = (
       await new TokenAuth().generate_token(user_student.id)
-    ).toString();
+    );
 
     var response = await handler(
       {
@@ -27,7 +27,6 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    
     expect(JSON.parse(response.body).data.course).toBe(user_updated.course);
     expect(JSON.parse(response.body).data.semester_course).toBe(user_updated.semester_course);
   });
@@ -44,7 +43,7 @@ describe("Testing Update User Presenter", () => {
     );
 
     expect(response.statusCode).toBe(401);
-    expect(JSON.parse(response.body).message).toBe("Invalid or expired token.");
+    expect(JSON.parse(response.body).message).toBe("Invalid or expired token");
   });
 
   it("should not update a user with missing parameters", async () => {
@@ -63,7 +62,7 @@ describe("Testing Update User Presenter", () => {
     );
 
     // expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body).message).toBe("Body not found.");
+    expect(JSON.parse(response.body).message).toBe("Body not found");
   });
 
   it("should not update a user with invalid request", async () => {
@@ -80,6 +79,6 @@ describe("Testing Update User Presenter", () => {
     );
 
     // expect(response.statusCode).toBe(400);
-    expect(JSON.parse(response.body).message).toBe("Headers not found.");
+    expect(JSON.parse(response.body).message).toBe("Headers not found");
   });
 });

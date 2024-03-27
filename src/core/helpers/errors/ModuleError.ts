@@ -4,9 +4,9 @@ import { MainError } from "./MainError";
 export class InvalidRequest extends MainError {
     constructor(parameter?: string) {
         if (parameter) {
-            super(parameter + " not found.");
+            super(parameter + " not found");
         } else {
-            super("No request found.");
+            super("No request found");
         }
     }
 }
@@ -28,7 +28,7 @@ export class UserNotAuthenticated extends MainError {
         if (message) {
             super(message);
         } else {
-            super("User not authentificated.");
+            super("User not authentificated");
         }
     }
 }

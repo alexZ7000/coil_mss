@@ -35,7 +35,7 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(401);
-        expect(JSON.parse(response.body).message).toBe("Invalid or expired token.");
+        expect(JSON.parse(response.body).message).toBe("Invalid or expired token");
     });
 
     it("should not create a moderator with missing parameter email", async () => {
@@ -66,7 +66,7 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(401);
-        expect(JSON.parse(response.body).message).toBe("User not authentificated.");
+        expect(JSON.parse(response.body).message).toBe("User not authentificated");
     });
 
     it("should not create a moderator with invalid email", async () => {
@@ -83,7 +83,7 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(409);
-        expect(JSON.parse(response.body).message).toBe("Email already in use.");
+        expect(JSON.parse(response.body).message).toBe("Email already in use");
     });
 
     it("should not create a moderator with invalid request", async () => {
@@ -97,7 +97,7 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(400);
-        expect(JSON.parse(response.body).message).toBe("Body not found.");
+        expect(JSON.parse(response.body).message).toBe("Body not found");
     });
 
     it("should not create a moderator with invalid request", async () => {
@@ -109,6 +109,6 @@ describe("Testing Create Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(400);
-        expect(JSON.parse(response.body).message).toBe("Headers not found.");
+        expect(JSON.parse(response.body).message).toBe("Headers not found");
     });
 });

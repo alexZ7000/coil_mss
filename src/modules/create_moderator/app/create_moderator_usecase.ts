@@ -35,19 +35,19 @@ export class CreateModeratorUsecase {
         .then(response => {
             return response;
         }).catch(error => {
-            throw new UserNotAuthenticated("Invalid or expired token.");
+            throw new UserNotAuthenticated("Invalid or expired token");
         });
 
         const user_admin = await this.database_repo.get_user(user_admin_id);
         if (!user_admin) {
-            throw new UserNotAuthenticated("User not found in .");
+            throw new UserNotAuthenticated();
         }
         if (user_admin.user_type !== UserTypeEnum.ADMIN) {
             throw new UserNotAuthenticated();
         }
 
         if (await this.database_repo.get_user_by_email(body.email)) {
-            throw new ConflictError("Email already in use.");
+            throw new ConflictError("Email already in use");
         }
 
         const moderator = new User({

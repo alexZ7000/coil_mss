@@ -1,6 +1,7 @@
 import { User } from "../../structure/entities/User";
 import { IUserRepo } from "../interfaces/IUserRepo";
 import { UserMock } from "../../structure/mocks/UserMock";
+import { rejects } from "assert";
 
 export class UserRepoMock implements IUserRepo {
   public user_mock: UserMock;
@@ -21,19 +22,11 @@ export class UserRepoMock implements IUserRepo {
     return Promise.resolve(true);
   }
 
-  public update_user(
-    userId: string,
-    course: string,
-    semester_course: number
-  ): Promise<User> {
+  public update_user(updatedUser: User): Promise<User> {
     return new Promise((resolve, reject) => {
-      const user_index = this.user_mock.users.findIndex(
-        (user) => user.id === userId
-      );
-      this.user_mock.users[user_index].course = course;
-      this.user_mock.users[user_index].semester_course = semester_course;
-      resolve(this.user_mock.users[user_index]);
-      
+      const userIndex = this.user_mock.users.findIndex((user) => user.id === updatedUser.id);
+      this.user_mock.users[userIndex] = updatedUser;
+      resolve(updatedUser);
     });
   }
 

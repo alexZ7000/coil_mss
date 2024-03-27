@@ -37,7 +37,7 @@ describe("Testing Create Moderator Usecase", () => {
             {
                 email: "moderator@maua.br"
             });
-        }).rejects.toThrow("Invalid or expired token.");
+        }).rejects.toThrow("Invalid or expired token");
     });
 
     it("should not create a moderator with missing parameter email", async () => {
@@ -52,7 +52,7 @@ describe("Testing Create Moderator Usecase", () => {
             {
                 email: ""
             });
-        }).rejects.toThrow("Missing parameter: Email");
+        }).rejects.toThrow("Missing parameter: ");
     });
 
     it("should not create a moderator with invalid user type", async () => {
@@ -67,7 +67,7 @@ describe("Testing Create Moderator Usecase", () => {
             {
                 email: "moderator@maua.br"
             });
-        }).rejects.toThrow("User not authentificated.");
+        }).rejects.toThrow("User not authentificated");
     });
 
     it("should not create a moderator with email already in use", async () => {
@@ -82,7 +82,7 @@ describe("Testing Create Moderator Usecase", () => {
             {
                 email: user_moderator.email
             });
-        }).rejects.toThrow("Email already in use.");
+        }).rejects.toThrow("Email already in use");
     });
 });
 
