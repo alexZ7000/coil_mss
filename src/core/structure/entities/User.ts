@@ -1,6 +1,7 @@
 import { EntityError } from "../../helpers/errors/EntityError";
 import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
+
 class UserProps {
   id: string;
   name: string | null;
