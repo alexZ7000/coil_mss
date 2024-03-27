@@ -3,23 +3,35 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id             String       @id
-  name           String?
-  email          String       @unique
-  password       String
-  userTypeId     Int
-  courseId       Int?
-  semesterCourse Int?
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  course         Course?      @relation(fields: [courseId], references: [id])
-  userType       UserType     @relation(fields: [userTypeId], references: [id])
-  userCourses    UserCourse[]
+  id           String       @id
+  name         String?
+  email        String       @unique
+  password     String
+  user_type_id Int
+  created_at   DateTime     @default(now())
+  updated_at   DateTime     @updatedAt
+  user_course  UserCourse[]
+  user_type    UserType     @relation(fields: [user_type_id], references: [id])
+}
+
+model UserCourse {
+  user_id   String @id
+  course_id Int
+  semester  Int
+  user      User   @relation(fields: [user_id], references: [id])
+  course    Course @relation(fields: [course_id], references: [id])
+}
+
+model ProjectCourse {
+  id         Int    @id @default(autoincrement())
+  project_id String
+  course_id  Int
+  course     Course @relation(fields: [course_id], references: [id])
 }
 
 model UserType {
@@ -29,25 +41,22 @@ model UserType {
 }
 
 model Course {
-  id          Int          @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   name        String
-  users       User[]
-  userCourses UserCourse[]
-}
-
-model UserCourse {
-  userId   String
-  courseId Int
-  user     User   @relation(fields: [userId], references: [id])
-  course   Course @relation(fields: [courseId], references: [id])
-
-  @@id([userId, courseId])
+  user_course UserCourse[]
+  projects    ProjectCourse[]
 }
 
 model Institution {
-  id             Int     @id @default(autoincrement())
-  partnerName    String
-  partnerEmail   String
-  partnerCountry String
-  patnerWebsite  String?
+  id      Int    @id @default(autoincrement())
+  name    String
+  email   String
+  country String
+}
+
+model InstitutionSocialMedia {
+  id             Int    @id @default(autoincrement())
+  institution_id Int
+  media          String
+  link           String
 }
