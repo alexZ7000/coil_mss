@@ -1,3 +1,5 @@
+import { Course } from "./Course";
+
 import { EntityError } from "../../helpers/errors/EntityError";
 import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
@@ -7,7 +9,7 @@ class UserProps {
   name: string | null;
   email: string;
   user_type: UserTypeEnum;
-  course: string | null;
+  course: Course | null;
   semester_course: number | null;
   created_at: Date;
   updated_at: Date;
@@ -18,7 +20,7 @@ export class User {
   name: string | null;
   email: string;
   user_type: UserTypeEnum;
-  course: string | null;
+  course: Course | null;
   semester_course: number | null;
   created_at: Date;
   updated_at: Date;
@@ -99,12 +101,12 @@ export class User {
     return user_type;
   }
 
-  private validate_set_course(course: string | null) {
-    if (course == null || course == "") {
+  private validate_set_course(course: Course | null) {
+    if (course == null) {
       return null;
     }
-    if (typeof course !== "string") {
-      throw new EntityError("Parameter course is not a string");
+    if (typeof course !== "object") {
+      throw new EntityError("Parameter course is not a Course");
     }
     return course;
   }

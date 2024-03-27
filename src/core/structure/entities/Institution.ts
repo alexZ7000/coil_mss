@@ -5,7 +5,7 @@
         name: string;
         email: string;
         country: string;
-        images: string[];
+        images: string[] | [];
         social_medias: { media: string, link: string }[] | [];
     }
 
@@ -14,7 +14,7 @@
         name: string;
         email: string;
         country: string;
-        images: string[];
+        images: string[] | [];
         social_medias: { media: string, link: string }[] | [];
 
         constructor(props: InstitutionProps){

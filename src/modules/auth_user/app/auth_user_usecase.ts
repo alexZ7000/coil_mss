@@ -1,10 +1,12 @@
 import { randomUUID } from 'crypto';
 
 import { User } from '../../../core/structure/entities/User';
+import { Course } from '../../../core/structure/entities/Course';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { get } from 'http';
 
 
 export class AuthUserUsecase {
@@ -45,7 +47,10 @@ export class AuthUserUsecase {
                 id: get_user.id,
                 name: get_user.name,
                 email: get_user.email,
-                course: get_user.course,
+                course: get_user.course ? new Course({
+                    id: get_user.course.id,
+                    name: get_user.course.name
+                }) : null,
                 semester_course: get_user.semester_course,
                 user_type: get_user.user_type,
                 created_at: get_user.created_at,

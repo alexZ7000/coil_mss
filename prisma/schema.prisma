@@ -8,30 +8,23 @@ datasource db {
 }
 
 model User {
-  id           String       @id
+  id           String   @id
   name         String?
-  email        String       @unique
-  password     String
+  email        String   @unique
   user_type_id Int
-  created_at   DateTime     @default(now())
-  updated_at   DateTime     @updatedAt
-  user_course  UserCourse[]
-  user_type    UserType     @relation(fields: [user_type_id], references: [id])
-}
-
-model UserCourse {
-  user_id   String @id
-  course_id Int
-  semester  Int
-  user      User   @relation(fields: [user_id], references: [id])
-  course    Course @relation(fields: [course_id], references: [id])
+  course_id    Int?
+  semester     Int?
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  course       Course?  @relation(fields: [course_id], references: [id], onDelete: SetNull)
+  user_type    UserType @relation(fields: [user_type_id], references: [id], onDelete: Restrict)
 }
 
 model ProjectCourse {
   id         Int    @id @default(autoincrement())
   project_id String
   course_id  Int
-  course     Course @relation(fields: [course_id], references: [id])
+  course     Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
 }
 
 model UserType {
@@ -41,22 +34,35 @@ model UserType {
 }
 
 model Course {
-  id          Int             @id @default(autoincrement())
-  name        String
-  user_course UserCourse[]
-  projects    ProjectCourse[]
+  id       Int             @id @default(autoincrement())
+  name     String          @unique
+  users    User[]
+  projects ProjectCourse[]
 }
 
 model Institution {
-  id      Int    @id @default(autoincrement())
-  name    String
+  id      String @id
+  name    String @unique
   email   String
   country String
+
+  social_medias InstitutionSocialMedia[]
+  images       InstitutionImage[]
 }
 
 model InstitutionSocialMedia {
-  id             Int    @id @default(autoincrement())
-  institution_id Int
+  id             Int @id @default(autoincrement())
+  institution_id String
   media          String
   link           String
+
+  institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
+}
+
+model InstitutionImage {
+  id             Int    @id @default(autoincrement())
+  institution_id String
+  image          String
+
+  institution Institution @relation(fields: [institution_id], references: [id], onDelete: Cascade)
 }
