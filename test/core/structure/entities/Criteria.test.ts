@@ -1,6 +1,6 @@
 import { it, describe, expect } from 'vitest'
 import { Criteria } from '../../../../src/core/structure/entities/Criteria'
-import { EntityError } from '../../../../src/core/helpers/errors/EntityError'
+
 
 describe('Criteria', () => {
     it('should throw an error if the id is null', async () => {
