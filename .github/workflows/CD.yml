@@ -26,6 +26,7 @@ jobs:
           npm install
           cd iac
           npm install prisma --save-dev
+          npm install @prisma/client
           npx prisma generate
           npm install
 
