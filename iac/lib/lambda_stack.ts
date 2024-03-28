@@ -4,7 +4,6 @@ import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as
 export class LambdaStack extends Construct {
 
     private core_layer: lambda.LayerVersion;
-    private prisma_modules_layer: lambda.LayerVersion;
 
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
@@ -17,6 +16,7 @@ export class LambdaStack extends Construct {
         environment_variables: {[key: string]: string},
         method: string,
         restapi_resource: apigw.Resource,
+        need_prisma: boolean = true,
         origins: string[] = apigw.Cors.ALL_ORIGINS
     ) {
 
@@ -27,7 +27,7 @@ export class LambdaStack extends Construct {
         let layers: lambda.ILayerVersion[]
         let function_lambda: lambda.Function;
 
-        layers = [this.core_layer, this.prisma_modules_layer];
+        layers = [this.core_layer];
 
         function_lambda = new lambda_js.NodejsFunction(
             this,
@@ -41,6 +41,25 @@ export class LambdaStack extends Construct {
                 layers: layers,
                 timeout: Duration.seconds(15),
                 memorySize: 256,
+                bundling: need_prisma ? {
+                    nodeModules: ['@prisma/client', 'prisma'],
+                    commandHooks: {
+                        beforeBundling(inputDir: string, outputDir: string) {
+                            return [];
+                        },
+                        beforeInstall(inputDir: string, outputDir: string) {
+                            return [`cp -R ${inputDir}/src/modules/${function_name}/prisma ${outputDir}/src/modules/${function_name}/`];
+                        },
+                        afterBundling(inputDir: string, outputDir: string) {
+                            return [
+                                `cd ${outputDir}`,
+                                `prisma generate`,
+                                `rm -rf node_modules/@prisma/engines`,
+                                `rm -rf node_modules/@prisma/client/node_modules node_modules/.bin node_modules/prisma`,
+                            ]
+                        }
+                    }
+                } : undefined
             }
         );
 
@@ -64,6 +83,11 @@ export class LambdaStack extends Construct {
         ) {
         super(scope, id);
 
+        let origins = ["*"];
+        if (environment_variables["STAGE"] === "prod") {
+            origins = [environment_variables["DOMAIN"]];
+        }
+
         this.core_layer = new lambda.LayerVersion(
             this, "Coil_Mss_Core_Layer",
             {
@@ -73,27 +97,22 @@ export class LambdaStack extends Construct {
             }
         );
 
-        this.prisma_modules_layer = new lambda.LayerVersion(
-            this, "Coil_Mss_Node_Modules_Layer",
-            {
-                code: lambda.Code.fromAsset("../node_modules"),
-                compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
-                description: "Coil MSS Node Modules Layer",
-            }
-        );
-
         this.create_moderator = this.create_lambda(
             "create_moderator",
             environment_variables,
             "POST",
-            restapi_resource
+            restapi_resource,
+            true,
+            origins
         );
 
         this.auth_user = this.create_lambda(
             "auth_user",
             environment_variables,
             "GET",
-            restapi_resource
+            restapi_resource,
+            true,
+            origins
         );
 
         this.functions_need_dynamodb_access = [
