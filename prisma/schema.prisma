@@ -20,9 +20,9 @@ model User {
   user_type    UserType @relation(fields: [user_type_id], references: [id], onDelete: Restrict)
 }
 
-model ProjectCourse {
+model ActivityCourse {
   id         Int    @id @default(autoincrement())
-  project_id String
+  activity_id String
   course_id  Int
   course     Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
 }
@@ -37,7 +37,7 @@ model Course {
   id       Int             @id @default(autoincrement())
   name     String          @unique
   users    User[]
-  projects ProjectCourse[]
+  projects ActivityCourse[]
 }
 
 model Institution {
