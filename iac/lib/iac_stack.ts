@@ -37,6 +37,7 @@ export class IacStack extends cdk.Stack {
       "SECRET_KEY": process.env.SECRET_KEY || "",
       "DATABASE_URL": process.env.DATABASE_URL || "",
       "PROJECT_TABLE": dynamodb_stack.project_table.tableName,
+      "PRISMA_CLI_BINARY_TARGETS": "native,rhel-openssl-3.0.x"
     };
 
     const lambda_stack = new LambdaStack(

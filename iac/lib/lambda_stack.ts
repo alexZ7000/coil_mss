@@ -16,7 +16,6 @@ export class LambdaStack extends Construct {
         environment_variables: {[key: string]: string},
         method: string,
         restapi_resource: apigw.Resource,
-        need_prisma: boolean = true,
         origins: string[] = apigw.Cors.ALL_ORIGINS
     ) {
 
@@ -40,26 +39,7 @@ export class LambdaStack extends Construct {
                 runtime: lambda.Runtime.NODEJS_20_X,
                 layers: layers,
                 timeout: Duration.seconds(15),
-                memorySize: 256,
-                bundling: need_prisma ? {
-                    nodeModules: ['@prisma/client', 'prisma'],
-                    commandHooks: {
-                        beforeBundling(inputDir: string, outputDir: string) {
-                            return [];
-                        },
-                        beforeInstall(inputDir: string, outputDir: string) {
-                            return [`cp -R ${inputDir}/src/modules/${function_name}/prisma ${outputDir}/src/modules/${function_name}/`];
-                        },
-                        afterBundling(inputDir: string, outputDir: string) {
-                            return [
-                                `cd ${outputDir}`,
-                                `prisma generate`,
-                                `rm -rf node_modules/@prisma/engines`,
-                                `rm -rf node_modules/@prisma/client/node_modules node_modules/.bin node_modules/prisma`,
-                            ]
-                        }
-                    }
-                } : undefined
+                memorySize: 256
             }
         );
 
@@ -102,7 +82,6 @@ export class LambdaStack extends Construct {
             environment_variables,
             "POST",
             restapi_resource,
-            true,
             origins
         );
 
@@ -111,7 +90,6 @@ export class LambdaStack extends Construct {
             environment_variables,
             "GET",
             restapi_resource,
-            true,
             origins
         );
 
