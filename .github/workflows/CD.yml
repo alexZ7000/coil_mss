@@ -23,6 +23,9 @@ jobs:
         run: |
           echo "Installing CDK dependencies"
           npm install -g aws-cdk
+          npm install prisma --save-dev
+          npm install @prisma/client
+          npx prisma generate
           npm install
           cd iac
           npm install prisma --save-dev
