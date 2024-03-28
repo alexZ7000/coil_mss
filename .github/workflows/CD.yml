@@ -33,6 +33,7 @@ jobs:
         run: |
           echo "Installing SRC dependencies"
           cp -r src/core iac/src/
+          cp -r node_modules iac/src/
 
       - name: AWS Credentials
         run: |

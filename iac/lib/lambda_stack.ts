@@ -1,10 +1,10 @@
 import { Construct } from "constructs";
 import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as apigw, aws_iam as iam, Duration} from "aws-cdk-lib";
-import path from "path";
 
 export class LambdaStack extends Construct {
 
     private core_layer: lambda.LayerVersion;
+    private node_modules_layer: lambda.LayerVersion;
 
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
@@ -17,8 +17,7 @@ export class LambdaStack extends Construct {
         environment_variables: {[key: string]: string},
         method: string,
         restapi_resource: apigw.Resource,
-        origins: string[] = apigw.Cors.ALL_ORIGINS,
-        more_layers: lambda.ILayerVersion[] = []
+        origins: string[] = apigw.Cors.ALL_ORIGINS
     ) {
 
         function toTittle(string:string) {
@@ -28,7 +27,7 @@ export class LambdaStack extends Construct {
         let layers: lambda.ILayerVersion[]
         let function_lambda: lambda.Function;
 
-        layers = [this.core_layer, ...more_layers];
+        layers = [this.core_layer, this.node_modules_layer];
 
         function_lambda = new lambda_js.NodejsFunction(
             this,
@@ -71,6 +70,15 @@ export class LambdaStack extends Construct {
                 code: lambda.Code.fromAsset("../src/core"),
                 compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
                 description: "Coil MSS Core Layer",
+            }
+        );
+
+        this.node_modules_layer = new lambda.LayerVersion(
+            this, "Coil_Mss_Node_Modules_Layer",
+            {
+                code: lambda.Code.fromAsset("../node_modules"),
+                compatibleRuntimes: [lambda.Runtime.NODEJS_20_X],
+                description: "Coil MSS Node Modules Layer",
             }
         );
 
