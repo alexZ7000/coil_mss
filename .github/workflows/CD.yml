@@ -25,7 +25,7 @@ jobs:
           npm install -g aws-cdk
           npm install
           cd iac
-          npm install -g prisma
+          npm install prisma --save-dev
           prisma generate
           npm install
 
