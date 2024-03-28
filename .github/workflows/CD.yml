@@ -23,6 +23,7 @@ jobs:
         run: |
           echo "Installing CDK dependencies"
           npm install -g aws-cdk
+          npm install -g prisma
           npm install
           prisma generate
           cd iac
