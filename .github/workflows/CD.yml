@@ -28,10 +28,12 @@ jobs:
           prisma generate
           cd iac
           npm install
+          dir
 
       - name: Install SRC dependencies
         run: |
           echo "Installing SRC dependencies"
+          dir
           mkdir -p iac/src/core
           cp -r src/core/* iac/src/core
           echo "Copying core files"
