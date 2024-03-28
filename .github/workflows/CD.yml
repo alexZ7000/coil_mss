@@ -28,7 +28,6 @@ jobs:
           prisma generate
           cd iac
           npm install
-          cd ..
 
       - name: Install SRC dependencies
         run: |
@@ -36,7 +35,6 @@ jobs:
           mkdir -p iac/src/core
           cp -r src/core/* iac/src/core
           echo "Copying core files"
-          dir iac/src/core
 
       - name: AWS Credentials
         run: |
@@ -57,6 +55,7 @@ jobs:
       - name: CDK Deploy
         run: |
           echo "CDK Deploy"
+          cd iac
           cdk deploy --require-approval never
         env:
           STAGE: ${{ github.ref_name }}
