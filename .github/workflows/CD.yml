@@ -25,19 +25,21 @@ jobs:
           npm install -g aws-cdk
           npm install -g prisma
           npm install
-          prisma generate
           cd iac
           npm install
-          dir
 
       - name: Install SRC dependencies
         run: |
           echo "Installing SRC dependencies"
-          dir
+          mkdir -p iac/prisma
+          cp -r prisma/* iac/prisma
+          cd iac
+          prisma generate
+          echo "Copying prisma files"
+          cd ..
           mkdir -p iac/src/core
           cp -r src/core/* iac/src/core
           echo "Copying core files"
-          dir iac/src
 
       - name: AWS Credentials
         run: |
