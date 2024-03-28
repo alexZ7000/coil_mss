@@ -4,7 +4,7 @@ import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as
 export class LambdaStack extends Construct {
 
     private core_layer: lambda.LayerVersion;
-    private node_modules_layer: lambda.LayerVersion;
+    private prisma_modules_layer: lambda.LayerVersion;
 
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
@@ -27,7 +27,7 @@ export class LambdaStack extends Construct {
         let layers: lambda.ILayerVersion[]
         let function_lambda: lambda.Function;
 
-        layers = [this.core_layer, this.node_modules_layer];
+        layers = [this.core_layer, this.prisma_modules_layer];
 
         function_lambda = new lambda_js.NodejsFunction(
             this,
@@ -73,7 +73,7 @@ export class LambdaStack extends Construct {
             }
         );
 
-        this.node_modules_layer = new lambda.LayerVersion(
+        this.prisma_modules_layer = new lambda.LayerVersion(
             this, "Coil_Mss_Node_Modules_Layer",
             {
                 code: lambda.Code.fromAsset("../node_modules"),

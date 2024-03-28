@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "Installing SRC dependencies"
           cp -r src/core iac/src/
-          cp -r node_modules iac/src/
+          cp -r node_modules/.prisma iac/node_modules/
 
       - name: AWS Credentials
         run: |
