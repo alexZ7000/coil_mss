@@ -33,7 +33,10 @@ jobs:
       - name: Install SRC dependencies
         run: |
           echo "Installing SRC dependencies"
-          cp -r src/core iac/src/core
+          mkdir -p iac/src/core
+          cp -r src/core/* iac/src/core
+          echo "Copying core files"
+          dir iac/src/core
 
       - name: AWS Credentials
         run: |
