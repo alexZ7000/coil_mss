@@ -28,6 +28,7 @@ jobs:
           prisma generate
           cd iac
           npm install
+          cd ..
 
       - name: Install SRC dependencies
         run: |
@@ -53,7 +54,6 @@ jobs:
       - name: CDK Deploy
         run: |
           echo "CDK Deploy"
-          cd iac
           cdk deploy --require-approval never
         env:
           STAGE: ${{ github.ref_name }}
