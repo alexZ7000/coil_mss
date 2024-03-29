@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "populate-db": "ts-node populate_database.ts",
     "test": "vitest"
   },
   "keywords": [],

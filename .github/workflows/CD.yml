@@ -25,9 +25,16 @@ jobs:
           npm install -g aws-cdk
           npm install -g ts-node
           npm install
-          ts-node populate_database.ts
+          npm run populate-db
           cd iac
           npm install
+        env:
+          RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
+          RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
+          RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+          RDS_PORT: ${{ secrets.RDS_PORT }}
+          RDS_DB_NAME: ${{ secrets.RDS_DB_NAME }}
+          RDS_DIALECT: ${{ secrets.RDS_DIALECT }}
 
       - name: AWS Credentials
         run: |
