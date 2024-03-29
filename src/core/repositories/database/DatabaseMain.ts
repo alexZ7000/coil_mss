@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import mysql2 from 'mysql2';
 import { Sequelize } from 'sequelize';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
@@ -14,6 +15,7 @@ export class DatabaseMain {
         this.project_table = process.env.PROJECT_TABLE as string;
         this.rd_client = new Sequelize({
             dialect: `mysql`,
+            dialectModule: mysql2,
             host: process.env.RDS_HOSTNAME,
             port: Number(process.env.RDS_PORT),
             username: process.env.RDS_USERNAME,
