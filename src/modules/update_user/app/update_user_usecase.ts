@@ -54,6 +54,6 @@ export class UpdateUserUsecase {
 
     const updatedUser = await this.database_repo.update_user(user_student);
 
-    return updatedUser;
+    return user_student;
   }
 }

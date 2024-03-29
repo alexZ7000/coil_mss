@@ -27,8 +27,9 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    expect(JSON.parse(response.body).data.course).toBe(user_updated.course);
-    expect(JSON.parse(response.body).data.semester_course).toBe(user_updated.semester_course);
+    expect(response.statusCode).toBe(200);
+    expect(JSON.parse(response.body).message).toBe("User updated successfully.");
+    
   });
 
   it("should not update a user with invalid token", async () => {

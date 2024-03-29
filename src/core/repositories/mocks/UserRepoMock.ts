@@ -1,7 +1,6 @@
-import { User } from "../../structure/entities/User";
 import { IUserRepo } from "../interfaces/IUserRepo";
+import { User } from "../../structure/entities/User";
 import { UserMock } from "../../structure/mocks/UserMock";
-import { rejects } from "assert";
 
 export class UserRepoMock implements IUserRepo {
   public user_mock: UserMock;
@@ -22,11 +21,11 @@ export class UserRepoMock implements IUserRepo {
     return Promise.resolve(true);
   }
 
-  public update_user(updatedUser: User): Promise<User> {
+  public update_user(updatedUser: User): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const userIndex = this.user_mock.users.findIndex((user) => user.id === updatedUser.id);
       this.user_mock.users[userIndex] = updatedUser;
-      resolve(updatedUser);
+      resolve(true);
     });
   }
 
