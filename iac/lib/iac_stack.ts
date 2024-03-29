@@ -35,9 +35,13 @@ export class IacStack extends cdk.Stack {
       "STAGE": process.env.STAGE || "test",
       "AZURE_URL": process.env.AZURE_URL || "",
       "SECRET_KEY": process.env.SECRET_KEY || "",
-      "DATABASE_URL": process.env.DATABASE_URL || "",
+      "RDS_HOSTNAME": process.env.RDS_HOSTNAME || "",
+      "RDS_PORT": process.env.RDS_PORT || "",
+      "RDS_DB_NAME": process.env.RDS_DB_NAME || "",
+      "RDS_USERNAME": process.env.RDS_USERNAME || "",
+      "RDS_PASSWORD": process.env.RDS_PASSWORD || "",
+      "RDS_DIALECT": process.env.RDS_DIALECT || "",
       "PROJECT_TABLE": dynamodb_stack.project_table.tableName,
-      "PRISMA_CLI_BINARY_TARGETS": "native,rhel-openssl-3.0.x"
     };
 
     const lambda_stack = new LambdaStack(
