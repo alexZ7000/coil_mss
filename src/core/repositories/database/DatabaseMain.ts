@@ -1,6 +1,9 @@
+import dotenv from 'dotenv';
 import { Sequelize } from 'sequelize';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
+
+dotenv.config();
 
 export class DatabaseMain {
     public project_table: string;
