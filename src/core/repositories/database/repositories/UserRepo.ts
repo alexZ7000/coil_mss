@@ -11,10 +11,10 @@ export class UserRepo implements IUserRepo {
       where: {
         id: id,
       },
-      include: {
-        [UserTypeDB.name]: true,
-        [CourseDB.name]: true,
-      },
+      include: [
+        { model: UserTypeDB, as: "user_type" },
+        { model: CourseDB, as: "course" },
+      ]
     });
 
     if (!user_found) {
@@ -29,10 +29,10 @@ export class UserRepo implements IUserRepo {
       where: {
         email: email,
       },
-      include: {
-        [UserTypeDB.name]: true,
-        [CourseDB.name]: true,
-      },
+      include: [
+        { model: UserTypeDB, as: "user_type" },
+        { model: CourseDB, as: "course" },
+      ],
     });
 
     if (!user_found) {
