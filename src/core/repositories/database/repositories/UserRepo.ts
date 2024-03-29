@@ -16,8 +16,6 @@ export class UserRepo implements IUserRepo {
         [UserTypeDB.name]: true,
         [CourseDB.name]: true,
       },
-    }).catch((err) => {
-      throw new QueryError(err)
     });
 
     if (!user_found) {
@@ -36,8 +34,6 @@ export class UserRepo implements IUserRepo {
         [UserTypeDB.name]: true,
         [CourseDB.name]: true,
       },
-    }).catch((err) => {
-      throw new QueryError(err)
     });
 
     if (!user_found) {
@@ -57,8 +53,6 @@ export class UserRepo implements IUserRepo {
       semester: user.semester_course,
       created_at: user.created_at,
       updated_at: user.updated_at,
-    }).catch((err) => {
-      throw new QueryError(err)
     });
 
     return user_created ? true : false;
@@ -77,8 +71,6 @@ export class UserRepo implements IUserRepo {
         id: updatedUser.id,
       },
       returning: true,
-    }).catch((err) => {
-      throw new QueryError(err)
     });
 
     return user_updated ? true : false;
