@@ -1,37 +1,35 @@
-import { IProjectRepo } from '../interfaces/IProjectRepo';
-import { Project } from '../../structure/entities/Project';
-import { ProjectMock } from '../../structure/mocks/ProjectMock';
-import { ProjectStatusEnum } from "../../helpers/enums/ProjectStatusEnum";
+import { IActivityRepo } from '../interfaces/IActivityRepo';
+import { Activity } from '../../structure/entities/Activity';
+import { ActivityMock } from '../../structure/mocks/ActivityMock';
+import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 
 
-export class ProjectRepoMock implements IProjectRepo {
-    private project_mock: ProjectMock;
+export class ActivityRepoMock implements IActivityRepo {
+    private project_mock: ActivityMock;
 
     constructor() {
-        this.project_mock = new ProjectMock();
+        this.project_mock = new ActivityMock();
     }
 
-    public async get_project(id: string) {
-        return this.project_mock.projects.find(project => project.id === id) || null;
+    async get_activity(id: string): Promise<Activity | null> {
+        return this.project_mock.activities.find(activity => activity.id === id) || null;
     }
 
-    public async create_project(project: Project) {
-        this.project_mock.projects.push(project);
+    async create_activity(activity: Activity): Promise<boolean> {
+        this.project_mock.activities.push(activity);
         return true;
     }
 
-    public async get_project_by_title(title: string) {
-        return this.project_mock.projects.find(project => project.title === title) || null;
+    async get_activity_by_title(title: string): Promise<Activity | null> {
+        return this.project_mock.activities.find(activity => activity.title === title) || null;
     }
 
-    public async get_all_projects_by_status(status: ProjectStatusEnum | ProjectStatusEnum[]) {
-        if (Array.isArray(status)) {
-            return this.project_mock.projects.filter(project => status.includes(project.status_project));
-        }
-        return this.project_mock.projects.filter(project => project.status_project === status);
+    async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[]): Promise<Activity[]> {
+        let statuses = Array.isArray(status) ? status : [status];
+        return this.project_mock.activities.filter(activity => statuses.includes(activity.status_activity));        
     }
 
-    public async get_all_projects() {
-        return this.project_mock.projects;
+    async get_all_activities(): Promise<Activity[]> {
+        return this.project_mock.activities;
     }
 }

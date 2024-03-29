@@ -1,82 +1,86 @@
-import { PrismaClient } from "@prisma/client";
-
 import { UserDTO } from "../dtos/UserDTO";
-import { DatabaseMain } from "../DatabaseMain";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
-
+import { InternalServerError } from "@aws-sdk/client-dynamodb";
+import { User as UserDB, UserType as UserTypeDB, Course as CourseDB } from "../models/Models";
 
 export class UserRepo implements IUserRepo {
-  private client: PrismaClient;
   private user_dto: UserDTO = new UserDTO();
 
-  constructor() {
-    this.client = new DatabaseMain().rd_client;
-  }
-
   public async get_user(id: string): Promise<User | null> {
-    let user_found = await this.client.user.findUnique({
+    let user_found = await UserDB.findOne({
       where: {
         id: id,
       },
       include: {
-        course: true,
-        user_type: true,
+        [UserTypeDB.name]: true,
+        [CourseDB.name]: true,
       },
+    }).catch((err) => {
+      throw new InternalServerError(err)
     });
 
     if (!user_found) {
       return null;
     }
 
-    return this.user_dto.to_entity(user_found);
+    return this.user_dto.to_entity(user_found.toJSON());
   }
 
   public async get_user_by_email(email: string): Promise<User | null> {
-    let user_found = await this.client.user.findUnique({
+    let user_found = await UserDB.findOne({
       where: {
         email: email,
       },
       include: {
-        course: true,
-        user_type: true,
+        [UserTypeDB.name]: true,
+        [CourseDB.name]: true,
       },
+    }).catch((err) => {
+      throw new InternalServerError(err)
     });
 
     if (!user_found) {
       return null;
     }
 
-    return this.user_dto.to_entity(user_found);
+    return this.user_dto.to_entity(user_found.toJSON());
   }
 
   public async create_user(user: User): Promise<boolean> {
-    let user_to_create = this.user_dto.to_database(user);
-
-    await this.client.user.create({
-      data: user_to_create,
-    }).then(() => {
-      return true;
-    }).catch(() => {
-      return false;
+    let user_created = await UserDB.create({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      user_type_id: user.user_type,
+      course_id: user.course?.id,
+      semester: user.semester_course,
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    }).catch((err) => {
+      throw new InternalServerError(err)
     });
-    return false;
+
+    return user_created ? true : false;
   }
 
-  public async update_user(updatedUser: User): Promise<User> {
-    let user_to_update = this.user_dto.to_database(updatedUser);
-
-    let user_updated = await this.client.user.update({
+  public async update_user(updatedUser: User): Promise<boolean> {
+    let user_updated = await UserDB.update({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      user_type_id: updatedUser.user_type,
+      course_id: updatedUser.course?.id,
+      semester: updatedUser.semester_course,
+      updated_at: updatedUser.updated_at,
+    }, {
       where: {
         id: updatedUser.id,
       },
-      data: user_to_update,
-      include: {
-        course: true,
-        user_type: true,
-      },
+      returning: true,
+    }).catch((err) => {
+      throw new InternalServerError(err)
     });
 
-    return this.user_dto.to_entity(user_updated);
+    return user_updated ? true : false;
   }
 }

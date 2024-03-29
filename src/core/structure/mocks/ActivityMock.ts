@@ -83,7 +83,7 @@ export class ActivityMock {
                     criterias: [this.criteria_mock.criterias[3], this.criteria_mock.criterias[4], this.criteria_mock.criterias[5], this.criteria_mock.criterias[6]],
                     courses: [this.course_mock.courses[0], this.course_mock.courses[1], this.course_mock.courses[2]],
                     status_activity: ActivityStatusEnum.ENDED,
-                    type_activity: ActivityTypeEnum.INTERNACIONAL_MOBILITY,
+                    type_activity: ActivityTypeEnum.ACADEMIC_MOBILITY,
                     created_at: new Date(),
                     updated_at: new Date(),
                     applicants: [{ user: this.user_mock.users[1], status: true }, { user: this.user_mock.users[1], status: false }]

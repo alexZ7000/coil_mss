@@ -1,5 +1,6 @@
     import { EntityError } from "../../helpers/errors/EntityError";
 
+    
     class InstitutionProps{
         id: string;
         name: string;
