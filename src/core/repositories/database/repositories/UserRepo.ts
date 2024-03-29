@@ -1,7 +1,6 @@
 import { UserDTO } from "../dtos/UserDTO";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
-import { QueryError } from "../../../helpers/errors/RepoError";
 import { User as UserDB, UserType as UserTypeDB, Course as CourseDB } from "../models/Models";
 
 export class UserRepo implements IUserRepo {
