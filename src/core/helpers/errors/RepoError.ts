@@ -6,3 +6,9 @@ export class NotFoundError extends MainError {
         super(message + " not found");
     }
 }
+
+export class QueryError extends MainError {
+    constructor(message: string) {
+        super(message);
+    }
+}

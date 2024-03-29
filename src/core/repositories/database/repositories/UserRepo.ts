@@ -1,7 +1,7 @@
 import { UserDTO } from "../dtos/UserDTO";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
-import { InternalServerError } from "@aws-sdk/client-dynamodb";
+import { QueryError } from "../../../helpers/errors/RepoError";
 import { User as UserDB, UserType as UserTypeDB, Course as CourseDB } from "../models/Models";
 
 export class UserRepo implements IUserRepo {
@@ -17,7 +17,7 @@ export class UserRepo implements IUserRepo {
         [CourseDB.name]: true,
       },
     }).catch((err) => {
-      throw new InternalServerError(err)
+      throw new QueryError(err)
     });
 
     if (!user_found) {
@@ -37,7 +37,7 @@ export class UserRepo implements IUserRepo {
         [CourseDB.name]: true,
       },
     }).catch((err) => {
-      throw new InternalServerError(err)
+      throw new QueryError(err)
     });
 
     if (!user_found) {
@@ -58,7 +58,7 @@ export class UserRepo implements IUserRepo {
       created_at: user.created_at,
       updated_at: user.updated_at,
     }).catch((err) => {
-      throw new InternalServerError(err)
+      throw new QueryError(err)
     });
 
     return user_created ? true : false;
@@ -78,7 +78,7 @@ export class UserRepo implements IUserRepo {
       },
       returning: true,
     }).catch((err) => {
-      throw new InternalServerError(err)
+      throw new QueryError(err)
     });
 
     return user_updated ? true : false;

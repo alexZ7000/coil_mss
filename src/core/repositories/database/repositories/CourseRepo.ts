@@ -1,5 +1,3 @@
-import { PrismaClient } from "@prisma/client";
-
 import { CourseDTO } from "../dtos/CourseDTO";
 import { DatabaseMain } from "../DatabaseMain";
 import { ICourseRepo } from "../../interfaces/ICourseRepo";
