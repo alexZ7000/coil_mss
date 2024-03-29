@@ -59,7 +59,7 @@ const UserType = instance.define('UserType', {
 }, {
     tableName: 'user_types',
     timestamps: false,
-    modelName: 'UserType'
+    modelName: 'UserType',
 });
 
 const Course = instance.define('Course', {

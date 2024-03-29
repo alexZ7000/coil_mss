@@ -7,11 +7,11 @@ class ToEntityProps {
     id: string;
     name: string | null;
     email: string;
-    user_type: {
+    UserType: {
         id: number;
         name: string;
     };
-    course: 
+    Course: 
     { 
         id: number,
         name: string 
@@ -28,10 +28,10 @@ export class UserDTO {
             id: user.id,
             name: user.name || null,
             email: user.email,
-            user_type: UserTypeEnum[user.user_type.name],
-            course: user.course ? new Course({
-                id: user.course.id,
-                name: user.course.name,
+            user_type: UserTypeEnum[user.UserType.name],
+            course: user.Course ? new Course({
+                id: user.Course.id,
+                name: user.Course.name,
             }) : null,
             semester_course: user.semester || null,
             created_at: user.created_at,

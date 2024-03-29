@@ -1,7 +1,7 @@
 import { UserDTO } from "../dtos/UserDTO";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
-import { User as UserDB, UserType as UserTypeDB, Course as CourseDB } from "../models/Models";
+import { User as UserDB, UserType as UserTypeDB, Course as CourseDB, Course } from "../models/Models";
 
 export class UserRepo implements IUserRepo {
   private user_dto: UserDTO = new UserDTO();
@@ -12,8 +12,8 @@ export class UserRepo implements IUserRepo {
         id: id,
       },
       include: [
-        { model: UserTypeDB, as: "user_type" },
-        { model: CourseDB, as: "course" },
+        { model: UserTypeDB, as: UserTypeDB.name },
+        { model: CourseDB, as: CourseDB.name },
       ]
     });
 
@@ -30,8 +30,8 @@ export class UserRepo implements IUserRepo {
         email: email,
       },
       include: [
-        { model: UserTypeDB, as: "user_type" },
-        { model: CourseDB, as: "course" },
+        { model: UserTypeDB, as: UserTypeDB.name },
+        { model: CourseDB, as: CourseDB.name },
       ],
     });
 
