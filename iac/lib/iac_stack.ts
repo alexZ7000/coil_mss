@@ -3,7 +3,6 @@ import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from 'constructs';
 import { DynamoStack } from './dynamo_stack';
 import { LambdaStack } from './lambda_stack';
-// import * as sqs from 'aws-cdk-lib/aws-sqs';
 
 export class IacStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
