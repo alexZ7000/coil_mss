@@ -1,3 +1,4 @@
+import { User } from '../../structure/entities/User';
 import { IActivityRepo } from '../interfaces/IActivityRepo';
 import { Activity } from '../../structure/entities/Activity';
 import { ActivityMock } from '../../structure/mocks/ActivityMock';
@@ -32,4 +33,30 @@ export class ActivityRepoMock implements IActivityRepo {
     async get_all_activities(): Promise<Activity[]> {
         return this.project_mock.activities;
     }
+
+    async update_activity(activity: Activity): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let index = this.project_mock.activities.findIndex(activity => activity.id === activity.id);
+            if (index !== -1) {
+                this.project_mock.activities[index] = activity;
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        });
+    }
+
+    async delete_activity(id: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let index = this.project_mock.activities.findIndex(activity => activity.id === id);
+            if (index !== -1) {
+                this.project_mock.activities.splice(index, 1);
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        });
+    }
+
 }
+

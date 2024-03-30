@@ -1,24 +1,50 @@
 import { CourseDTO } from "../dtos/CourseDTO";
-import { DatabaseMain } from "../DatabaseMain";
+import { Course as CourseDB } from "../models/Models";
 import { ICourseRepo } from "../../interfaces/ICourseRepo";
 import { Course } from "../../../structure/entities/Course";
-
 export class CourseRepo implements ICourseRepo {
+    private courseDTO: CourseDTO;
 
-    public async get_courses(): Promise<Course[]> {
-        throw new Error("Method not implemented.");
+    constructor() {
+        this.courseDTO = new CourseDTO();
+    }
+
+    public async get_all_courses(): Promise<Course[]> {
+        let courses_found = await CourseDB.findAll();
+
+        return courses_found.map(course => {
+            return this.courseDTO.to_entity(course.toJSON());
+        });
     }
 
     public async create_course(course: Course): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        await CourseDB.create({
+            name: course.name,
+        });
+
+        return true;
     }
 
-    public async update_course(course: Course): Promise<Course> {
-        throw new Error("Method not implemented.");
+    public async update_course(course: Course): Promise<boolean> {
+        await CourseDB.update({
+            name: course.name,
+        }, {
+            where: {
+                id: course.id
+            }
+        });
+
+        return true;
     }
 
     public async delete_course(id: number): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        await CourseDB.destroy({
+            where: {
+                id: id
+            }
+        });
+
+        return true;
     }
 }
     

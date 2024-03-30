@@ -1,15 +1,16 @@
-import { DatabaseMain } from "../DatabaseMain";
 import { ActivityDTO } from "../dtos/ActivityDTO";
 import { User } from "../../../structure/entities/User";
 import { IActivityRepo } from "../../interfaces/IActivityRepo";
 import { Activity } from "../../../structure/entities/Activity";
 import { ActivityStatusEnum } from "../../../helpers/enums/ActivityStatusEnum";
-
+import {
+    Activity as ActivityDB, ActivityApplication, ActivityCourse, ActivityLanguage,
+    ActivityCriteria, ActivityPartnerInstitution, ActivityStatus, ActivityType,
+    Course, Institution, User as UserDB
+} from "../models/Models";
 
 export class ActivityRepo implements IActivityRepo {
-    private dynamo = new DatabaseMain();
-    private activity_dto = new ActivityDTO();
-
+    
     async get_activity(id: string): Promise<Activity | null> {
         throw new Error("Method not implemented.");
     }
@@ -47,11 +48,10 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
-        throw new Error("Method not implemented.");    
+        throw new Error("Method not implemented.");
     }
 
     async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 }
-

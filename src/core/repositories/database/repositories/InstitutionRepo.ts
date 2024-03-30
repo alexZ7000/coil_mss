@@ -1,25 +1,111 @@
+import { InstitutionDTO } from "../dtos/InstitutionDTO";
 import { IInstitutionRepo } from "../../interfaces/IInstitutionRepo";
 import { Institution } from "../../../structure/entities/Institution";
+import { Institution as InstitutionDB, InstitutionImage as InstitutionImageDB, InstitutionSocialMedia as InstitutionSocialMediaDB } from "../models/Models";
+
 
 export class InstitutionRepo implements IInstitutionRepo {
+    private institutionDTO: InstitutionDTO;
+
+    constructor() {
+        this.institutionDTO = new InstitutionDTO();
+    }
 
     public async get_all_institutions(): Promise<Institution[]> {
-        throw new Error("Method not implemented.");
+        let institutions_found = await InstitutionDB.findAll({
+            include: [
+                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
+                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+            ]
+        });
+
+        return institutions_found.map(institution => {
+            return this.institutionDTO.to_entity(institution.toJSON());
+        });
     }
 
     public async create_institution(institution: Institution): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        let institution_created = await InstitutionDB.create({
+            id: institution.id,
+            name: institution.name,
+            email: institution.email,
+            country: institution.country,
+            InstitutionSocialMedia: institution.social_medias.map(sm => {
+                return {
+                    institution_id: institution.id,
+                    media: sm.media,
+                    link: sm.link,
+                }
+            }),
+            InstitutionImage: institution.images.map(img => {
+                return {
+                    institution_id: institution.id,
+                    image: img,
+                }
+            })
+        }, {
+            include: [
+                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
+                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+            ]
+        });
+
+        return institution_created ? true : false;
     }
 
-    public async update_institution(institution: Institution): Promise<Institution> {
-        throw new Error("Method not implemented.");
+    public async update_institution(institution: Institution): Promise<boolean> {
+        await InstitutionDB.update({
+            name: institution.name,
+            description: institution.description,
+            email: institution.email,
+            country: institution.country
+        }, {
+            where: {
+                id: institution.id
+            }
+        });
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
+            return {
+                institution_id: institution.id,
+                media: sm.media,
+                link: sm.link
+            }
+        }), {
+            updateOnDuplicate: ['media', 'link']
+        });
+        await InstitutionImageDB.bulkCreate(institution.images.map(img => {
+            return {
+                institution_id: institution.id,
+                image: img
+            }
+        }), {
+            updateOnDuplicate: ['image']
+        });
+
+        return true;
     }
 
     public async delete_institution(id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        let institution_deleted = await InstitutionDB.destroy({
+            where: {
+                id: id
+            }
+        });
+
+        return institution_deleted ? true : false;
     }
 
     public async get_institution(id: string): Promise<Institution | null> {
-        throw new Error("Method not implemented.");
+        let institution_found = await InstitutionDB.findOne({
+            where: {
+                id: id
+            },
+            include: [
+                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
+                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+            ]
+        });
+
+        return institution_found ? this.institutionDTO.to_entity(institution_found.toJSON()) : null;
     }
 }

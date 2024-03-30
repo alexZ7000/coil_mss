@@ -26,14 +26,14 @@ class ActivityProps {
 export class Activity {
     id: string;
     title: string;
+    description: string;
+    status_activity: ActivityStatusEnum;
+    type_activity: ActivityTypeEnum;
     start_date: Date;
     end_date: Date;
-    description: string;
     languages: string[] | [];
     partner_institutions: Institution[] | [];
     criterias: Criteria[] | [];
-    status_activity: ActivityStatusEnum;
-    type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
     applicants: {user: User, status: boolean}[] | [];

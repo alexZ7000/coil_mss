@@ -14,11 +14,27 @@ export class InstitutionRepoMock implements IInstitutionRepo {
         return true;
     }
 
-    async update_institution(institutionId: string, institution: Institution): Promise<Institution> {
+    async update_institution(institution: Institution): Promise<boolean> {
         return new Promise((resolve, reject) => {
-            const institution_index = this.institutions_mock.institutions.findIndex(institution => institution.id === institutionId);
-            this.institutions_mock.institutions[institution_index] = institution;
-            resolve(this.institutions_mock.institutions[institution_index]);
+            let index = this.institutions_mock.institutions.findIndex(institution => institution.id === institution.id);
+            if (index !== -1) {
+                this.institutions_mock.institutions[index] = institution;
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        });
+    }
+
+    async delete_institution(id: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let index = this.institutions_mock.institutions.findIndex(institution => institution.id === id);
+            if (index !== -1) {
+                this.institutions_mock.institutions.splice(index, 1);
+                resolve(true);
+            } else {
+                reject(false);
+            }
         });
     }
 

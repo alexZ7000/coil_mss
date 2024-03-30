@@ -45,6 +45,182 @@ const User = instance.define('User', {
     modelName: 'User'
 });
 
+const ActivityStatus = instance.define('ActivityStatus', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'activity_status',
+    timestamps: false,
+    modelName: 'ActivityStatus'
+});
+
+const ActivityType = instance.define('ActivityType', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'activity_types',
+    timestamps: false,
+    modelName: 'ActivityType'
+});
+
+const ActivityLanguage = instance.define('ActivityLanguage', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    activity_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'activity_languages',
+    timestamps: false,
+    modelName: 'ActivityLanguage'
+});
+
+const ActivityPartnerInstitution = instance.define('ActivityPartnerInstitution', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    activity_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    institution_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    }
+}, {
+    tableName: 'activity_partner_institutions',
+    timestamps: false,
+    modelName: 'ActivityPartnerInstitution'
+});
+
+const ActivityCriteria = instance.define('ActivityCriteria', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    activity_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    criteria: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'activity_criterias',
+    timestamps: false,
+    modelName: 'ActivityCriteria'
+});
+
+const ActivityApplication = instance.define('ActivityApplication', {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        allowNull: false
+    },
+    user_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    activity_id: {
+        type: DataTypes.UUID,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        onUpdate: new Date().toISOString()
+    }
+}, {
+    tableName: 'activity_applications',
+    timestamps: false,
+    modelName: 'ActivityApplication'
+});
+
+const Activity = instance.define('Activity', {
+    id: {
+        type: DataTypes.UUID,
+        primaryKey: true,
+        allowNull: false
+    },
+    title: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: false
+    },
+    status_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    type_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    start_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    end_date: {
+        type: DataTypes.DATE,
+        allowNull: false
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+    },
+    updated_at: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        onUpdate: new Date().toISOString()
+    }
+}, {
+    tableName: 'activities',
+    timestamps: false,
+    modelName: 'Activity'
+});
+
 const UserType = instance.define('UserType', {
     id: {
         type: DataTypes.INTEGER,
@@ -112,6 +288,10 @@ const Institution = instance.define('Institution', {
         allowNull: false,
         unique: true
     },
+    description: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     email: {
         type: DataTypes.STRING,
         allowNull: false
@@ -174,8 +354,20 @@ const InstitutionImage = instance.define('InstitutionImage', {
 
 User.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'SET NULL' });
 User.belongsTo(UserType, { foreignKey: 'user_type_id' });
-ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE'});
-Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE'});
-Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE'});
+User.hasMany(ActivityApplication, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+Course.hasMany(ActivityCourse, { foreignKey: 'course_id', onDelete: 'CASCADE' });
+Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id' });
+Activity.belongsTo(ActivityType, { foreignKey: 'type_id' });
+Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
+Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
+Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
 
-export { User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage };
+export {
+    User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage,
+    Activity, ActivityStatus, ActivityType, ActivityLanguage, ActivityPartnerInstitution, ActivityCriteria, ActivityApplication
+};

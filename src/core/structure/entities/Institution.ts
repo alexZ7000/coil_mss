@@ -4,6 +4,7 @@
     class InstitutionProps{
         id: string;
         name: string;
+        description: string | null;
         email: string;
         country: string;
         images: string[] | [];
@@ -13,6 +14,7 @@
     export class Institution {
         id: string;
         name: string;
+        description: string | null;
         email: string;
         country: string;
         images: string[] | [];
@@ -21,6 +23,7 @@
         constructor(props: InstitutionProps){
             this.id = this.validate_set_id(props.id);
             this.name = this.validate_set_name(props.name);
+            this.description = this.validate_set_description(props.description);
             this.email = this.validate_set_email(props.email);
             this.country = this.validate_set_country(props.country);
             this.images = this.validate_set_images(props.images);
@@ -60,6 +63,16 @@
                 throw new EntityError("Parameter name must be a string")
             }
             return name;
+        }
+
+        private validate_set_description(description: string | null){
+            if (description == null || description == ""){
+                return "";
+            }
+            if (typeof description !== "string"){
+                throw new EntityError("Parameter description must be a string")
+            }
+            return description;
         }
 
         private validate_set_email(email: string){
