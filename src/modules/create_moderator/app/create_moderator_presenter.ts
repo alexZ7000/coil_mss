@@ -4,7 +4,7 @@ import { CreateModeratorController } from "./create_moderator_controller";
 import { Repository } from "../../../core/repositories/Repository";
 import { HttpRequest } from "../../../core/helpers/http/http_codes";
 
-const repository = new Repository({user_repo: true, project_repo: false});
+const repository = new Repository({user_repo: true});
 
 const usecase = new CreateModeratorUsecase(repository.UserRepo);
 const controller = new CreateModeratorController(usecase);

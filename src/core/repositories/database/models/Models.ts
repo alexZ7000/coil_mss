@@ -188,7 +188,7 @@ const Activity = instance.define('Activity', {
     },
     description: {
         type: DataTypes.TEXT,
-        allowNull: false
+        allowNull: true
     },
     status_id: {
         type: DataTypes.INTEGER,

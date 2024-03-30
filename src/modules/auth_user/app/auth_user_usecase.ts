@@ -41,8 +41,12 @@ export class AuthUserUsecase {
 
         let user: User;
         const get_user = await this.database_repo.get_user_by_email(token_response.mail);
-        
+
         if (get_user) {
+            if (!get_user.name) {
+                get_user.name = token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+                this.database_repo.update_user(get_user);
+            }
             user = new User({
                 id: get_user.id,
                 name: get_user.name,
