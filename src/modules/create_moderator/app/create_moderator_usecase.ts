@@ -7,7 +7,6 @@ import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { ConflictError, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
-
 export class CreateModeratorUsecase {
     public token_auth: TokenAuth;
     public database_repo: IUserRepo;
