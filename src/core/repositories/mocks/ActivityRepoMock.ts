@@ -30,7 +30,7 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async get_all_activities(): Promise<Activity[]> {
-        return this.activity_mock.activities;
+        return this.activity_mock.activities; 
     }
 
     async update_activity(activity: Activity): Promise<boolean> {
