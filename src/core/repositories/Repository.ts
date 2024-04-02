@@ -1,7 +1,7 @@
 import { UserRepoMock } from "./mocks/UserRepoMock";
 import { UserRepo } from "./database/repositories/UserRepo";
 
-import { ActivityRepoMock } from "./mocks/ProjectRepoMock";
+import { ActivityRepoMock } from "./mocks/ActivityRepoMock";
 import { ActivityRepo } from "./database/repositories/ActivityRepo";
 
 import { InstitutionRepoMock } from "./mocks/InstitutionRepoMock";
