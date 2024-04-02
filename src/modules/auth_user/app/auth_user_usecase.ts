@@ -6,7 +6,6 @@ import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
-import { get } from 'http';
 
 
 export class AuthUserUsecase {
