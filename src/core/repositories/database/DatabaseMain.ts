@@ -1,7 +1,6 @@
 import dotenv from 'dotenv';
 import mysql2 from 'mysql2';
 import { Sequelize } from 'sequelize';
-import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 
 dotenv.config();
@@ -22,6 +21,5 @@ export class DatabaseMain {
             password: process.env.RDS_PASSWORD,
             database: process.env.RDS_DB_NAME,
         })
-        this.dynamo_dbclient = new DynamoDBClient({region: process.env.AWS_REGION});
     }
 }
