@@ -23,7 +23,7 @@ export class CreateInstitutionController {
 
             const institutionData = request.body.body;
 
-            if (!institutionData.id || !institutionData.name || !institutionData.description || !institutionData.email ) {
+            if (!institutionData.id || !institutionData.name || !institutionData.description || !institutionData.email || !institutionData.country || !institutionData.images || !institutionData.social_medias) {
                 throw new MissingParameter("InstitutionData");
             }
 
