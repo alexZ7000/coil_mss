@@ -6,7 +6,7 @@ export class LambdaStack extends Construct {
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
 
-    public functions_need_dynamodb_access: lambda.Function[] = [];
+    public functions_need_event_bridge_access: lambda.Function[] = [];
     
 
     private create_lambda(
@@ -79,8 +79,7 @@ export class LambdaStack extends Construct {
             origins
         );
 
-        this.functions_need_dynamodb_access = [
-
+        this.functions_need_event_bridge_access = [
         ]
     }
 }

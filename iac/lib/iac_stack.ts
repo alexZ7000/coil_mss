@@ -1,8 +1,10 @@
 import * as cdk from 'aws-cdk-lib';
-import { RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from 'constructs';
-import { DynamoStack } from './dynamo_stack';
+import * as iam from 'aws-cdk-lib/aws-iam';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { LambdaStack } from './lambda_stack';
+import { RestApi } from 'aws-cdk-lib/aws-apigateway';
+
 
 export class IacStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -19,6 +21,11 @@ export class IacStack extends cdk.Stack {
       }}
     );
 
+    const bucket = new Bucket(this, "Coil_Bucket", {
+      bucketName: "coil-bucket",
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     const coil_resource = restapi.root.addResource("coil", {
       defaultCorsPreflightOptions: {
         allowOrigins: ["*"],
@@ -26,8 +33,6 @@ export class IacStack extends cdk.Stack {
         allowHeaders: ["*"],
       }
     });
-
-    const dynamodb_stack = new DynamoStack(this); 
 
     const ENVIROMMENT_VARIABLES: {[key: string]: string} = {
       "DOMAIN": process.env.DOMAIN || "",
@@ -40,7 +45,6 @@ export class IacStack extends cdk.Stack {
       "RDS_USERNAME": process.env.RDS_USERNAME || "",
       "RDS_PASSWORD": process.env.RDS_PASSWORD || "",
       "RDS_DIALECT": process.env.RDS_DIALECT || "",
-      "PROJECT_TABLE": dynamodb_stack.project_table.tableName,
     };
 
     const lambda_stack = new LambdaStack(
@@ -50,8 +54,13 @@ export class IacStack extends cdk.Stack {
       coil_resource
     );
 
-    for (let function_lambda of lambda_stack.functions_need_dynamodb_access) {
-      dynamodb_stack.project_table.grantReadWriteData(function_lambda);
+    for (const lambda_function of lambda_stack.functions_need_event_bridge_access) {
+      lambda_function.addToRolePolicy(
+        new iam.PolicyStatement({
+          actions: ["events:*", "lambda:*"],
+          resources: ["*"],
+        })
+      );
     }
   }
 }
