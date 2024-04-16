@@ -137,7 +137,7 @@ export class CreateActivityUsecase {
       throw error;
     }
 
-    this.event_bridge.create_trigger(
+    await this.event_bridge.create_trigger(
       "START_ACTIVITY_" + activity.id,
       "Update_Activity_Event",
       activity.start_date,
@@ -147,7 +147,7 @@ export class CreateActivityUsecase {
       }
     );
 
-    this.event_bridge.create_trigger(
+    await this.event_bridge.create_trigger(
       "END_ACTIVITY_" + activity.id,
       "Update_Activity_Event",
       activity.end_date,
