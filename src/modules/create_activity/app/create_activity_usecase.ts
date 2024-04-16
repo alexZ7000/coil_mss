@@ -88,7 +88,7 @@ export class CreateActivityUsecase {
       throw new UserNotAuthenticated();
     }
     const user_types_allowed = [UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR];
-    if (!(user.user_type in user_types_allowed)) {
+    if (!user_types_allowed.includes(user.user_type) {
       throw new UserNotAuthenticated();
     }
 
