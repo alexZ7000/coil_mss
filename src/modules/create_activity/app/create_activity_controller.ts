@@ -1,4 +1,4 @@
-import { UpdateUserUsecase } from "./update_user_usecase";
+import { CreateActivityUsecase } from "./create_activity_usecase";
 import {
   ConflictError,
   InvalidParameter,
@@ -9,18 +9,18 @@ import {
 import {
   BadRequest,
   Conflict,
+  Created,
   HttpRequest,
   InternalServerError,
-  OK,
   ParameterError,
   Unauthorized,
 } from "../../../core/helpers/http/http_codes";
 import { EntityError } from "../../../core/helpers/errors/EntityError";
 
-export class UpdateUserController {
-  public usecase: UpdateUserUsecase;
+export class CreateActivityController {
+  public usecase: CreateActivityUsecase;
 
-  constructor(usecase: UpdateUserUsecase) {
+  constructor(usecase: CreateActivityUsecase) {
     this.usecase = usecase;
   }
 
@@ -38,8 +38,9 @@ export class UpdateUserController {
         throw new InvalidRequest("Body");
       }
 
-      const updatedUser = await this.usecase.execute(request.headers, request.body.body);
-      return new OK(updatedUser.to_json(), "User updated successfully");
+      const usecase = await this.usecase.execute(request.headers, request.body.body);
+      return new Created({}, "Activity created successfully");
+    
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);

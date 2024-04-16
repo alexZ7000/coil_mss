@@ -1,6 +1,6 @@
 import { EventBridge, Lambda } from 'aws-sdk';
 
-export class event_bridge {
+export class EventBridgeManager {
     private event: EventBridge;
     private lambda: Lambda;
 

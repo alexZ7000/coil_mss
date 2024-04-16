@@ -14,11 +14,11 @@ class ActivityProps {
     end_date: Date;
     created_at: Date;
     updated_at: Date;
-    ActivityLanguage: {id: number, activity_id: string, name: string}[];
-    ActivityCriteria: {id: number, activity_id: string, name: string}[];
-    ActivityPartnerInstitution: {id: number, activity_id: string, Institution: {id: string, name: string, email: string, country: string }}[];
-    ActivityCourse: {id: number, activity_id: string, Course: {id: number, name: string}}[];
-    ActivityApplication: {id: number, activity_id: string, user_id: string, status: number}[];
+    ActivityLanguage: {id?: number, activity_id: string, name: string}[];
+    ActivityCriteria: {id?: number, activity_id: string, name: string}[];
+    ActivityPartnerInstitution: {id?: number, activity_id: string, Institution: {id: string, name: string, email: string, country: string }}[];
+    ActivityCourse: {id?: number, activity_id: string, Course: {id: number, name: string}}[];
+    ActivityApplication: {id?: number, activity_id: string, user_id: string, status: number}[];
 }
 
 export class ActivityDTO {  
@@ -35,7 +35,7 @@ export class ActivityDTO {
             updated_at: activity.updated_at,
             languages: activity.ActivityLanguage.map(lang => lang.name),
             criterias: activity.ActivityCriteria.map(crit => new Criteria({
-                id: crit.id,
+                id: crit.id as number,
                 criteria: crit.name
             })),
             partner_institutions: activity.ActivityPartnerInstitution.map(partner => new Institution({
@@ -51,7 +51,7 @@ export class ActivityDTO {
                 id: course.Course.id,
                 name: course.Course.name
             })),
-            applicants: []
+            applicants: activity.ActivityApplication.map(applicant => ({id: applicant.user_id, status: applicant.status === 1 })),
         });
     }
 }

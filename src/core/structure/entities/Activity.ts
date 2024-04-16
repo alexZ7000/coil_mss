@@ -13,31 +13,31 @@ class ActivityProps {
     end_date: Date;
     description: string;
     languages: string[] | [];
-    partner_institutions: Institution[] | [];
+    courses: Course[]
+    partner_institutions: {id: string, name?: string}[];
     criterias: Criteria[];
     status_activity: ActivityStatusEnum;
     type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {user: User, status: boolean}[] | [];
-    courses: Course[] | [];
+    applicants: {id: string, status: boolean}[];
 }
 
 export class Activity {
     id: string;
     title: string;
-    description: string;
-    status_activity: ActivityStatusEnum;
-    type_activity: ActivityTypeEnum;
     start_date: Date;
     end_date: Date;
+    description: string;
     languages: string[] | [];
-    partner_institutions: Institution[] | [];
-    criterias: Criteria[] | [];
+    courses: Course[];
+    partner_institutions: {id: string, name?: string}[];
+    criterias: Criteria[];
+    status_activity: ActivityStatusEnum;
+    type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {user: User, status: boolean}[] | [];
-    courses: Course[] | [];
+    applicants: {id: string, status: boolean}[];
 
     constructor(props: ActivityProps) {
         this.id = this.validate_set_id(props.id);
@@ -65,13 +65,13 @@ export class Activity {
             description: this.description,
             languages: this.languages,
             partner_institutions: this.partner_institutions,
-            criterias: this.criterias,
+            criterias: this.criterias.map(criteria => criteria.to_json()),
             status_activity: this.status_activity,
             type_activity: this.type_activity,
             created_at: this.created_at,
             updated_at: this.updated_at,
-            applicants: this.applicants.map((applicant: {user: User, status: boolean}) => {return {user: applicant.user.to_json(), status: applicant.status}}),
-            courses: this.courses.map((course: Course) => course.to_json())
+            applicants: this.applicants,
+            courses: this.courses.map(course => course.to_json())
         };
     }
 
@@ -141,15 +141,9 @@ export class Activity {
         return languages;
     }
 
-    private validate_set_partner_institutions(partner_institutions: Institution[] | []) {
+    private validate_set_partner_institutions(partner_institutions: {id: string, name?: string}[]) {
         if (partner_institutions == null || partner_institutions.length === 0) {
             return [];
-        }
-        if (!Array.isArray(partner_institutions)) {
-            throw new EntityError("Parameter partner_institutions is not an array");
-        }
-        if (partner_institutions.some((institution) => !(institution instanceof Institution))) {
-            throw new EntityError("Parameter partner_institutions must be an array of Institution objects");
         }
         return partner_institutions;
     }
@@ -157,12 +151,6 @@ export class Activity {
     private validate_set_criterias(criterias: Criteria[] | []) {
         if (criterias == null || criterias.length === 0) {
             return [];
-        }
-        if (!Array.isArray(criterias)) {
-            throw new EntityError("Parameter criterias is not an array");
-        }
-        if (criterias.some((criteria) => !(criteria instanceof Criteria))) {
-            throw new EntityError("Parameter criterias must be an array of Criteria objects");
         }
         return criterias;
     }
@@ -213,28 +201,16 @@ export class Activity {
         return updated_at;
     }
 
-    private validate_set_applicants(applicants: {user: User, status: boolean}[] | []) {
+    private validate_set_applicants(applicants: {id: string, status: boolean}[]) {
         if (applicants == null || applicants.length === 0) {
             return [];
-        }
-        if (!Array.isArray(applicants)) {
-            throw new EntityError("Parameter applicants is not an array");
-        }
-        if (applicants.some((applicant) => !(applicant.user instanceof User) || typeof applicant.status !== "boolean")) {
-            throw new EntityError("Parameter applicants must be an array of objects with user as User and status as boolean");
         }
         return applicants;
     }
 
-    private validate_set_courses(courses: Course[] | []) {
+    private validate_set_courses(courses: Course[]) {
         if (courses == null || courses.length === 0) {
             return [];
-        }
-        if (!Array.isArray(courses)) {
-            throw new EntityError("Parameter courses is not an array");
-        }
-        if (courses.some((course) => !(course instanceof Course))) {
-            throw new EntityError("Parameter courses must be an array of Course objects");
         }
         return courses;
     }

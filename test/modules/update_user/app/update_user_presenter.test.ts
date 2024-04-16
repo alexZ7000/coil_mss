@@ -28,7 +28,7 @@ describe("Testing Update User Presenter", () => {
     );
 
     expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body).message).toBe("User updated successfully.");
+    expect(JSON.parse(response.body).message).toBe("User updated successfully");
     
   });
 
