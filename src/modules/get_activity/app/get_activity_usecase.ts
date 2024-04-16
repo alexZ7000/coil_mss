@@ -13,8 +13,9 @@ export class GetActivityUsecase {
   public user_repo: IUserRepo;
   public activity_repo: IActivityRepo;
 
-  constructor(activity_repo: IActivityRepo) {
+  constructor(user_repo: IUserRepo, activity_repo: IActivityRepo) {
     this.token_auth = new TokenAuth();
+    this.user_repo = user_repo;
     this.activity_repo = activity_repo;
   }
 
