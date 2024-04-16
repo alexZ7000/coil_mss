@@ -51,35 +51,7 @@ export class ActivityDTO {
                 id: course.Course.id,
                 name: course.Course.name
             })),
-            applicants: activity.ActivityApplication.map(applicant => ({id: applicant.user_id
+            applicants: activity.ActivityApplication.map(applicant => ({id: applicant.user_id, status: applicant.status === 1 })),
         });
-    }
-
-    public to_db(activity: Activity): ActivityProps {
-        return {
-            id: activity.id,
-            title: activity.title,
-            description: activity.description,
-            ActivityStatus: {id: activity.status_activity, name: ''},
-            ActivityType: {id: activity.type_activity, name: ''},
-            start_date: activity.start_date,
-            end_date: activity.end_date,
-            created_at: activity.created_at,
-            updated_at: activity.updated_at,
-            ActivityLanguage: activity.languages.map(lang => ({activity_id: activity.id, name: lang})),
-            ActivityCriteria: activity.criterias.map(crit => ({activity_id: activity.id, name: crit.criteria})),
-            ActivityPartnerInstitution: activity.partner_institutions.map(partner => ({
-                id: 0,
-                activity_id: activity.id,
-                Institution: {
-                    id: partner.id,
-                    name: partner.name,
-                    email: partner.email,
-                    country: partner.country
-                }
-            })),
-            ActivityCourse: activity.courses.map(course => ({id: 0, activity_id: activity.id, Course: {id: course.id, name: course.name}})),
-            ActivityApplication: activity.applicants.map(applicant => ({id: 0, activity_id: activity.id, user_id: applicant.id, status: 0}))
-        };
     }
 }

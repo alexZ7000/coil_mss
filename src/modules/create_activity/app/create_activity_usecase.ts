@@ -6,6 +6,7 @@ import {
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 
+import { Course } from "../../../core/structure/entities/Course";
 import { Activity } from "../../../core/structure/entities/Activity";
 import { Criteria } from "../../../core/structure/entities/Criteria";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
@@ -91,12 +92,27 @@ export class CreateActivityUsecase {
       throw new UserNotAuthenticated();
     }
 
+    const courses = body.courses.map((course: { [key: string]: any }) => {
+      return new Course({
+        id: course.id,
+        name: course.name
+      });
+    });
+
     const criterias = body.criterias.map((criteria: { [key: string]: any }) => {
       return new Criteria({
         id: 0,
         criteria: criteria.criteria
       });
     });
+
+    const partner_institutions = body.partner_institutions.map(
+      (institution: string) => {
+        return {
+          id: institution
+        };
+      }
+    );
 
     const activity = new Activity({
       id: randomUUID(),
@@ -105,8 +121,8 @@ export class CreateActivityUsecase {
       start_date: new Date(body.start_date),
       end_date: new Date(body.end_date),
       languages: body.languages,
-      partner_institutions: body.partner_institutions,
-      courses: body.courses,
+      partner_institutions: partner_institutions,
+      courses: courses,
       criterias: criterias,
       applicants: [],
       status_activity: ActivityStatusEnum.TO_START,
