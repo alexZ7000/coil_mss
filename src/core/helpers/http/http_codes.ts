@@ -107,6 +107,12 @@ export class NotFound extends HttpResponse {
     }
 }
 
+export class Unprocessable_Entity extends HttpResponse {
+    constructor(message: string) {
+        super(422, null, message);
+    }
+} 
+
 export class Conflict extends HttpResponse {
     constructor(message: string) {
         super(409, null, message);

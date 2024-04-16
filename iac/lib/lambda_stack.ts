@@ -3,7 +3,10 @@ import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as
 
 export class LambdaStack extends Construct {
 
+    private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
+    private update_user: lambda_js.NodejsFunction;
+    private create_activity: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
 
     public functions_need_event_bridge_access: lambda.Function[] = [];
@@ -79,7 +82,32 @@ export class LambdaStack extends Construct {
             origins
         );
 
+        this.get_user = this.create_lambda(
+            "get_user",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.update_user = this.create_lambda(
+            "update_user",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
+        this.create_activity = this.create_lambda(
+            "create_activity",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
         this.functions_need_event_bridge_access = [
+            this.create_activity
         ]
     }
 }
