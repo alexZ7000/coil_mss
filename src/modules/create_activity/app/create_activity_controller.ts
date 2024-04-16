@@ -1,4 +1,7 @@
+import { UniqueConstraintError } from "sequelize";
+
 import { CreateActivityUsecase } from "./create_activity_usecase";
+import { EntityError } from "../../../core/helpers/errors/EntityError";
 import {
   ConflictError,
   InvalidParameter,
@@ -14,8 +17,9 @@ import {
   InternalServerError,
   ParameterError,
   Unauthorized,
+  Unprocessable_Entity,
 } from "../../../core/helpers/http/http_codes";
-import { EntityError } from "../../../core/helpers/errors/EntityError";
+
 
 export class CreateActivityController {
   public usecase: CreateActivityUsecase;
@@ -40,7 +44,7 @@ export class CreateActivityController {
 
       const usecase = await this.usecase.execute(request.headers, request.body.body);
       return new Created({}, "Activity created successfully");
-    
+
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
@@ -59,6 +63,9 @@ export class CreateActivityController {
       }
       if (error instanceof MissingParameter) {
         return new ParameterError(error.message);
+      }
+      if (error instanceof UniqueConstraintError) {
+        return new Unprocessable_Entity(error.message);
       }
       return new InternalServerError(error.message);
     }

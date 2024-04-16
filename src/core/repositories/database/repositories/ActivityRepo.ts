@@ -3,7 +3,6 @@ import { ActivityDTO } from "../dtos/ActivityDTO";
 import { User } from "../../../structure/entities/User";
 import { IActivityRepo } from "../../interfaces/IActivityRepo";
 import { Activity } from "../../../structure/entities/Activity";
-import { Unprocessable_Entity } from "../../../helpers/http/http_codes";
 import { ActivityStatusEnum } from "../../../helpers/enums/ActivityStatusEnum";
 import {
     Activity as ActivityDB, ActivityApplication, ActivityCourse, ActivityLanguage,
@@ -45,48 +44,41 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
-        throw new Error("Method not implemented.");    
+        throw new Error("Method not implemented.");
     }
 
     async create_activity(activity: Activity): Promise<boolean> {
-        try {
-            await ActivityDB.create({
-                id: activity.id,
-                title: activity.title,
-                description: activity.description,
-                status_id: activity.status_activity,
-                type_id: activity.type_activity,
-                start_date: activity.start_date,
-                end_date: activity.end_date,
-                created_at: activity.created_at,
-                updated_at: activity.updated_at,
-            });
+        await ActivityDB.create({
+            id: activity.id,
+            title: activity.title,
+            description: activity.description,
+            status_id: activity.status_activity,
+            type_id: activity.type_activity,
+            start_date: activity.start_date,
+            end_date: activity.end_date,
+            created_at: activity.created_at,
+            updated_at: activity.updated_at,
+        });
 
-            await ActivityPartnerInstitution.bulkCreate(activity.partner_institutions.map(institution => ({
-                activity_id: activity.id,
-                institution_id: institution.id
-            })));
+        await ActivityPartnerInstitution.bulkCreate(activity.partner_institutions.map(institution => ({
+            activity_id: activity.id,
+            institution_id: institution.id
+        })));
 
-            await ActivityCourse.bulkCreate(activity.courses.map(course => ({
-                activity_id: activity.id,
-                course_id: course.id
-            })));
+        await ActivityCourse.bulkCreate(activity.courses.map(course => ({
+            activity_id: activity.id,
+            course_id: course.id
+        })));
 
-            await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
-                activity_id: activity.id,
-                language: language
-            })));
+        await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
+            activity_id: activity.id,
+            language: language
+        })));
 
-            await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
-                activity_id: activity.id,
-                criteria: criteria.criteria
-            })));
-        } catch (error) {
-            if (error instanceof UniqueConstraintError) {
-                throw new Unprocessable_Entity("Activity already exists");
-            }
-            throw error;
-        }
+        await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+            activity_id: activity.id,
+            criteria: criteria.criteria
+        })));
         return true;
     }
 
@@ -126,70 +118,63 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_activity(activity: Activity): Promise<boolean> {
-        try {
-            await ActivityDB.update({
-                title: activity.title,
-                description: activity.description,
-                status_id: activity.status_activity,
-                type_id: activity.type_activity,
-                start_date: activity.start_date,
-                end_date: activity.end_date,
-                updated_at: activity.updated_at,
-            }, {
-                where: {
-                    id: activity.id
-                }
-            });
-
-            await ActivityPartnerInstitution.destroy({
-                where: {
-                    activity_id: activity.id
-                }
-            });
-
-            await ActivityCourse.destroy({
-                where: {
-                    activity_id: activity.id
-                }
-            });
-
-            await ActivityLanguage.destroy({
-                where: {
-                    activity_id: activity.id
-                }
-            });
-
-            await ActivityCriteria.destroy({
-                where: {
-                    activity_id: activity.id
-                }
-            });
-
-            await ActivityPartnerInstitution.bulkCreate(activity.partner_institutions.map(institution => ({
-                activity_id: activity.id,
-                institution_id: institution.id
-            })));
-
-            await ActivityCourse.bulkCreate(activity.courses.map(course => ({
-                activity_id: activity.id,
-                course_id: course.id
-            })));
-
-            await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
-                activity_id: activity.id,
-                language: language
-            })));
-
-            await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
-                activity_id: activity.id,
-                criteria: criteria.criteria
-            })));
-        } catch (error) {
-            if (error instanceof UniqueConstraintError) {
-                throw new Unprocessable_Entity("Activity already exists");
+        await ActivityDB.update({
+            title: activity.title,
+            description: activity.description,
+            status_id: activity.status_activity,
+            type_id: activity.type_activity,
+            start_date: activity.start_date,
+            end_date: activity.end_date,
+            updated_at: activity.updated_at,
+        }, {
+            where: {
+                id: activity.id
             }
-            throw error;
-        }
+        });
+
+        await ActivityPartnerInstitution.destroy({
+            where: {
+                activity_id: activity.id
+            }
+        });
+
+        await ActivityCourse.destroy({
+            where: {
+                activity_id: activity.id
+            }
+        });
+
+        await ActivityLanguage.destroy({
+            where: {
+                activity_id: activity.id
+            }
+        });
+
+        await ActivityCriteria.destroy({
+            where: {
+                activity_id: activity.id
+            }
+        });
+
+        await ActivityPartnerInstitution.bulkCreate(activity.partner_institutions.map(institution => ({
+            activity_id: activity.id,
+            institution_id: institution.id
+        })));
+
+        await ActivityCourse.bulkCreate(activity.courses.map(course => ({
+            activity_id: activity.id,
+            course_id: course.id
+        })));
+
+        await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
+            activity_id: activity.id,
+            language: language
+        })));
+
+        await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+            activity_id: activity.id,
+            criteria: criteria.criteria
+        })));
         return true;
     }
 
@@ -198,18 +183,13 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
-        try {
-            await ActivityDB.update({
-                status_id: status
-            }, {
-                where: {
-                    id: activity_id
-                }
-            });
-        }
-        catch (error) {
-            throw error;
-        }
+        await ActivityDB.update({
+            status_id: status
+        }, {
+            where: {
+                id: activity_id
+            }
+        });
         return true;
     }
 }

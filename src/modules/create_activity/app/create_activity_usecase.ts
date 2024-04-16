@@ -1,11 +1,10 @@
 import { randomUUID } from "crypto";
-
+import { UniqueConstraintError } from "sequelize";
 import {
   InvalidRequest,
   MissingParameter,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
-
 import { Course } from "../../../core/structure/entities/Course";
 import { Activity } from "../../../core/structure/entities/Activity";
 import { Criteria } from "../../../core/structure/entities/Criteria";
@@ -92,6 +91,12 @@ export class CreateActivityUsecase {
       throw new UserNotAuthenticated();
     }
 
+    if (await this.activity_repo.check_activity_by_title(body.title)) {
+      throw new UniqueConstraintError({
+        message: "Activity with this title already exists"
+      });
+    }
+
     const courses = body.courses.map((course: { [key: string]: any }) => {
       return new Course({
         id: course.id,
@@ -131,11 +136,7 @@ export class CreateActivityUsecase {
       updated_at: new Date()
     });
 
-    try {
-      await this.activity_repo.create_activity(activity);
-    } catch (error) {
-      throw error;
-    }
+    await this.activity_repo.create_activity(activity);
 
     await this.event_bridge.create_trigger(
       "START_ACTIVITY_" + activity.id,
