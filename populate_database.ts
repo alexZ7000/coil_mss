@@ -16,6 +16,15 @@ const courses: string[] = [
     "Engenharia de Alimentos", "Engenharia Civil"
 ];
 
+const institutions = [
+    { 
+        id: randomUUID(),
+        name: "Fontys University of Applied Sciences",
+        county: "Netherlands",
+        email: "teste@test.com"
+    }
+];
+
 const userTypes: UserTypeEnum[] = [
     UserTypeEnum.ADMIN, UserTypeEnum.STUDENT, UserTypeEnum.MODERATOR
 ];
@@ -66,6 +75,15 @@ async function createOrUpdateUser(name: string, email: string, userType: UserTyp
     console.log(`User ${name} ${user ? 'updated' : 'created'}`);
 }
 
+async function createOrUpdateInstitution(institution: any): Promise<void> {
+    let existingInstitution = await Institution.findOne({ where: { name: institution.name } });
+    if (!existingInstitution) {
+        await Institution.create(institution);
+        console.log(`Institution ${institution.name} created`);
+    }
+    console.log(`Institutions checked/created`);
+}
+
 async function createOrUpdateEnumItems(model: any, enumItems: number[], enumType: any): Promise<void> {
     for (const enumItem of enumItems) {
         let item = await model.findOne({ where: { id: enumItem } });
@@ -93,15 +111,19 @@ async function handleCoursesCreation(): Promise<void> {
         await handleDatabaseCreation();
         console.log("Database created");
         await handleCoursesCreation();
+        console.log("Courses checked/created");
         await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
         await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
+        console.log("Enums checked/created");
         await createOrUpdateUser("Relações Internacionais", "relacoes-internacionais@maua.br", UserTypeEnum.ADMIN, 1, null);
         const stage = process.env.STAGE || "";
         if (["dev", "test"].includes(stage)) {
             await createOrUpdateUser("Felipe Carillo", "23.00765-6@maua.br", UserTypeEnum.ADMIN, 1, 1);
         }
         console.log("Users checked/created");
+        await createOrUpdateInstitution(institutions[0]);
+        console.log("Institutions checked/created");
     } catch (error) {
         console.error(error);
     }
