@@ -8,6 +8,7 @@ export class LambdaStack extends Construct {
     private update_user: lambda_js.NodejsFunction;
     private create_activity: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+    private update_activity_event: lambda_js.NodejsFunction;
 
     public functions_need_event_bridge_access: lambda.Function[] = [];
     
@@ -104,6 +105,20 @@ export class LambdaStack extends Construct {
             "POST",
             restapi_resource,
             origins
+        );
+
+        this.update_activity_event = new lambda_js.NodejsFunction(
+            this,
+            "Update_Activity_Event",
+            {
+                functionName: "Update_Activity_Event",
+                entry: `../src/modules/update_activity_event/app/update_activity_event_presenter.ts`,
+                handler: `handler`,
+                environment: environment_variables,
+                runtime: lambda.Runtime.NODEJS_20_X,
+                timeout: Duration.seconds(15),
+                memorySize: 256
+            }
         );
 
         this.functions_need_event_bridge_access = [

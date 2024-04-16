@@ -5,6 +5,8 @@ import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 
 export interface IActivityRepo {
     create_activity(activity: Activity): Promise<boolean>
+    update_activity(activity: Activity): Promise<boolean>
+    update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean>
 
     get_activity(id: string): Promise<Activity | null>
     check_activity_by_title(title: string): Promise<boolean> 

@@ -58,6 +58,18 @@ export class ActivityRepoMock implements IActivityRepo {
         return this.activity_mock.activities; 
     }
 
+    async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let index = this.activity_mock.activities.findIndex(activity => activity.id === activity_id);
+            if (index !== -1) {
+                this.activity_mock.activities[index].status_activity = status;
+                resolve(true);
+            } else {
+                reject(false);
+            }
+        });    
+    }
+
     async update_activity(activity: Activity): Promise<boolean> {
         return new Promise((resolve, reject) => {
             let index = this.activity_mock.activities.findIndex(activity => activity.id === activity.id);

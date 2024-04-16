@@ -44,6 +44,10 @@ export class ActivityRepo implements IActivityRepo {
         return this.ActivityDTO.to_entity(activity.toJSON());
     }
 
+    async get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
+        throw new Error("Method not implemented.");    
+    }
+
     async create_activity(activity: Activity): Promise<boolean> {
         try {
             await ActivityDB.create({
@@ -122,14 +126,90 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_activity(activity: Activity): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
+        try {
+            await ActivityDB.update({
+                title: activity.title,
+                description: activity.description,
+                status_id: activity.status_activity,
+                type_id: activity.type_activity,
+                start_date: activity.start_date,
+                end_date: activity.end_date,
+                updated_at: activity.updated_at,
+            }, {
+                where: {
+                    id: activity.id
+                }
+            });
 
-    async get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
-        throw new Error("Method not implemented.");
+            await ActivityPartnerInstitution.destroy({
+                where: {
+                    activity_id: activity.id
+                }
+            });
+
+            await ActivityCourse.destroy({
+                where: {
+                    activity_id: activity.id
+                }
+            });
+
+            await ActivityLanguage.destroy({
+                where: {
+                    activity_id: activity.id
+                }
+            });
+
+            await ActivityCriteria.destroy({
+                where: {
+                    activity_id: activity.id
+                }
+            });
+
+            await ActivityPartnerInstitution.bulkCreate(activity.partner_institutions.map(institution => ({
+                activity_id: activity.id,
+                institution_id: institution.id
+            })));
+
+            await ActivityCourse.bulkCreate(activity.courses.map(course => ({
+                activity_id: activity.id,
+                course_id: course.id
+            })));
+
+            await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
+                activity_id: activity.id,
+                language: language
+            })));
+
+            await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+                activity_id: activity.id,
+                criteria: criteria.criteria
+            })));
+        } catch (error) {
+            if (error instanceof UniqueConstraintError) {
+                throw new Unprocessable_Entity("Activity already exists");
+            }
+            throw error;
+        }
+        return true;
     }
 
     async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
         throw new Error("Method not implemented.");
+    }
+
+    async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
+        try {
+            await ActivityDB.update({
+                status_id: status
+            }, {
+                where: {
+                    id: activity_id
+                }
+            });
+        }
+        catch (error) {
+            throw error;
+        }
+        return true;
     }
 }

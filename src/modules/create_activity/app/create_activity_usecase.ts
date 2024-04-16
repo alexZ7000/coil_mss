@@ -99,57 +99,63 @@ export class CreateActivityUsecase {
       });
     });
 
-    const criterias = body.criterias.map((criteria: string ) => {
-  return new Criteria({
-    id: 0,
-    criteria: criteria
-  });
-});
+    const criterias = body.criterias.map((criteria: string) => {
+      return new Criteria({
+        id: 0,
+        criteria: criteria
+      });
+    });
 
-const partner_institutions = body.partner_institutions.map(
-  (institution: string) => {
-    return {
-      id: institution
-    };
-  }
-);
+    const partner_institutions = body.partner_institutions.map(
+      (institution: string) => {
+        return {
+          id: institution
+        };
+      }
+    );
 
-const activity = new Activity({
-  id: randomUUID(),
-  title: body.title,
-  description: body.description,
-  start_date: new Date(body.start_date),
-  end_date: new Date(body.end_date),
-  languages: body.languages,
-  partner_institutions: partner_institutions,
-  courses: courses,
-  criterias: criterias,
-  applicants: [],
-  status_activity: ActivityStatusEnum.TO_START,
-  type_activity: body.type_activity,
-  created_at: new Date(),
-  updated_at: new Date()
-});
+    const activity = new Activity({
+      id: randomUUID(),
+      title: body.title,
+      description: body.description,
+      start_date: new Date(body.start_date),
+      end_date: new Date(body.end_date),
+      languages: body.languages,
+      partner_institutions: partner_institutions,
+      courses: courses,
+      criterias: criterias,
+      applicants: [],
+      status_activity: ActivityStatusEnum.TO_START,
+      type_activity: body.type_activity,
+      created_at: new Date(),
+      updated_at: new Date()
+    });
 
-await this.activity_repo.create_activity(activity);
+    try {
+      await this.activity_repo.create_activity(activity);
+    } catch (error) {
+      throw error;
+    }
 
-this.event_bridge.create_trigger(
-  "START_ACTIVITY_" + activity.id,
-  "Start_Activity",
-  activity.start_date,
-  {
-    activity_id: activity.id
-  }
-);
+    this.event_bridge.create_trigger(
+      "START_ACTIVITY_" + activity.id,
+      "Update_Activity_Event",
+      activity.start_date,
+      {
+        activity_id: activity.id,
+        status_activity: ActivityStatusEnum.ACTIVE
+      }
+    );
 
-this.event_bridge.create_trigger(
-  "END_ACTIVITY_" + activity.id,
-  "End_Activity",
-  activity.end_date,
-  {
-    activity_id: activity.id
-  }
-);
-    
+    this.event_bridge.create_trigger(
+      "END_ACTIVITY_" + activity.id,
+      "Update_Activity_Event",
+      activity.end_date,
+      {
+        activity_id: activity.id,
+        status_activity: ActivityStatusEnum.ON_HOLD
+      }
+    );
+
   }
 }
