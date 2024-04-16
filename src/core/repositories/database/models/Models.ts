@@ -90,7 +90,7 @@ const ActivityLanguage = instance.define('ActivityLanguage', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    name: {
+    language: {
         type: DataTypes.STRING,
         allowNull: false
     }
