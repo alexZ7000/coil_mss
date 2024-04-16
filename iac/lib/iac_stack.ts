@@ -35,6 +35,7 @@ export class IacStack extends cdk.Stack {
     });
 
     const ENVIROMMENT_VARIABLES: {[key: string]: string} = {
+      "AWS_ACCOUNT_ID": process.env.AWS_ACCOUNT_ID || "",
       "DOMAIN": process.env.DOMAIN || "",
       "STAGE": process.env.STAGE || "test",
       "AZURE_URL": process.env.AZURE_URL || "",
