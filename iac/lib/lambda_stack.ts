@@ -109,9 +109,9 @@ export class LambdaStack extends Construct {
 
         this.update_activity_event = new lambda_js.NodejsFunction(
             this,
-            "Update_Activity_Event",
+            "Update_Activity_Event_Coil",
             {
-                functionName: "Update_Activity_Event",
+                functionName: "Update_Activity_Event_Coil",
                 entry: `../src/modules/update_activity_event/app/update_activity_event_presenter.ts`,
                 handler: `handler`,
                 environment: environment_variables,
