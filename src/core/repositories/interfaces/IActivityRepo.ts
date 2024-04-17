@@ -9,7 +9,8 @@ export interface IActivityRepo {
     get_activity(id: string): Promise<Activity | null>
     get_activity_by_title(title: string): Promise<Activity | null> 
     get_users_assigned_to_activity(activity_id: string): Promise<User[]>
-    get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null>
+    check_activity_enrolled_by_user(user_id: string, activity_id: string): Promise<boolean>
+    get_activities_by_user_id(user_id: string, activity_type: ActivityTypeEnum): Promise<Activity[] | null>
     get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[], type: ActivityTypeEnum): Promise<Activity[] | null> 
     
     assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean>
