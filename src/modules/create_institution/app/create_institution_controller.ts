@@ -12,6 +12,7 @@ export class CreateInstitutionController {
     constructor(usecase: CreateInstitutionUsecase) {
         this.usecase = usecase;
     }
+
     async execute(request: HttpRequest): Promise<HttpResponse> {
         try {
             if (!request) {
@@ -19,6 +20,9 @@ export class CreateInstitutionController {
             }
             if (!request.body || !request.body.body) { 
                 throw new MissingParameter("Body");
+            }
+            if (!request.headers) {
+                throw new MissingParameter("Headers");
             }
 
             const institutionData = request.body.body;
@@ -37,7 +41,7 @@ export class CreateInstitutionController {
                 social_medias: institutionData.social_medias
             });
 
-            await this.usecase.execute(institution);
+            await this.usecase.execute(institution, request.headers);
     
             return new Created({}, "Institution created successfully");
         } catch (error) {
