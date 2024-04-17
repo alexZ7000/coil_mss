@@ -3,6 +3,7 @@ import { Activity } from "../../structure/entities/Activity";
 import { ActivityMock } from "../../structure/mocks/ActivityMock";
 import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 import { User } from "../../structure/entities/User";
+import { ActivityTypeEnum } from "../../helpers/enums/ActivityTypeEnum";
 
 export class ActivityRepoMock implements IActivityRepo {
   private activity_mock: ActivityMock;
@@ -10,10 +11,13 @@ export class ActivityRepoMock implements IActivityRepo {
   constructor() {
     this.activity_mock = new ActivityMock();
   }
+  check_activity_enrolled_by_user(user_id: string, activity_id: string): Promise<boolean> {
+    throw new Error("Method not implemented.");
+  }
+  get_activities_by_user_id(user_id: string, activity_type: ActivityTypeEnum): Promise<Activity[] | null> {
+    throw new Error("Method not implemented.");
+  }
     get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
-        throw new Error("Method not implemented.");
-    }
-    get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
         throw new Error("Method not implemented.");
     }
     assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
