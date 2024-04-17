@@ -5,9 +5,14 @@ import { Repository } from "../../../core/repositories/Repository";
 
 const repository = new Repository({ activity_repo: true });
 
-const usecase = new GetActivityUsecase(repository.UserRepo, repository.ActivityRepo);
+const usecase = new GetActivityUsecase(
+  repository.UserRepo,
+  repository.ActivityRepo
+);
 const controller = new GetActivityController(usecase);
 
 export const handler = async (event: any, context: any) => {
-  
+  let request = new HttpRequest(event);
+  let response = await controller.execute(request);
+  return response.to_json();
 };
