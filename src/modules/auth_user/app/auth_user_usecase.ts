@@ -5,7 +5,7 @@ import { Course } from '../../../core/structure/entities/Course';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
-import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { InvalidRequest, MissingParameter, UserNotAuthenticated, UserNotAllowed } from '../../../core/helpers/errors/ModuleError';
 
 
 export class AuthUserUsecase {
@@ -24,18 +24,18 @@ export class AuthUserUsecase {
         if (!headers.Authorization) {
             throw new MissingParameter("Authorization");
         }
-        
+
         const token_response = await this.token_auth.verify_azure_token(headers.Authorization)
-        .then
-        (response => {
-            return response;
-        }).catch(error => {
-            throw new UserNotAuthenticated(error.message);
-        });
+            .then
+            (response => {
+                return response;
+            }).catch(error => {
+                throw new UserNotAuthenticated(error.message);
+            });
 
         const padrao: RegExp = /@maua\.br$/;
         if (!padrao.test(token_response.mail)) {
-            throw new UserNotAuthenticated('Invalid Email, must be a maua.br domain.');
+            throw new UserNotAllowed('Invalid Email, must be a maua.br domain.');
         }
 
         let user: User;

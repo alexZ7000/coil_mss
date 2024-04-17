@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import { UniqueConstraintError } from "sequelize";
 import {
+  UserNotAllowed,
   InvalidRequest,
   MissingParameter,
   UserNotAuthenticated,
@@ -88,7 +89,7 @@ export class CreateActivityUsecase {
     }
     const user_types_allowed = [UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR];
     if (!user_types_allowed.includes(user.user_type)) {
-      throw new UserNotAuthenticated();
+      throw new UserNotAllowed();
     }
 
     if (await this.activity_repo.check_activity_by_title(body.title)) {

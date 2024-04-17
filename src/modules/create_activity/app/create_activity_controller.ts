@@ -13,6 +13,7 @@ import {
   BadRequest,
   Conflict,
   Created,
+  Forbidden,
   HttpRequest,
   InternalServerError,
   ParameterError,
@@ -53,7 +54,7 @@ export class CreateActivityController {
         return new Unauthorized(error.message);
       }
       if (error instanceof ConflictError) {
-        return new Conflict(error.message);
+        return new Forbidden(error.message);
       }
       if (error instanceof EntityError) {
         return new ParameterError(error.message);
