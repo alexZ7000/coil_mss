@@ -1,3 +1,6 @@
+import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
+import { ActivityTypeEnum } from "../../../core/helpers/enums/ActivityTypeEnum";
+import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import {
   InvalidRequest,
   MissingParameter,
@@ -33,7 +36,7 @@ export class GetActivityUsecase {
       throw new MissingParameter("activity_id");
     }
 
-    const user_student_id = await this.token_auth
+    const user_id = await this.token_auth
       .decode_token(headers.Authorization)
       .then((response) => {
         return response;
@@ -42,8 +45,8 @@ export class GetActivityUsecase {
         throw new UserNotAuthenticated("Invalid or expired token");
       });
 
-    const user_student = await this.user_repo.get_user(user_student_id);
-    if (!user_student) {
+    const user = await this.user_repo.get_user(user_id);
+    if (!user) {
       throw new UserNotAuthenticated();
     }
 
@@ -52,6 +55,13 @@ export class GetActivityUsecase {
       throw new NotFound("Activity not found");
     }
 
+    if (user.user_type === UserTypeEnum.STUDENT) {
+      const check_user_enrolled = this.activity_repo.check_activity_enrolled_by_user(user_id, activity.id);
+      const condition = ActivityStatusEnum.CANCELED === activity.status_activity || (!check_user_enrolled && [ActivityStatusEnum.ON_HOLD, ActivityStatusEnum.ENDED].includes(activity.status_activity))
+      if (condition) {
+        throw new NotFound("Activity not found");
+      }
+    }
     return activity.to_json();
   }
 }
