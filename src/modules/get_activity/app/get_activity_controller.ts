@@ -29,6 +29,9 @@ export class GetActivityController {
       if (!request.headers) {
         throw new InvalidRequest("Headers");
       }
+      if (!request.body) {
+        throw new InvalidRequest("Body");
+      }
 
       const queryParams = request.body.queryStringParameters;
 
