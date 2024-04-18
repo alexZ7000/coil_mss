@@ -22,17 +22,17 @@ export class GetActivityUsecase {
     this.activity_repo = activity_repo;
   }
 
-  async execute(headers: { [key: string]: any }, body: { [key: string]: any }) {
+  async execute(headers: { [key: string]: any }, queryStringParameters: { [key: string]: any }) {
     if (!headers) {
       throw new InvalidRequest("Headers");
     }
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
     }
-    if (!body) {
+    if (!queryStringParameters) {
       throw new InvalidRequest("Body");
     }
-    if (!body.activity_id) {
+    if (!queryStringParameters.activity_id) {
       throw new MissingParameter("activity_id");
     }
 
@@ -50,7 +50,7 @@ export class GetActivityUsecase {
       throw new UserNotAuthenticated();
     }
 
-    const activity = await this.activity_repo.get_activity(body.activity_id);
+    const activity = await this.activity_repo.get_activity(queryStringParameters.activity_id);
     if (!activity) {
       throw new NotFound("Activity not found");
     }
