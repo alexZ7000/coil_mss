@@ -1,7 +1,7 @@
 import { GetInstitutionUsecase } from "./get_institution_usecase";
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
-import { Conflict, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
+import { Conflict, OK, Unauthorized, BadRequest, HttpRequest, HttpResponse} from '../../../core/helpers/http/http_codes';
 import { ConflictError, InvalidParameter, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
 
@@ -13,12 +13,21 @@ export class GetInstitutionController {
         this.usecase = usecase;
     }
 
-    public async execute( id: string): Promise<{ [key: string]: any }> {
+    public async executeexecute(request: HttpRequest): Promise<HttpResponse> {
         try {
-            
-            
-            let response = await this.usecase.execute(id);
-            return response;
+            if(!request)
+                {
+                    throw new InvalidRequest();
+
+                }
+            if(!request.headers)
+                {
+                    throw new InvalidRequest("Headers");
+
+                }
+
+            let response = await this.usecase.execute(request.headers);
+            return new OK(response, "Institution found");
 
         } catch (error) {
             if (error instanceof InvalidRequest) {

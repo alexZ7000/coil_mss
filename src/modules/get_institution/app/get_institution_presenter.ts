@@ -10,7 +10,7 @@ const usecase = new GetInstitutionUsecase(repository.InstitutionRepo);
 const controller = new GetInstitutionController(usecase);
 
 export const handler = async (event: any, context: any) => {
-    let id = event.pathParameters.id;
-    let response  = await controller.execute(id);
-    return response;
+    let request = new HttpRequest(event);
+    let response = await controller.executeexecute(request);
+    return response.to_json();
 }
