@@ -1,8 +1,10 @@
 import { randomUUID } from 'crypto';
 import { Institution } from "../../../core/structure/entities/Institution";
-import { MissingParameter } from '../../../core/helpers/errors/ModuleError';
+import { MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { IInstitutionRepo } from '../../../core/repositories/interfaces/IInstitutionRepo';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
+import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
+import jwt from 'jsonwebtoken';
 
 export class CreateInstitutionUsecase {
     public database_repo: IInstitutionRepo;
@@ -18,19 +20,15 @@ export class CreateInstitutionUsecase {
             throw new MissingParameter("Authorization");
         }
         
+        const decodedToken = jwt.verify(headers.authorization, process.env.JWT_SECRET as string);
+        const userId = decodedToken;
+        
+        
         const userExists = await this.user_repo.get_user(headers.authorization);
-        if (!userExists) {
-            throw new Error("User does not exist in our database");
+        if (!userExists || userExists.user_type !== UserTypeEnum.ADMIN && userExists.user_type !== UserTypeEnum.MODERATOR) {
+            throw new UserNotAuthenticated("User is not authenticated");
         }
 
-        const user = await this.user_repo.get_user(headers.authorization);
-        if (!user) {
-            throw new Error("User is not authenticated");
-        }
-
-        if (!institution.name) {
-            throw new MissingParameter("Name");
-        }
         if (!institution.name) {
             throw new MissingParameter("Name");
         }

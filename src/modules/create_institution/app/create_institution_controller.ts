@@ -41,7 +41,7 @@ export class CreateInstitutionController {
                 social_medias: institutionData.social_medias
             });
 
-            await this.usecase.execute(institution, request.headers);
+            await this.usecase.execute(institution, request.body);
     
             return new Created({}, "Institution created successfully");
         } catch (error) {
