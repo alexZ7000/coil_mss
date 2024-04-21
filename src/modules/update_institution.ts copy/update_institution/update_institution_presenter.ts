@@ -6,7 +6,7 @@ import { HttpRequest } from "../../../core/helpers/http/http_codes";
 
 const repository = new Repository({ user_repo: true });
 
-const usecase = new UpdateInstitutionUsecase(repository.InstitutionRepo);
+const usecase = new UpdateInstitutionUsecase(repository.InstitutionRepo, repository.UserRepo);
 const controller = new UpdateInstitutionController(usecase);
 
 export const handler = async (event: any, context: any) => {
