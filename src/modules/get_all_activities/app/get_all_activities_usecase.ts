@@ -1,5 +1,6 @@
 import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
 import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
+import { ActivityTypeEnum } from "../../../core/helpers/enums/ActivityTypeEnum"; // Import do enum ActivityTypeEnum
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from "../../../core/helpers/errors/ModuleError";
@@ -60,7 +61,12 @@ export class GetAllActivitiesByStatusUsecase {
       if (typeNumber < 1 || typeNumber > 2) {
         throw new BadRequest("Invalid activity type");
       }
-      statuses = statusAllowed.filter(status => status >= 3); 
+
+      if (typeNumber === ActivityTypeEnum.PROJECT) {
+        statuses = statusAllowed;
+      } else if (typeNumber === ActivityTypeEnum.ACADEMIC_MOBILITY) {
+        statuses = statusAllowed.filter(status => status >= 3);
+      }
     } else {
       statuses = statusAllowed;
     }
