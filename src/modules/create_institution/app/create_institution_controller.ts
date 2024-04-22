@@ -25,23 +25,7 @@ export class CreateInstitutionController {
                 throw new MissingParameter("Headers");
             }
 
-            const institutionData = request.body.body;
-
-            if (!institutionData.id || !institutionData.name || !institutionData.description || !institutionData.email || !institutionData.country || !institutionData.images || !institutionData.social_medias) {
-                throw new MissingParameter("InstitutionData");
-            }
-
-            const institution = new Institution({
-                id: institutionData.id,
-                name: institutionData.name,
-                description: institutionData.description,
-                email: institutionData.email,
-                country: institutionData.country,
-                images: institutionData.images,
-                social_medias: institutionData.social_medias
-            });
-
-            await this.usecase.execute(institution, request.body);
+            await this.usecase.execute(request.body, request.headers);
     
             return new Created({}, "Institution created successfully");
         } catch (error) {
