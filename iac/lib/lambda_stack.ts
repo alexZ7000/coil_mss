@@ -7,6 +7,7 @@ export class LambdaStack extends Construct {
     private auth_user: lambda_js.NodejsFunction;
     private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+    private create_institution: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
     private readonly create_activity: lambda_js.NodejsFunction;
 
@@ -118,6 +119,14 @@ export class LambdaStack extends Construct {
                 timeout: Duration.seconds(15),
                 memorySize: 256
             }
+        );
+
+        this.create_institution = this.create_lambda(
+            "create_institution",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
         );
 
         this.functions_need_event_bridge_access = [
