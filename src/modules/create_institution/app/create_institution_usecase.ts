@@ -3,31 +3,37 @@ import { Institution } from "../../../core/structure/entities/Institution";
 import { MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { IInstitutionRepo } from '../../../core/repositories/interfaces/IInstitutionRepo';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
-import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import jwt from 'jsonwebtoken';
+import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 
 export class CreateInstitutionUsecase {
     public database_repo: IInstitutionRepo;
     public user_repo: IUserRepo;
+    public token_auth: TokenAuth;
 
     constructor(database_repo: IInstitutionRepo, user_repo: IUserRepo) {
         this.database_repo = database_repo;
         this.user_repo = user_repo;
+        this.token_auth = new TokenAuth();
     }
 
     public async execute(institutionData: any, headers: any){
-        if (!headers.authorization) {
+        if (!headers.Authorization) {
             throw new MissingParameter("Authorization");
         }
         
-        const decodedToken = jwt.verify(headers.authorization, process.env.JWT_SECRET as string);
-        const userId = decodedToken;
-        
-        
-        const userExists = await this.user_repo.get_user(headers.authorization);
-        if (!userExists || userExists.user_type !== UserTypeEnum.ADMIN && userExists.user_type !== UserTypeEnum.MODERATOR) {
-            throw new UserNotAuthenticated("User is not authenticated");
-        }
+        const user_id = await this.token_auth
+        .decode_token(headers.Authorization)
+        .then((response) => {
+          return response;
+        })
+        .catch((error) => {
+          throw new UserNotAuthenticated("Invalid or expired token");
+        });
+  
+      const user = await this.user_repo.get_user(user_id);
+      if (!user) {
+        throw new UserNotAuthenticated();
+      }
 
         if (!institutionData.name) {
             throw new MissingParameter("Name");

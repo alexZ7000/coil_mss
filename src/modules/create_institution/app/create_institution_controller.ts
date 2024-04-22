@@ -18,14 +18,14 @@ export class CreateInstitutionController {
             if (!request) {
                 throw new MissingParameter("Request");
             }
-            if (!request.body || !request.body.body) { 
+            if (!request.body) { 
                 throw new MissingParameter("Body");
             }
             if (!request.headers) {
                 throw new MissingParameter("Headers");
             }
 
-            await this.usecase.execute(request.body, request.headers);
+            await this.usecase.execute(request.body.body, request.headers);
     
             return new Created({}, "Institution created successfully");
         } catch (error) {

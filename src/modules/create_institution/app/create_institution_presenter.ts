@@ -1,14 +1,12 @@
 import { CreateInstitutionUsecase } from "./create_institution_usecase";
 import { CreateInstitutionController } from "./create_institution_controller";
 
-import { InstitutionRepo } from "../../../core/repositories/database/repositories/InstitutionRepo";
-import { UserRepo } from "../../../core/repositories/database/repositories/UserRepo";
 import { HttpRequest } from "../../../core/helpers/http/http_codes";
+import { Repository } from "../../../core/repositories/Repository";
 
-const institutionRepo = new InstitutionRepo();
-const userRepo = new UserRepo();
+const repository = new Repository({ user_repo: true, institution_repo: true });
 
-const usecase = new CreateInstitutionUsecase(institutionRepo, userRepo);
+const usecase = new CreateInstitutionUsecase(repository.InstitutionRepo, repository.UserRepo);
 const controller = new CreateInstitutionController(usecase);
 
 export const handler = async (event: any) => {
