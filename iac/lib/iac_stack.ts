@@ -29,7 +29,6 @@ export class IacStack extends cdk.Stack {
         blockPublicPolicy: false,
         ignorePublicAcls: false,
         restrictPublicBuckets: false,
-        
       },
       publicReadAccess: true,
     });

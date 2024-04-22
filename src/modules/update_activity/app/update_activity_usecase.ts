@@ -149,7 +149,5 @@ export class UpdateActivityUsecase {
         }
       }
     });
-
-    return activity;
   }
 }
