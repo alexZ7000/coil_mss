@@ -144,8 +144,10 @@ export class CreateActivityUsecase {
       "Update_Activity_Event",
       activity.start_date,
       {
-        activity_id: activity.id,
-        status_activity: ActivityStatusEnum.ACTIVE
+        "body": {
+          activity_id: activity.id,
+          status_activity: ActivityStatusEnum.ACTIVE
+        }
       }
     );
 
@@ -153,9 +155,11 @@ export class CreateActivityUsecase {
       "END_ACTIVITY_" + activity.id,
       "Update_Activity_Event",
       activity.end_date,
-      {
-        activity_id: activity.id,
-        status_activity: ActivityStatusEnum.ON_HOLD
+      { 
+        "body": {
+          activity_id: activity.id,
+          status_activity: ActivityStatusEnum.ON_HOLD
+        }
       }
     );
 

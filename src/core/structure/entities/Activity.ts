@@ -75,6 +75,39 @@ export class Activity {
         };
     }
 
+    public update(props: ActivityProps) {
+        if (props.title) {
+            this.title = this.validate_set_title(props.title);
+        }
+        if (props.start_date) {
+            this.start_date = this.validate_set_start_date(props.start_date);
+        }
+        if (props.end_date) {
+            this.end_date = this.validate_set_end_date(props.end_date);
+        }
+        if (props.description) {
+            this.description = this.validate_set_description(props.description);
+        }
+        if (props.languages) {
+            this.languages = this.validate_set_languages(props.languages);
+        }
+        if (props.partner_institutions) {
+            this.partner_institutions = this.validate_set_partner_institutions(props.partner_institutions);
+        }
+        if (props.criterias) {
+            this.criterias = this.validate_set_criterias(props.criterias);
+        }
+        if (props.status_activity) {
+            this.status_activity = this.validate_set_status_activity(props.status_activity);
+        }
+        if (props.type_activity) {
+            this.type_activity = this.validate_set_type_activity(props.type_activity);
+        }
+        if (props.courses) {
+            this.courses = this.validate_set_courses(props.courses);
+        }
+    }
+
     private validate_set_id(id: string) {
         if (id == null) {
             throw new EntityError("Parameter id is required");

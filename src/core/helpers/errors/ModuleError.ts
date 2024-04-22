@@ -43,6 +43,12 @@ export class UserNotAllowed extends MainError {
     }
 }
 
+export class NotfoundError extends MainError {
+    constructor(message: string) {
+        super(message);
+    }
+}
+
 export class ConflictError extends MainError {
     constructor(message: string) {
         super(message);
