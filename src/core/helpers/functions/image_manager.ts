@@ -44,6 +44,4 @@ export class ImageManager {
     private async get_image_url(key: string) {
         return `https://${this.bucket}.s3.amazonaws.com/${key}`;
     }
-
-
 }
