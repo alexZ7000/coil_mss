@@ -27,6 +27,7 @@ export class IacStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       publicReadAccess: true,
     });
+    bucket.grantPublicAccess();
 
     const coil_resource = restapi.root.addResource("coil", {
       defaultCorsPreflightOptions: {
@@ -58,7 +59,7 @@ export class IacStack extends cdk.Stack {
       coil_resource
     );
 
-    lambda_stack.functions_need_event_bridge_access.forEach((lambda_function) => {
+    lambda_stack.functions_need_event_bridge_access.forEach((lambda_function: cdk.aws_lambda.Function) => {
       lambda_function.addToRolePolicy(
         new iam.PolicyStatement({
           actions: ["events:*", "lambda:*"],
@@ -67,7 +68,7 @@ export class IacStack extends cdk.Stack {
       );
     });
 
-    lambda_stack.functions_need_s3_access.forEach((lambda_function) => {
+    lambda_stack.functions_need_s3_access.forEach((lambda_function: cdk.aws_lambda.Function) => {
       bucket.grantReadWrite(lambda_function);
     });
   }
