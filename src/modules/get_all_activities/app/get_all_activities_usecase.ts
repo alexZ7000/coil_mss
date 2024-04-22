@@ -1,11 +1,10 @@
 import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
 import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
-import { ActivityTypeEnum } from "../../../core/helpers/enums/ActivityTypeEnum"; // Import do enum ActivityTypeEnum
+import { ActivityTypeEnum } from "../../../core/helpers/enums/ActivityTypeEnum"; 
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
-import { InvalidRequest, MissingParameter, UserNotAuthenticated } from "../../../core/helpers/errors/ModuleError";
+import { InvalidParameter, InvalidRequest, MissingParameter, UserNotAuthenticated } from "../../../core/helpers/errors/ModuleError";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
-import { OK, BadRequest, Unauthorized, ParameterError, InternalServerError } from "../../../core/helpers/http/http_codes";
 
 export class GetAllActivitiesByStatusUsecase {
   public token_auth: TokenAuth;
@@ -24,6 +23,9 @@ export class GetAllActivitiesByStatusUsecase {
     }
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
+    }
+    if (!(queryStringParameters.type_activity in ActivityTypeEnum)) {
+        throw new InvalidParameter("type_activity", queryStringParameters.type_activity);
     }
 
     const user_id = await this.token_auth
@@ -44,34 +46,12 @@ export class GetAllActivitiesByStatusUsecase {
 
     if (user.user_type === UserTypeEnum.STUDENT) {
       statusAllowed = [ActivityStatusEnum.TO_START, ActivityStatusEnum.ACTIVE];
-    } else if (user.user_type === UserTypeEnum.ADMIN || user.user_type === UserTypeEnum.MODERATOR) {
+    } else {
       statusAllowed = [ActivityStatusEnum.TO_START, ActivityStatusEnum.ACTIVE, ActivityStatusEnum.ON_HOLD, ActivityStatusEnum.ENDED, ActivityStatusEnum.CANCELED];
-    } else {
-      throw new Unauthorized("User not authorized");
-    }
+    } 
+    const type_activity = queryStringParameters.type_activity;
 
-    const type = queryStringParameters?.type || null;
-    let statuses: ActivityStatusEnum[] = [];
-
-    if (typeof type === "string") {
-      const typeNumber = parseInt(type, 10);
-      if (isNaN(typeNumber)) {
-        throw new BadRequest("Invalid activity type parameter");
-      }
-      if (typeNumber < 1 || typeNumber > 2) {
-        throw new BadRequest("Invalid activity type");
-      }
-
-      if (typeNumber === ActivityTypeEnum.PROJECT) {
-        statuses = statusAllowed;
-      } else if (typeNumber === ActivityTypeEnum.ACADEMIC_MOBILITY) {
-        statuses = statusAllowed.filter(status => status >= 3);
-      }
-    } else {
-      statuses = statusAllowed;
-    }
-
-    const activities = await this.activity_repo.get_all_activities_by_status(statuses, type);
+    const activities = await this.activity_repo.get_all_activities_by_status(statusAllowed, type_activity);
     return activities ? activities.map(activity => activity.to_json()) : [];
   }
 }
