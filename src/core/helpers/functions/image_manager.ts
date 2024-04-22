@@ -19,7 +19,6 @@ export class ImageManager {
             Key: key,
             Body: body,
             ContentType: content_type,
-            ACL: 'public-read',
         }).promise();
         return await this.get_image_url(key);
     }

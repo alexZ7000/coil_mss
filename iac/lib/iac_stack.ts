@@ -1,9 +1,9 @@
 import * as cdk from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { LambdaStack } from './lambda_stack';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { Bucket, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
 
 
 export class IacStack extends cdk.Stack {
