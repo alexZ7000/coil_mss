@@ -23,8 +23,8 @@ export class IacStack extends cdk.Stack {
 
     const bucket = new Bucket(this, "Coil_Bucket", {
       bucketName: "coil-bucket",
-      accessControl: BucketAccessControl.PUBLIC_READ,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      accessControl: BucketAccessControl.PUBLIC_READ,
       publicReadAccess: true,
     });
 
