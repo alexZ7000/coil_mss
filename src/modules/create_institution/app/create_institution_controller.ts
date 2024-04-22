@@ -2,9 +2,10 @@ import { CreateInstitutionUsecase } from "./create_institution_usecase";
 import { Institution } from "../../../core/structure/entities/Institution";
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
+import { Created, HttpRequest, HttpResponse, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
-import { Created, HttpRequest, HttpResponse } from '../../../core/helpers/http/http_codes';
-import { MissingParameter } from '../../../core/helpers/errors/ModuleError';
+import { MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { UniqueConstraintError } from "sequelize";
 
 export class CreateInstitutionController {
     usecase: CreateInstitutionUsecase;
@@ -18,7 +19,7 @@ export class CreateInstitutionController {
             if (!request) {
                 throw new MissingParameter("Request");
             }
-            if (!request.body) { 
+            if (!request.body) {
                 throw new MissingParameter("Body");
             }
             if (!request.headers) {
@@ -26,8 +27,8 @@ export class CreateInstitutionController {
             }
 
             await this.usecase.execute(request.body.body, request.headers);
-    
             return new Created({}, "Institution created successfully");
+
         } catch (error) {
             if (error instanceof EntityError) {
                 return new BadRequest(error.message);
@@ -35,8 +36,16 @@ export class CreateInstitutionController {
             if (error instanceof MissingParameter) {
                 return new ParameterError(error.message);
             }
-
-            return new InternalServerError("An internal server error occurred");
+            if (error instanceof UserNotAllowed) {
+                return new BadRequest(error.message);
+            }
+            if (error instanceof UserNotAuthenticated) {
+                return new BadRequest(error.message);
+            }
+            if (error instanceof UniqueConstraintError) {
+                return new Unprocessable_Entity(error.message)
+            }
+            return new InternalServerError(error.message);
         }
     }
 }

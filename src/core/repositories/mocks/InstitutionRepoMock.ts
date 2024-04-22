@@ -9,6 +9,17 @@ export class InstitutionRepoMock implements IInstitutionRepo {
         this.institutions_mock = new InstitutionMock();
     }
 
+    async check_institution_exists_by_name(name: string): Promise<boolean> {
+        return new Promise((resolve, reject) => {
+            let institution = this.institutions_mock.institutions.find(institution => institution.name === name);
+            if (institution) {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+    }
+
     async create_institution(institution: Institution): Promise<boolean> {
         this.institutions_mock.institutions.push(institution);
         return true;

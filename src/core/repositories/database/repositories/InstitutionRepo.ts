@@ -11,6 +11,16 @@ export class InstitutionRepo implements IInstitutionRepo {
         this.institutionDTO = new InstitutionDTO();
     }
 
+    public async check_institution_exists_by_name(name: string): Promise<boolean> {
+        let institution_found = await InstitutionDB.findOne({
+            where: {
+                name: name
+            }
+        });
+
+        return institution_found ? true : false;
+    }
+
     public async get_all_institutions(): Promise<Institution[]> {
         let institutions_found = await InstitutionDB.findAll({
             include: [
