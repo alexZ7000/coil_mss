@@ -1,5 +1,5 @@
 import { Construct } from "constructs";
-import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as apigw, aws_iam as iam, Duration} from "aws-cdk-lib";
+import { aws_lambda as lambda, aws_lambda_nodejs as lambda_js, aws_apigateway as apigw, aws_iam as iam, Duration } from "aws-cdk-lib";
 
 export class LambdaStack extends Construct {
 
@@ -11,17 +11,18 @@ export class LambdaStack extends Construct {
     private update_activity_event: lambda_js.NodejsFunction;
     private readonly create_activity: lambda_js.NodejsFunction;
 
+    public functions_need_s3_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
 
     private create_lambda(
         function_name: string,
-        environment_variables: {[key: string]: string},
+        environment_variables: { [key: string]: string },
         method: string,
         restapi_resource: apigw.Resource,
         origins: string[] = apigw.Cors.ALL_ORIGINS,
     ) {
 
-        function toTittle(string:string) {
+        function toTittle(string: string) {
             return string.toLowerCase().split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join("_");
         }
 
@@ -42,7 +43,7 @@ export class LambdaStack extends Construct {
             }
         );
 
-        restapi_resource.addResource(function_name.replace("_", "-"),{
+        restapi_resource.addResource(function_name.replace("_", "-"), {
             defaultCorsPreflightOptions: {
                 allowOrigins: origins,
                 allowMethods: [method],
@@ -57,9 +58,9 @@ export class LambdaStack extends Construct {
     constructor(
         scope: Construct,
         id: string,
-        environment_variables: {[key: string]: string },
+        environment_variables: { [key: string]: string },
         restapi_resource: apigw.Resource
-        ) {
+    ) {
         super(scope, id);
 
         let origins = ["*"];
@@ -128,6 +129,10 @@ export class LambdaStack extends Construct {
             restapi_resource,
             origins
         );
+
+        this.functions_need_s3_access = [
+            this.create_institution,
+        ]
 
         this.functions_need_event_bridge_access = [
             this.create_activity

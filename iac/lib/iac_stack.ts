@@ -9,7 +9,7 @@ import { Bucket, BucketAccessControl, BlockPublicAccess } from 'aws-cdk-lib/aws-
 export class IacStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    
+
     const restapi = new RestApi(
       this, "Coil_Restapi", {
       restApiName: "CoilRestApi",
@@ -18,7 +18,8 @@ export class IacStack extends cdk.Stack {
         allowOrigins: ["*"],
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["*"],
-      }}
+      }
+    }
     );
 
     const bucket = new Bucket(this, "Coil_Bucket", {
@@ -41,7 +42,7 @@ export class IacStack extends cdk.Stack {
       }
     });
 
-    const ENVIROMMENT_VARIABLES: {[key: string]: string} = {
+    const ENVIROMMENT_VARIABLES: { [key: string]: string } = {
       "AWS_ACCOUNT_ID": process.env.AWS_ACCOUNT_ID || "",
       "DOMAIN": process.env.DOMAIN || "",
       "STAGE": process.env.STAGE || "test",
@@ -63,13 +64,17 @@ export class IacStack extends cdk.Stack {
       coil_resource
     );
 
-    for (const lambda_function of lambda_stack.functions_need_event_bridge_access) {
+    lambda_stack.functions_need_event_bridge_access.forEach((lambda_function) => {
       lambda_function.addToRolePolicy(
         new iam.PolicyStatement({
           actions: ["events:*", "lambda:*"],
           resources: ["*"],
         })
       );
-    }
+    });
+
+    lambda_stack.functions_need_s3_access.forEach((lambda_function) => {
+      bucket.grantReadWrite(lambda_function);
+    });
   }
 }
