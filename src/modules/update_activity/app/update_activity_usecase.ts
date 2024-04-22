@@ -90,7 +90,7 @@ export class UpdateActivityUsecase {
       }
     );
 
-    const activity = await this.activity_repo.get_activity(body.id);
+    const activity = await this.activity_repo.get_activity(body.activity_id);
     if (!activity) {
       throw new NotfoundError("Activity not found");
     }
