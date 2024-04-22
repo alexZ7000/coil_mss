@@ -3,7 +3,7 @@ import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { LambdaStack } from './lambda_stack';
 import { RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { Bucket, BucketAccessControl, BlockPublicAccess } from 'aws-cdk-lib/aws-s3';
+import { Bucket, BucketAccessControl } from 'aws-cdk-lib/aws-s3';
 
 
 export class IacStack extends cdk.Stack {
@@ -25,13 +25,6 @@ export class IacStack extends cdk.Stack {
     const bucket = new Bucket(this, "Coil_Bucket", {
       bucketName: "coil-bucket",
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      blockPublicAccess: {
-        blockPublicAcls: false,
-        blockPublicPolicy: false,
-        ignorePublicAcls: false,
-        restrictPublicBuckets: false,
-      },
-      accessControl: BucketAccessControl.PUBLIC_READ,
       publicReadAccess: true,
     });
 
