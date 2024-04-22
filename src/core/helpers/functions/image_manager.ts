@@ -13,11 +13,12 @@ export class ImageManager {
         this.bucket = process.env.AWS_BUCKET as string;
     }
 
-    public async upload_image(key: string, body: Buffer) {
+    public async upload_image(key: string, body: Buffer, content_type: string) {
         await this.s3.putObject({
             Bucket: this.bucket,
             Key: key,
             Body: body,
+            ContentType: content_type,
             ACL: 'public-read',
         }).promise();
         return await this.get_image_url(key);
