@@ -24,6 +24,7 @@ export class IacStack extends cdk.Stack {
     const bucket = new Bucket(this, "Coil_Bucket", {
       bucketName: "coil-bucket",
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      publicReadAccess: true,
     });
 
     const coil_resource = restapi.root.addResource("coil", {
@@ -40,6 +41,7 @@ export class IacStack extends cdk.Stack {
       "STAGE": process.env.STAGE || "test",
       "AZURE_URL": process.env.AZURE_URL || "",
       "SECRET_KEY": process.env.SECRET_KEY || "",
+      "AWS_BUCKET": bucket.bucketName,
       "RDS_HOSTNAME": process.env.RDS_HOSTNAME || "",
       "RDS_PORT": process.env.RDS_PORT || "",
       "RDS_DB_NAME": process.env.RDS_DB_NAME || "",

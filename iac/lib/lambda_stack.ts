@@ -6,12 +6,11 @@ export class LambdaStack extends Construct {
     private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
     private update_user: lambda_js.NodejsFunction;
-    private create_activity: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
+    private readonly create_activity: lambda_js.NodejsFunction;
 
     public functions_need_event_bridge_access: lambda.Function[] = [];
-    
 
     private create_lambda(
         function_name: string,

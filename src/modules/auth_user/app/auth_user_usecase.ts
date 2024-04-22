@@ -44,7 +44,7 @@ export class AuthUserUsecase {
         if (get_user) {
             if (!get_user.name) {
                 get_user.name = token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-                this.database_repo.update_user(get_user);
+                await this.database_repo.update_user(get_user);
             }
             user = new User({
                 id: get_user.id,
@@ -70,7 +70,7 @@ export class AuthUserUsecase {
                 created_at: new Date(),
                 updated_at: new Date()
             });
-            this.database_repo.create_user(user);
+            await this.database_repo.create_user(user);
         }
 
         return {
