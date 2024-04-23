@@ -7,9 +7,14 @@ export class LambdaStack extends Construct {
     private auth_user: lambda_js.NodejsFunction;
     private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+    
     private create_institution: lambda_js.NodejsFunction;
+    private update_institution: lambda_js.NodejsFunction;
+
+    private create_activity: lambda_js.NodejsFunction;
+    private update_activity: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
-    private readonly create_activity: lambda_js.NodejsFunction;
+
 
     public functions_need_s3_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
@@ -108,6 +113,14 @@ export class LambdaStack extends Construct {
             origins
         );
 
+        this.update_activity = this.create_lambda(
+            "update_activity",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
         this.update_activity_event = new lambda_js.NodejsFunction(
             this,
             "Update_Activity_Event_Coil",
@@ -130,12 +143,22 @@ export class LambdaStack extends Construct {
             origins
         );
 
+        this.update_institution = this.create_lambda(
+            "update_institution",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
         this.functions_need_s3_access = [
             this.create_institution,
+            this.update_institution,
         ]
 
         this.functions_need_event_bridge_access = [
-            this.create_activity
+            this.create_activity,
+            this.update_activity,
         ]
     }
 }
