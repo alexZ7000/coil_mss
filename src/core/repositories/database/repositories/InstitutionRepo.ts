@@ -38,6 +38,7 @@ export class InstitutionRepo implements IInstitutionRepo {
         let institution_created = await InstitutionDB.create({
             id: institution.id,
             name: institution.name,
+            description: institution.description,
             email: institution.email,
             country: institution.country
         });
