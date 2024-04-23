@@ -35,17 +35,15 @@ export class UpdateInstitutionUsecase {
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
     }
-    if (!body.institution_id) {
+    if (!body.id) {
       throw new MissingParameter("Missing institution_id");
     }
-
-    const user_id = await this.token_auth
-    .decode_token(headers.Authorization)
-    .then((response) => {
-      return response;
-    })
-    .catch((error) => {
-      throw new UserNotAuthenticated("Invalid or expired token");
+    
+    const user_id = await this.token_auth.decode_token(headers.Authorization)
+    .then(response => {
+        return response;
+    }).catch(error => {
+        throw new UserNotAuthenticated("Invalid or expired token");
     });
 
     const user = await this.user_repo.get_user(user_id);
@@ -55,7 +53,7 @@ export class UpdateInstitutionUsecase {
 
 
 
-    const institution = await this.institution_repo.get_institution(user_id)
+    const institution = await this.institution_repo.get_institution(body.institution_id)
     if(!institution){
       throw new NotFound("Institution not found."); 
     }

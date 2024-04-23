@@ -4,7 +4,7 @@ import { UpdateInstitutionController } from "./update_institution_controller";
 import { Repository } from "../../../core/repositories/Repository";
 import { HttpRequest } from "../../../core/helpers/http/http_codes";
 
-const repository = new Repository({ user_repo: true });
+const repository = new Repository({ user_repo: true, institution_repo: true});
 
 const usecase = new UpdateInstitutionUsecase(repository.InstitutionRepo, repository.UserRepo);
 const controller = new UpdateInstitutionController(usecase);

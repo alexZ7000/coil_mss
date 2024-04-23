@@ -1,9 +1,11 @@
 import { it, describe, expect } from "vitest";
 
 import { TokenAuth } from "../../../src/core/helpers/functions/token_auth";
+import { UserMock } from "../../../src/core/structure/mocks/UserMock";
 import { handler } from "../../../src/modules/update_institution.ts copy/update_institution/update_institution_presenter";
 
 describe("Testing Update Institution Presenter", () => {
+  const user_admin = new UserMock().users[0];
   const institution_admin = {
     id: '365556ad-69d2-43cd-b98c-287bf7606fba',
     name: 'Test',
@@ -17,16 +19,13 @@ describe("Testing Update Institution Presenter", () => {
   };
 
   const institution_updated = {
-    body: {
+      id: '365556ad-69d2-43cd-b98c-287bf7606fba',
       name: "Updated University",
       country: "Updated Country",
-    }
   };
 
   it("should update an institution", async () => {
-    var token = (
-      await new TokenAuth().generate_token(institution_admin.id)
-    );
+    var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
 
     var response = await handler(
       {
@@ -52,6 +51,7 @@ describe("Testing Update Institution Presenter", () => {
       },
       null
     );
+    console.log(response);
 
     expect(response.statusCode).toBe(401);
     expect(JSON.parse(response.body).message).toBe("Invalid or expired token");
