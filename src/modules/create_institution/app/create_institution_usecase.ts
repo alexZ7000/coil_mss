@@ -97,12 +97,12 @@ export class CreateInstitutionUsecase {
             social_medias: institutionData.social_medias
         });
 
-        await Promise.all(images.map(async (image: string, index: number) => {
+        images.map(async (image: string, index: number) => {
             const content_type = image.split(';')[0].split(':')[1];
             const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;
             const image_buffer = Buffer.from(image.split(',')[1], 'base64');
             institution.images[index] = await this.bucket.upload_image(image_key, image_buffer, content_type);
-        }));
+        });
 
         await this.institution_repo.create_institution(institution);
     }

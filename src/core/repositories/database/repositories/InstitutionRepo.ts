@@ -39,26 +39,21 @@ export class InstitutionRepo implements IInstitutionRepo {
             id: institution.id,
             name: institution.name,
             email: institution.email,
-            country: institution.country,
-            InstitutionSocialMedia: institution.social_medias.map(sm => {
-                return {
-                    institution_id: institution.id,
-                    media: sm.media,
-                    link: sm.link,
-                }
-            }),
-            InstitutionImage: institution.images.map(img => {
-                return {
-                    institution_id: institution.id,
-                    image: img,
-                }
-            })
-        }, {
-            include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
-            ]
+            country: institution.country
         });
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
+            return {
+                institution_id: institution.id,
+                media: sm.media,
+                link: sm.link
+            }
+        }));
+        await InstitutionImageDB.bulkCreate(institution.images.map(img => {
+            return {
+                institution_id: institution.id,
+                image: img
+            }
+        }));
 
         return institution_created ? true : false;
     }
