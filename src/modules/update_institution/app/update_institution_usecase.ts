@@ -1,22 +1,26 @@
-import { i } from "vitest/dist/reporters-LqC_WI4d.js";
 import {
   InvalidRequest,
   MissingParameter,
+  UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
+import { UniqueConstraintError } from "sequelize";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
-import { IInstitutionRepo } from "../../../core/repositories/interfaces/IInstitutionRepo";
-import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
+import { NotFoundError } from "../../../core/helpers/errors/RepoError";
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import { NotFound } from "../../../core/helpers/http/http_codes";
+import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
+import { ImageManager } from "../../../core/helpers/functions/image_manager";
+import { IInstitutionRepo } from "../../../core/repositories/interfaces/IInstitutionRepo";
 
 export class UpdateInstitutionUsecase {
+  public bucket: ImageManager;
   public token_auth: TokenAuth;
-  public institution_repo: IInstitutionRepo;
   public user_repo: IUserRepo;
+  public institution_repo: IInstitutionRepo;
 
   constructor(institution_repo: IInstitutionRepo, user_repo: IUserRepo) {
     this.token_auth = new TokenAuth();
+    this.bucket = new ImageManager();
     this.institution_repo = institution_repo;
     this.user_repo = user_repo;
   }
@@ -35,30 +39,39 @@ export class UpdateInstitutionUsecase {
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
     }
-    if (!body.id) {
+    if (!body.institution_id) {
       throw new MissingParameter("Missing institution_id");
     }
-    
+
     const user_id = await this.token_auth.decode_token(headers.Authorization)
-    .then(response => {
+      .then(response => {
         return response;
-    }).catch(error => {
+      }).catch(error => {
         throw new UserNotAuthenticated("Invalid or expired token");
-    });
+      });
 
     const user = await this.user_repo.get_user(user_id);
-    if (!user || user.user_type !== UserTypeEnum.ADMIN && user.user_type !== UserTypeEnum.MODERATOR) {
-      throw new UserNotAuthenticated("User not authorized to update institution.");
+    if (!user) {
+      throw new UserNotAuthenticated();
     }
-
-
+    if (!([UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type))) {
+      throw new UserNotAllowed();
+    }
 
     const institution = await this.institution_repo.get_institution(body.institution_id)
-    if(!institution){
-      throw new NotFound("Institution not found."); 
+    if (!institution) {
+      throw new NotFoundError("Institution not found");
     }
 
-    
+    if (body.name) {
+      const institution_exists = await this.institution_repo.check_institution_exists_by_name(body.name);
+      if (institution_exists) {
+        throw new UniqueConstraintError({
+          message: "Institution already exists"
+        });
+      }
+    }
+
     institution.name = body.name || institution.name;
     institution.description = body.description || institution.description;
     institution.country = body.country || institution.country;
@@ -66,12 +79,17 @@ export class UpdateInstitutionUsecase {
     institution.country = body.country || institution.country;
     institution.images = body.images || institution.images;
     institution.social_medias = body.social_medias || institution.social_medias;
-    
 
-    const updateInstitution = await this.institution_repo.update_institution(institution);
+    if (body.images) {
+      institution.images.map(async (image: string, index: number) => {
+        const content_type = image.split(';')[0].split(':')[1];
+        const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;
+        const image_buffer = Buffer.from(image.split(',')[1], 'base64');
+        institution.images[index] = await this.bucket.upload_image(image_key, image_buffer, content_type);
+      });
+    }
 
-    
-    return institution;
+    await this.institution_repo.update_institution(institution);
   }
 
 }

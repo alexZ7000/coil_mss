@@ -70,23 +70,29 @@ export class InstitutionRepo implements IInstitutionRepo {
                 id: institution.id
             }
         });
+        await InstitutionSocialMediaDB.destroy({
+            where: {
+                institution_id: institution.id
+            }
+        });
+        await InstitutionImageDB.destroy({
+            where: {
+                institution_id: institution.id
+            }
+        });
         await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
             return {
                 institution_id: institution.id,
                 media: sm.media,
                 link: sm.link
             }
-        }), {
-            updateOnDuplicate: ['media', 'link']
-        });
+        }));
         await InstitutionImageDB.bulkCreate(institution.images.map(img => {
             return {
                 institution_id: institution.id,
                 image: img
             }
-        }), {
-            updateOnDuplicate: ['image']
-        });
+        }));
 
         return true;
     }
