@@ -42,10 +42,9 @@ async function handleDatabaseCreation(): Promise<void> {
     const stage = process.env.STAGE || "";
     const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
     if ("prod" !== stage) {
-        await Promise.all(models.map(async model => await model.sync({ force: true })));
-    } else {
-        await Promise.all(models.map(async model => await model.sync({ alter: true })));
+        await Promise.all(models.reverse().map(async model => await model.drop()));
     }
+    await Promise.all(models.map(async model => await model.sync({ alter: true })));
 }
 
 async function createOrUpdateUser(name: string, email: string, userType: UserTypeEnum, courseId: number | null, semester: number | null): Promise<void> {
