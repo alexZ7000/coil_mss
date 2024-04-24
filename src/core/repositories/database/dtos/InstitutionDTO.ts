@@ -7,21 +7,21 @@ class Props {
     description: string;
     email: string;
     country: string;
-    InstitutionSocialMedia?: {id: number, institution_id: string, media: string, link: string}[];
-    InstitutionImage?: {id: number, institution_id: string, image: string}[];
+    SocialMedias?: {id: number, institution_id: string, media: string, link: string}[];
+    Images?: {id: number, institution_id: string, image: string}[];
 }
 
 
 export class InstitutionDTO {
 
-    public to_entity(course: Props): Institution {
+    public to_entity(institution: Props): Institution {
         return new Institution({
-            id: course.id,
-            name: course.name,
-            description: course.description,
-            email: course.email,
-            country: course.country,
-            social_medias: course.InstitutionSocialMedia ? course.InstitutionSocialMedia.map(sm => {
+            id: institution.id,
+            name: institution.name,
+            description: institution.description,
+            email: institution.email,
+            country: institution.country,
+            social_medias: institution.SocialMedias ? institution.SocialMedias.map(sm => {
                 return {
                     id: sm.id,
                     institution_id: sm.institution_id,
@@ -29,7 +29,7 @@ export class InstitutionDTO {
                     link: sm.link,
                 }
             }) : [],
-            images: course.InstitutionImage ? course.InstitutionImage.map(img => {
+            images: institution.Images ? institution.Images.map(img => {
                 return img.image;
             }) : [],
         });

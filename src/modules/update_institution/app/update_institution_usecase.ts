@@ -81,6 +81,7 @@ export class UpdateInstitutionUsecase {
     institution.social_medias = body.social_medias || institution.social_medias;
 
     if (body.images) {
+      await this.bucket.delete_folder(`institution/${institution.id}`);
       institution.images.map(async (image: string, index: number) => {
         const content_type = image.split(';')[0].split(':')[1];
         const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;

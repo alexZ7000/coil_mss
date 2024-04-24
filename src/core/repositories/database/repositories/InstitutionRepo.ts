@@ -24,8 +24,8 @@ export class InstitutionRepo implements IInstitutionRepo {
     public async get_all_institutions(): Promise<Institution[]> {
         let institutions_found = await InstitutionDB.findAll({
             include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+                { model: InstitutionSocialMediaDB, as: "SocialMedias" },
+                { model: InstitutionImageDB, as: "Images" },
             ]
         });
 
@@ -42,14 +42,14 @@ export class InstitutionRepo implements IInstitutionRepo {
             email: institution.email,
             country: institution.country
         });
-        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map((sm: { media: string; link: string; }) => {
             return {
                 institution_id: institution.id,
                 media: sm.media,
                 link: sm.link
             }
         }));
-        await InstitutionImageDB.bulkCreate(institution.images.map(img => {
+        await InstitutionImageDB.bulkCreate(institution.images.map((img: string) => {
             return {
                 institution_id: institution.id,
                 image: img
@@ -80,14 +80,14 @@ export class InstitutionRepo implements IInstitutionRepo {
                 institution_id: institution.id
             }
         });
-        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map((sm: { media: string; link: string; }) => {
             return {
                 institution_id: institution.id,
                 media: sm.media,
                 link: sm.link
             }
         }));
-        await InstitutionImageDB.bulkCreate(institution.images.map(img => {
+        await InstitutionImageDB.bulkCreate(institution.images.map((img: string) => {
             return {
                 institution_id: institution.id,
                 image: img
@@ -113,8 +113,8 @@ export class InstitutionRepo implements IInstitutionRepo {
                 id: id
             },
             include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+                { model: InstitutionSocialMediaDB, as: "SocialMedias" },
+                { model: InstitutionImageDB, as: "Images" },
             ]
         });
 
