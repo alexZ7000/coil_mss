@@ -42,7 +42,8 @@ async function handleDatabaseCreation(): Promise<void> {
     const stage = process.env.STAGE || "";
     const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
     if ("prod" !== stage) {
-        await Promise.all(models.reverse().map(async model => await model.drop()));
+        let reversedModels = models.slice().reverse();
+        await Promise.all(reversedModels.map(async model => await model.drop()));
     }
     await Promise.all(models.map(async model => await model.sync({ alter: true })));
 }
