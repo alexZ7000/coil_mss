@@ -21,7 +21,7 @@ const institutions = [
     {
         id: randomUUID(),
         name: "Fontys University of Applied Sciences",
-        county: "Netherlands",
+        country: "Netherlands",
         email: "teste@test.com"
     }
 ];
