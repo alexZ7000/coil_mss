@@ -355,7 +355,10 @@ const InstitutionImage = instance.define('InstitutionImage', {
 User.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'SET NULL' });
 User.belongsTo(UserType, { foreignKey: 'user_type_id' });
 User.hasMany(ActivityApplication, { foreignKey: 'user_id', onDelete: 'CASCADE' });
+
 Course.hasMany(ActivityCourse, { foreignKey: 'course_id', onDelete: 'CASCADE' });
+Course.hasMany(ActivityCourse, { foreignKey: 'course_id', onDelete: 'CASCADE' });
+
 Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id' });
 Activity.belongsTo(ActivityType, { foreignKey: 'type_id' });
 Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
@@ -363,9 +366,10 @@ Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCA
 Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
 Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
 Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
-Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
+
 Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
+Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
+Institution.hasMany(ActivityPartnerInstitution, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
 
 export {
     User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage,
