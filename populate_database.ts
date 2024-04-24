@@ -42,7 +42,7 @@ async function handleDatabaseCreation(): Promise<void> {
     const stage = process.env.STAGE || "";
     const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
     if ("prod" !== stage) {
-        await Promise.all(models.reverse().map(model => model.sync({ force: true })));
+        await Promise.all(models.map(model => model.sync({ force: true })));
     } else {
         await Promise.all(models.map(model => model.sync({ alter: true })));
     }
