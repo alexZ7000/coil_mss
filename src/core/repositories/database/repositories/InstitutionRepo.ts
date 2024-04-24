@@ -24,8 +24,8 @@ export class InstitutionRepo implements IInstitutionRepo {
     public async get_all_institutions(): Promise<Institution[]> {
         let institutions_found = await InstitutionDB.findAll({
             include: [
-                { model: InstitutionSocialMediaDB, as: "SocialMedias" },
-                { model: InstitutionImageDB, as: "Images" },
+                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
+                { model: InstitutionImageDB, as: InstitutionImageDB.name },
             ]
         });
 
@@ -113,8 +113,8 @@ export class InstitutionRepo implements IInstitutionRepo {
                 id: id
             },
             include: [
-                { model: InstitutionSocialMediaDB, as: "SocialMedias" },
-                { model: InstitutionImageDB, as: "Images" },
+                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
+                { model: InstitutionImageDB, as: InstitutionImageDB.name },
             ]
         });
 
