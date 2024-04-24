@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
+
 import {
     User, Course, UserType, ActivityCourse, Institution, InstitutionImage, InstitutionSocialMedia,
     ActivityStatus, ActivityType, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution,
@@ -17,7 +18,7 @@ const courses: string[] = [
 ];
 
 const institutions = [
-    { 
+    {
         id: randomUUID(),
         name: "Fontys University of Applied Sciences",
         county: "Netherlands",
@@ -38,22 +39,41 @@ const activityTypes: ActivityTypeEnum[] = [
 ];
 
 async function handleDatabaseCreation(): Promise<void> {
+    const stage = process.env.STAGE || "";
+    if (["dev", "test"].includes(stage)) {
+        await Promise.all([
+            ActivityCourse.drop(),
+            ActivityPartnerInstitution.drop(),
+            ActivityCriteria.drop(),
+            ActivityLanguage.drop(),
+            ActivityApplication.drop(),
+            Activity.drop(),
+            InstitutionSocialMedia.drop(),
+            InstitutionImage.drop(),
+            ActivityType.drop(),
+            ActivityStatus.drop(),
+            User.drop(),
+            Institution.drop(),
+            Course.drop(),
+            UserType.drop()
+        ]);
+    }
     await Promise.all([
-        UserType,
-        Course,
-        Institution,
-        User,
-        ActivityStatus,
-        ActivityType,
-        InstitutionImage,
-        InstitutionSocialMedia,
-        Activity,
-        ActivityApplication,
-        ActivityLanguage,
-        ActivityCriteria,
-        ActivityPartnerInstitution,
-        ActivityCourse
-    ].map(model => model.sync({ alter: true })));    
+        UserType.sync({ alter: true }),
+        Course.sync({ alter: true }),
+        Institution.sync({ alter: true }),
+        User.sync({ alter: true }),
+        ActivityStatus.sync({ alter: true }),
+        ActivityType.sync({ alter: true }),
+        InstitutionImage.sync({ alter: true }),
+        InstitutionSocialMedia.sync({ alter: true }),
+        Activity.sync({ alter: true }),
+        ActivityApplication.sync({ alter: true }),
+        ActivityLanguage.sync({ alter: true }),
+        ActivityCriteria.sync({ alter: true }),
+        ActivityPartnerInstitution.sync({ alter: true }),
+        ActivityCourse.sync({ alter: true })
+    ]);
 }
 
 async function createOrUpdateUser(name: string, email: string, userType: UserTypeEnum, courseId: number | null, semester: number | null): Promise<void> {

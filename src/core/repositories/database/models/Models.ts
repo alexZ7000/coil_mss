@@ -326,7 +326,7 @@ const InstitutionSocialMedia = instance.define('InstitutionSocialMedia', {
         allowNull: false
     }
 }, {
-    tableName: 'institution_social_media',
+    tableName: 'institution_social_medias',
     timestamps: false,
     modelName: 'InstitutionSocialMedia',
 });
@@ -347,7 +347,7 @@ const InstitutionImage = instance.define('InstitutionImage', {
         allowNull: false
     }
 }, {
-    tableName: 'institution_image',
+    tableName: 'institution_images',
     timestamps: false,
     modelName: 'InstitutionImage',
 });
