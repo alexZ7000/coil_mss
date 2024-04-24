@@ -347,7 +347,7 @@ const InstitutionImage = instance.define('InstitutionImage', {
         allowNull: false
     }
 }, {
-    tableName: 'institution_images',
+    tableName: 'institution_image',
     timestamps: false,
     modelName: 'InstitutionImage',
 });
