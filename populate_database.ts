@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
-
 import {
     User, Course, UserType, ActivityCourse, Institution, InstitutionImage, InstitutionSocialMedia,
     ActivityStatus, ActivityType, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution,
@@ -40,7 +39,7 @@ const activityTypes: ActivityTypeEnum[] = [
 
 async function handleDatabaseCreation(): Promise<void> {
     const stage = process.env.STAGE || "";
-    if (["dev", "test"].includes(stage)) {
+    if ("prod" !== stage) {
         await Promise.all([
             ActivityCourse.drop(),
             ActivityPartnerInstitution.drop(),
@@ -138,7 +137,7 @@ async function handleCoursesCreation(): Promise<void> {
         console.log("Enums checked/created");
         await createOrUpdateUser("Relações Internacionais", "relacoes-internacionais@maua.br", UserTypeEnum.ADMIN, 1, null);
         const stage = process.env.STAGE || "";
-        if (["dev", "test"].includes(stage)) {
+        if ("prod" !== stage) {
             await createOrUpdateUser("Felipe Carillo", "23.00765-6@maua.br", UserTypeEnum.ADMIN, 1, 1);
         }
         console.log("Users checked/created");

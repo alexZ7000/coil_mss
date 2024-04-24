@@ -29,6 +29,7 @@ jobs:
           cd iac
           npm install
         env:
+          STAGE: ${{ github.ref_name }}
           RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}
