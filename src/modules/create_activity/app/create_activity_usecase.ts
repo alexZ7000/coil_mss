@@ -5,6 +5,7 @@ import {
   InvalidRequest,
   MissingParameter,
   UserNotAuthenticated,
+  InvalidParameter,
 } from "../../../core/helpers/errors/ModuleError";
 import { Course } from "../../../core/structure/entities/Course";
 import { Activity } from "../../../core/structure/entities/Activity";
@@ -72,6 +73,9 @@ export class CreateActivityUsecase {
     }
     if (!body.type_activity) {
       throw new MissingParameter("Type Activity");
+    }
+    if (new Date(body.start_date) > new Date(body.end_date)) {
+        throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
     }
 
     const user_id = await this.token_auth
