@@ -12,9 +12,9 @@ import { CourseRepo } from "./database/repositories/CourseRepo";
 
 class RepositoryProps {
     user_repo?: boolean = false;
+    course_repo?: boolean = false;
     activity_repo?: boolean = false;
     institution_repo?: boolean = false;
-    course_repo?: boolean = false;
 }
 
 export class Repository {
