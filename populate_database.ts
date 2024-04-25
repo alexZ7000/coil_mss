@@ -43,9 +43,8 @@ async function handleDatabaseCreation(): Promise<void> {
     const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
 
     if ("prod" !== stage) {
-        let reversedModels = models.slice().reverse();
-        for (const model of reversedModels) {
-            await model.drop();
+        for (const model of models) {
+            await model.sync({ force: true });
         }
     }
 
