@@ -115,7 +115,7 @@ export class Activity {
         if (!(end_date instanceof Date)) {
             throw new EntityError("Parameter end_date must be a Date object");
         }
-        if (end_date < this.start_date) {
+        if (end_date <= this.start_date) {
             throw new EntityError("Parameter end_date must be greater than start_date");
         }
         return end_date;
