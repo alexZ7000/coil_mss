@@ -8,6 +8,7 @@ import {
   HttpRequest,
   HttpResponse,
   InternalServerError,
+  NotFound,
   OK,
   ParameterError,
   Unauthorized,
@@ -45,7 +46,7 @@ export class GetActivityController {
         return new Unauthorized(error.message);
       }
       if (error instanceof MissingParameter) {
-        return new ParameterError(error.message);
+        return new NotFound(error.message);
       }
       return new InternalServerError(error.message);
     }
