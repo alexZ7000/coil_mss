@@ -20,6 +20,10 @@ export class ActivityRepoMock implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
+    async check_activity_by_id(id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+
     async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
@@ -36,7 +40,7 @@ export class ActivityRepoMock implements IActivityRepo {
         throw new Error("Method not implemented.");    
     }
 
-    async get_activity(id: string): Promise<Activity | null> {
+    async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
         return this.activity_mock.activities.find(activity => activity.id === id) || null;
     }
 

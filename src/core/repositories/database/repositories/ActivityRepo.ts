@@ -1,4 +1,4 @@
-import { UniqueConstraintError, } from "sequelize";
+import { Includeable } from "sequelize";
 import { ActivityDTO } from "../dtos/ActivityDTO";
 import { User } from "../../../structure/entities/User";
 import { IActivityRepo } from "../../interfaces/IActivityRepo";
@@ -20,20 +20,25 @@ export class ActivityRepo implements IActivityRepo {
         this.ActivityDTO = new ActivityDTO();
     }
 
-    async get_activity(id: string): Promise<Activity | null> {
+    async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
+        let include: Includeable | Includeable[] = [
+            { model: ActivityCourse, as: 'courses' },
+            { model: ActivityLanguage, as: 'languages' },
+            { model: ActivityCriteria, as: 'criterias' },
+            { model: ActivityPartnerInstitution, as: 'partner_institutions' },
+            { model: ActivityStatus, as: 'activity_status' },
+            { model: ActivityType, as: 'activity_type' }
+        ];
+
+        if (applicants) {
+            include.push({ model: ActivityApplication, as: ActivityApplication.name, include: [{ model: UserDB, as: 'user' }] });
+        }
+
         const activity = await ActivityDB.findOne({
             where: {
                 id: id
             },
-            include: [
-                { model: ActivityApplication, as: ActivityApplication.name },
-                { model: ActivityCourse, as: ActivityCourse.name },
-                { model: ActivityLanguage, as: ActivityLanguage.name },
-                { model: ActivityCriteria, as: ActivityCriteria.name },
-                { model: ActivityPartnerInstitution, as: ActivityPartnerInstitution.name },
-                { model: ActivityStatus, as: ActivityStatus.name },
-                { model: ActivityType, as: ActivityType.name }
-            ]
+            include: include
         });
 
         if (!activity) {
@@ -79,6 +84,21 @@ export class ActivityRepo implements IActivityRepo {
             activity_id: activity.id,
             criteria: criteria.criteria
         })));
+        return true;
+    }
+
+    async check_activity_by_id(id: string): Promise<boolean> {
+        const activity = await ActivityDB.findOne({
+            where: {
+                id: id
+            },
+            attributes: ['id']
+        });
+
+        if (!activity) {
+            return false;
+        }
+
         return true;
     }
 
