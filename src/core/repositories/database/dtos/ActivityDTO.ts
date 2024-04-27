@@ -38,7 +38,7 @@ export class ActivityDTO {
             languages: activity.languages ? activity.languages.map(language => language.language) : [],
             criterias: activity.criterias ? activity.criterias.map(criteria =>
                 new Criteria({
-                    id: criteria.id,
+                    id: criteria.id || 0,
                     criteria: criteria.criteria
                 })) : [],
             partner_institutions: activity.partner_institutions ? activity.partner_institutions.map(institution =>
