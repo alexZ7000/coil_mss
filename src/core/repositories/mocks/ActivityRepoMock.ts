@@ -17,11 +17,11 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async check_activity_by_title(title: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return this.activity_mock.activities.some(activity => activity.title === title);
     }
 
     async check_activity_by_id(id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return this.activity_mock.activities.some(activity => activity.id === id);
     }
 
     async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {

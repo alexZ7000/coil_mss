@@ -20,7 +20,7 @@ export class ActivityMock {
     constructor() {
         this.activities = [
             new Activity({
-                id: randomUUID(),
+                id: '9166c7b4-6c42-4977-aebe-d87734a5a9c5',
                 title: "Project 1",
                 start_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
                 end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2),
@@ -33,11 +33,11 @@ export class ActivityMock {
                 type_activity: ActivityTypeEnum.PROJECT,
                 created_at: new Date(),
                 updated_at: new Date(),
-                applicants: [{ user: this.user_mock.users[1], status: true }, { user: this.user_mock.users[1], status: false }]
+                applicants: [{ id: this.user_mock.users[1].id, status: true }, { id: this.user_mock.users[1].id, status: false }]
             }),
             new Activity(
                 {
-                    id: randomUUID(),
+                    id: "9166c7b4-6c42-4977-aebe-d87734a5a9c6",
                     title: "Project 2",
                     start_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
                     end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2),
@@ -49,13 +49,13 @@ export class ActivityMock {
                     type_activity: ActivityTypeEnum.PROJECT,
                     created_at: new Date(),
                     updated_at: new Date(),
-                    applicants: [{ user: this.user_mock.users[1], status: true }, { user: this.user_mock.users[1], status: false }],
+                    applicants: [{ id: this.user_mock.users[1].id, status: true }, { id: this.user_mock.users[1].id, status: false }],
                     courses: [this.course_mock.courses[3], this.course_mock.courses[4], this.course_mock.courses[0]]
                 }
             ),
             new Activity(
                 {
-                    id: randomUUID(),
+                    id: "9166c7b4-6c42-4977-aebe-d87734a5a9c7",
                     title: "Project 3",
                     start_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
                     end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2),
@@ -73,7 +73,7 @@ export class ActivityMock {
             ),
             new Activity(
                 {
-                    id: randomUUID(),
+                    id: "9166c7b4-6c42-4977-aebe-d87734a5a9c8",
                     title: "Project 4",
                     start_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
                     end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2),
@@ -86,7 +86,7 @@ export class ActivityMock {
                     type_activity: ActivityTypeEnum.ACADEMIC_MOBILITY,
                     created_at: new Date(),
                     updated_at: new Date(),
-                    applicants: [{ user: this.user_mock.users[1], status: true }, { user: this.user_mock.users[1], status: false }]
+                    applicants: [{ id: this.user_mock.users[1].id, status: true }, { id: this.user_mock.users[1].id, status: false }]
                 }
             )
         ];
