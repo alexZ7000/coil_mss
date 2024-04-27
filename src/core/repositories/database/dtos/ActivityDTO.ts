@@ -11,8 +11,8 @@ class ActivityProps {
     id: string;
     title: string;
     description: string;
-    activity_status: number;
-    activity_type: number;
+    status_id: number;
+    type_id: number;
     start_date: Date;
     end_date: Date;
     created_at: Date;
@@ -30,8 +30,8 @@ export class ActivityDTO {
             id: activity.id,
             title: activity.title,
             description: activity.description,
-            status_activity: activity.activity_status,
-            type_activity: activity.activity_type,
+            status_activity: activity.status_id,
+            type_activity: activity.type_id,
             start_date: activity.start_date,
             end_date: activity.end_date,
             created_at: activity.created_at,
