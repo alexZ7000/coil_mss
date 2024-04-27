@@ -138,8 +138,7 @@ export class UpdateActivityUsecase {
     });
 
     await this.activity_repo.update_activity(activity_update).then(async (response) => {
-      if (response) {
-
+      if (response && process.env.STAGE === "prod") {
         if (activity_update.start_date !== activity.start_date) {
           // Delete the previous trigger and create a new one
           await this.event_bridge.delete_trigger(
