@@ -354,34 +354,34 @@ const InstitutionImage = instance.define('InstitutionImage', {
 
 // Relationships
 // User
-User.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'SET NULL' });
-User.belongsTo(UserType, { foreignKey: 'user_type_id' });
+User.belongsTo(Course, { foreignKey: 'course_id', as: 'course', onDelete: 'SET NULL' });
+User.belongsTo(UserType, { foreignKey: 'user_type_id', as: 'user_type' });
 
 // Activity
-Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id' });
-Activity.belongsTo(ActivityType, { foreignKey: 'type_id' });
+Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id', as: 'activity_status'});
+Activity.belongsTo(ActivityType, { foreignKey: 'type_id', as: 'activity_type' });
 
 // ActivityApplication
-Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-ActivityApplication.belongsTo(User, { foreignKey: 'user_id' });
+Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'applications'});
+ActivityApplication.belongsTo(User, { foreignKey: 'user_id', as: 'user'});
 
 // Activity Language
-Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'languages'});
 
 // Activity Partner Institution
-Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-ActivityPartnerInstitution.belongsTo(Institution, { foreignKey: 'institution_id' });
+Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'partner_institutions'});
+ActivityPartnerInstitution.belongsTo(Institution, { foreignKey: 'institution_id', as: 'institution'});
 
 // Activity Criteria
-Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
+Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'criterias'});
 
 // Activity Course
-Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-ActivityCourse.belongsTo(Course, { foreignKey: 'course_id' });
+Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'courses'});
+ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', as: 'course' });
 
 // Institution
-InstitutionImage.belongsTo(Institution, { foreignKey: 'institution_id' });
-InstitutionSocialMedia.belongsTo(Institution, { foreignKey: 'institution_id' });
+Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'social_medias'});
+Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'images'});
 
 export {
     User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage,
