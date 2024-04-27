@@ -5,9 +5,19 @@ import { IActivityRepo } from "../../interfaces/IActivityRepo";
 import { Activity } from "../../../structure/entities/Activity";
 import { ActivityStatusEnum } from "../../../helpers/enums/ActivityStatusEnum";
 import {
-    Activity as ActivityDB, ActivityApplication, ActivityCourse, ActivityLanguage,
-    ActivityCriteria, ActivityPartnerInstitution, ActivityStatus, ActivityType,
-    Course, Institution, User as UserDB
+    Course,
+    Institution,
+    ActivityType,
+    ActivityStatus,
+    ActivityCourse,
+    User as UserDB,
+    ActivityCriteria,
+    ActivityLanguage,
+    ActivityApplication,
+    Activity as ActivityDB,
+    ActivityPartnerInstitution,
+    InstitutionImage as InstitutionImageDB,
+    InstitutionSocialMedia as InstitutionSocialMediaDB
 } from "../models/Models";
 
 
@@ -22,10 +32,24 @@ export class ActivityRepo implements IActivityRepo {
 
     async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
         let include: Includeable | Includeable[] = [
-            { model: ActivityCourse, as: 'courses' },
+            { model: ActivityCourse, as: 'courses', include: [{ model: Course, as: 'course' }] },
             { model: ActivityLanguage, as: 'languages' },
             { model: ActivityCriteria, as: 'criterias' },
-            { model: ActivityPartnerInstitution, as: 'partner_institutions' },
+            {
+                model: ActivityPartnerInstitution,
+                as: 'partner_institutions',
+                include: [{
+                    model: Institution,
+                    as: 'institution',
+                    include: [{
+                        model: InstitutionImageDB,
+                        as: 'images'
+                    }, {
+                        model: InstitutionSocialMediaDB,
+                        as: 'social_medias'
+                    }]
+                }]
+            },
             { model: ActivityStatus, as: 'activity_status' },
             { model: ActivityType, as: 'activity_type' }
         ];
