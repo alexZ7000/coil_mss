@@ -35,31 +35,33 @@ export class ActivityDTO {
             end_date: activity.end_date,
             created_at: activity.created_at,
             updated_at: activity.updated_at,
-            languages: activity.languages.map(language => language.language),
-            criterias: activity.criterias.map(criteria => new Criteria({
-                id: criteria.id || 0,
-                criteria: criteria.criteria
-            })),
-            partner_institutions: activity.partner_institutions.map(institution => new Institution({
-                id: institution.id,
-                name: institution.name,
-                description: institution.description,
-                email: institution.email,
-                country: institution.country,
-                images: institution.images.map(image => image.image),
-                social_medias: institution.social_medias.map(sm => ({
-                    media: sm.media,
-                    link: sm.link
-                }))
-            })),
-            courses: activity.courses.map(course => new Course({
+            languages: activity.languages ? activity.languages.map(language => language.language) : [],
+            criterias: activity.criterias ? activity.criterias.map(criteria =>
+                new Criteria({
+                    id: criteria.id,
+                    criteria: criteria.criteria
+                })) : [],
+            partner_institutions: activity.partner_institutions ? activity.partner_institutions.map(institution =>
+                new Institution({
+                    id: institution.id,
+                    name: institution.name,
+                    description: institution.description,
+                    email: institution.email,
+                    country: institution.country,
+                    images: institution.images ? institution.images.map(image => image.image) : [],
+                    social_medias: institution.social_medias ? institution.social_medias.map(sm => ({
+                        media: sm.media,
+                        link: sm.link
+                    })) : []
+                })) : [],
+            courses: activity.courses ? activity.courses.map(course => new Course({
                 id: course.course.id,
                 name: course.course.name
-            })),
-            applicants: activity.applications.map(application => ({
+            })) : [],
+            applicants: activity.applications ? activity.applications.map(application => ({
                 id: application.user.id,
                 status: application.status
-            }))
+            })) : []
         });
     }
 }
