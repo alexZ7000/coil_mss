@@ -75,7 +75,7 @@ export class CreateActivityUsecase {
       throw new MissingParameter("Type Activity");
     }
     if (new Date(body.start_date) > new Date(body.end_date)) {
-        throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
+      throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
     }
 
     const user_id = await this.token_auth
@@ -141,31 +141,32 @@ export class CreateActivityUsecase {
       updated_at: new Date()
     });
 
-    await this.activity_repo.create_activity(activity);
+    await this.activity_repo.create_activity(activity).then(async (response) => {
+      if (response && process.env.STAGE === "prod") {
+        await this.event_bridge.create_trigger(
+          "START_ACTIVITY_" + activity.id,
+          "Update_Activity_Event",
+          activity.start_date,
+          {
+            "body": {
+              activity_id: activity.id,
+              status_activity: ActivityStatusEnum.ACTIVE
+            }
+          }
+        );
 
-    await this.event_bridge.create_trigger(
-      "START_ACTIVITY_" + activity.id,
-      "Update_Activity_Event",
-      activity.start_date,
-      {
-        "body": {
-          activity_id: activity.id,
-          status_activity: ActivityStatusEnum.ACTIVE
-        }
+        await this.event_bridge.create_trigger(
+          "END_ACTIVITY_" + activity.id,
+          "Update_Activity_Event",
+          activity.end_date,
+          {
+            "body": {
+              activity_id: activity.id,
+              status_activity: ActivityStatusEnum.ON_HOLD
+            }
+          }
+        );
       }
-    );
-
-    await this.event_bridge.create_trigger(
-      "END_ACTIVITY_" + activity.id,
-      "Update_Activity_Event",
-      activity.end_date,
-      { 
-        "body": {
-          activity_id: activity.id,
-          status_activity: ActivityStatusEnum.ON_HOLD
-        }
-      }
-    );
-
+    });
   }
 }
