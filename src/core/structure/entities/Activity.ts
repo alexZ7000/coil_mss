@@ -14,7 +14,7 @@ class ActivityProps {
     description: string;
     languages: string[] | [];
     courses: Course[]
-    partner_institutions: {id: string, name?: string}[];
+    partner_institutions: {id: string, institution?: Institution}[];
     criterias: Criteria[];
     status_activity: ActivityStatusEnum;
     type_activity: ActivityTypeEnum;
@@ -31,13 +31,13 @@ export class Activity {
     description: string;
     languages: string[] | [];
     courses: Course[];
-    partner_institutions: {id: string, name?: string}[];
+    partner_institutions: {id: string, institution?: Institution}[];
     criterias: Criteria[];
     status_activity: ActivityStatusEnum;
     type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {id: string, status: boolean}[];
+    applicants: {id: string, status: boolean, user?: User}[];
 
     constructor(props: ActivityProps) {
         this.id = this.validate_set_id(props.id);
@@ -141,7 +141,7 @@ export class Activity {
         return languages;
     }
 
-    private validate_set_partner_institutions(partner_institutions: {id: string, name?: string}[]) {
+    private validate_set_partner_institutions(partner_institutions: {id: string, institution?: Institution}[]) {
         if (partner_institutions == null || partner_institutions.length === 0) {
             return [];
         }
