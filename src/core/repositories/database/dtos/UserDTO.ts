@@ -3,7 +3,7 @@ import { Course } from "../../../structure/entities/Course";
 import { UserTypeEnum } from "../../../helpers/enums/UserTypeEnum";
 
 
-class ToEntityProps {
+class UserProps {
     id: string;
     name: string | null;
     email: string;
@@ -21,9 +21,8 @@ class ToEntityProps {
     updated_at: Date;
 }
 
-
-export class UserDTO {
-    public to_entity(user: ToEntityProps): User {
+class UserDTO {
+    public to_entity(user: UserProps): User {
         return new User({
             id: user.id,
             name: user.name || null,
@@ -39,3 +38,5 @@ export class UserDTO {
         });
     }
 }
+
+export { UserDTO, UserProps };
