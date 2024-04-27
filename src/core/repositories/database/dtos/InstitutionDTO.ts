@@ -1,7 +1,7 @@
 import { Institution } from "../../../structure/entities/Institution";
 
 
-class Props {
+class InstitutionProps {
     id: string;
     name: string;
     description: string;
@@ -11,10 +11,8 @@ class Props {
     images?: {id: number, institution_id: string, image: string}[];
 }
 
-
-export class InstitutionDTO {
-
-    public to_entity(institution: Props): Institution {
+class InstitutionDTO {
+    public to_entity(institution: InstitutionProps): Institution {
         return new Institution({
             id: institution.id,
             name: institution.name,
@@ -35,3 +33,5 @@ export class InstitutionDTO {
         });
     }
 }
+
+export { InstitutionDTO, InstitutionProps };
