@@ -106,6 +106,8 @@ export class UpdateActivityUsecase {
       throw new NotfoundError("Activity not found");
     }
 
+    console.log(activity);
+
     if (body.start_date && body.end_date) {
       if (new Date(body.start_date) > new Date(body.end_date)) {
         throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
