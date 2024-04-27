@@ -121,7 +121,7 @@ export class UpdateActivityUsecase {
     }
 
     const activity_update: Activity = new Activity({
-      id: body.activity_id,
+      id: activity.id,
       title: body.title ? body.title : activity.title,
       description: body.description ? body.description : activity.description,
       start_date: body.start_date ? new Date(body.start_date) : activity.start_date,
