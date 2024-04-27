@@ -7,8 +7,8 @@ class Props {
     description: string;
     email: string;
     country: string;
-    SocialMedias?: {id: number, institution_id: string, media: string, link: string}[];
-    Images?: {id: number, institution_id: string, image: string}[];
+    social_medias?: {id: number, institution_id: string, media: string, link: string}[];
+    images?: {id: number, institution_id: string, image: string}[];
 }
 
 
@@ -21,7 +21,7 @@ export class InstitutionDTO {
             description: institution.description,
             email: institution.email,
             country: institution.country,
-            social_medias: institution.SocialMedias ? institution.SocialMedias.map(sm => {
+            social_medias: institution.social_medias ? institution.social_medias.map(sm => {
                 return {
                     id: sm.id,
                     institution_id: sm.institution_id,
@@ -29,7 +29,7 @@ export class InstitutionDTO {
                     link: sm.link,
                 }
             }) : [],
-            images: institution.Images ? institution.Images.map(img => {
+            images: institution.images ? institution.images.map(img => {
                 return img.image;
             }) : [],
         });
