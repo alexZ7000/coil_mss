@@ -24,13 +24,25 @@ export class ImageManager {
     }
 
     public async delete_folder(prefix: string) {
-        return await this.s3.deleteObjects({
+        const objects = await this.s3.listObjectsV2({
+            Bucket: this.bucket,
+            Prefix: prefix,
+        }).promise();
+
+        if (!objects.Contents) {
+            return;
+        }
+
+        await this.s3.deleteObjects({
             Bucket: this.bucket,
             Delete: {
-                Objects: [
-                    { Key: prefix }
-                ]
-            }
+                Objects: objects.Contents.map(object => ({ Key: object.Key || '' })),
+            },
+        }).promise();
+
+        return await this.s3.deleteObject({
+            Bucket: this.bucket,
+            Key: prefix,
         }).promise();
     }
 
