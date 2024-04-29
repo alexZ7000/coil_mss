@@ -148,10 +148,15 @@ export class ActivityRepo implements IActivityRepo {
             where: {
                 status_id: statuses
             },
-            attributes: { exclude: ['description'] },
+            attributes: { exclude: ['description', "status_id", "type_id"] },
             include: [
-                { model: ActivityCourse, as: 'courses', include: [{ model: Course, as: 'course' }] },
-                { model: ActivityLanguage, as: 'languages' },
+                {
+                    model: ActivityCourse,
+                    as: 'courses',
+                    include: [{ model: Course, as: 'course', attributes: ['name']}],
+                    attributes: []
+                },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -163,7 +168,8 @@ export class ActivityRepo implements IActivityRepo {
                             as: 'images'
                         }],
                         attributes: ['name']
-                    }]
+                    }],
+                    attributes: []
                 },
                 { model: ActivityStatus, as: 'activity_status' },
                 { model: ActivityType, as: 'activity_type' }
