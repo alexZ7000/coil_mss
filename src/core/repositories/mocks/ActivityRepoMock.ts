@@ -24,8 +24,8 @@ export class ActivityRepoMock implements IActivityRepo {
         return this.activity_mock.activities.some(activity => activity.id === id);
     }
 
-    async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
+        return { assign: true }
     }
 
     async remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean> {
