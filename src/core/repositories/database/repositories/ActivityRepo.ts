@@ -143,7 +143,39 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[]): Promise<Activity[]> {
-        throw new Error("Method not implemented.");
+        const statuses = Array.isArray(status) ? status : [status];
+        const activities = await ActivityDB.findAll({
+            where: {
+                status_id: statuses
+            },
+            include: [
+                { model: ActivityCourse, as: 'courses', include: [{ model: Course, as: 'course' }] },
+                { model: ActivityLanguage, as: 'languages' },
+                { model: ActivityCriteria, as: 'criterias' },
+                {
+                    model: ActivityPartnerInstitution,
+                    as: 'partner_institutions',
+                    include: [{
+                        model: Institution,
+                        as: 'institution',
+                        include: [{
+                            model: InstitutionImageDB,
+                            as: 'images'
+                        }, {
+                            model: InstitutionSocialMediaDB,
+                            as: 'social_medias'
+                        }]
+                    }]
+                },
+                { model: ActivityStatus, as: 'activity_status' },
+                { model: ActivityType, as: 'activity_type' }
+            ],
+            order: [
+                ['start_date', 'ASC']
+            ]
+        });
+
+        return activities.map(activity => this.ActivityDTO.to_entity(activity.toJSON()));
     }
 
     async get_all_activities(): Promise<Activity[]> {
