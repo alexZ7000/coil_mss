@@ -21,7 +21,6 @@ import {
 } from "../models/Models";
 
 
-
 export class ActivityRepo implements IActivityRepo {
 
     private ActivityDTO: ActivityDTO;
