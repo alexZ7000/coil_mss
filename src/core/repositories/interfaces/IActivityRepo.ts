@@ -16,7 +16,6 @@ export interface IActivityRepo {
     get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null>
     get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[], type: ActivityTypeEnum): Promise<Activity[] | null> 
     
-    assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean>
-    remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean>
+    assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }>
     update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean>
 }
