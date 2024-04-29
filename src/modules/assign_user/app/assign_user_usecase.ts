@@ -2,12 +2,14 @@ import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import {
   InvalidRequest,
   MissingParameter,
+  NotfoundError,
   UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
+import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
 
 
 export class AssignUserUsecase {
@@ -56,6 +58,15 @@ export class AssignUserUsecase {
 
     if (user.user_type !== UserTypeEnum.STUDENT) {
       throw new UserNotAllowed();
+    }
+
+    const activity = await this.activity_repo.get_activity(activity_id);
+    if (!activity) {
+      throw new NotfoundError("Activity not found");
+    }
+
+    if (activity.status_activity !== ActivityStatusEnum.ACTIVE) {
+      throw new UserNotAllowed("Activity is not available for assignment");
     }
 
     return await this.activity_repo.assign_user_to_activity(activity_id, user_id);
