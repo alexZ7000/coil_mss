@@ -13,7 +13,7 @@ export class GetInstitutionController {
         this.usecase = usecase;
     }
 
-    public async executeexecute(request: HttpRequest): Promise<HttpResponse> {
+    public async execute(request: HttpRequest): Promise<HttpResponse> {
         try {
             if(!request)
                 {
@@ -25,8 +25,11 @@ export class GetInstitutionController {
                     throw new InvalidRequest("Headers");
 
                 }
+            if(!request.body){
+                throw new InvalidRequest("Body");
+            }
 
-            let response = await this.usecase.execute(request.headers);
+            let response = await this.usecase.execute(request.body.body ,request.headers);
             return new OK(response, "Institution found");
 
         } catch (error) {
