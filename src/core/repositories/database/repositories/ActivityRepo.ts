@@ -162,7 +162,7 @@ export class ActivityRepo implements IActivityRepo {
                             model: InstitutionImageDB,
                             as: 'images'
                         }],
-                        attributes: ['name', 'images']
+                        attributes: ['name']
                     }]
                 },
                 { model: ActivityStatus, as: 'activity_status' },
