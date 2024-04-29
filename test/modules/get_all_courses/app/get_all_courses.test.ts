@@ -1,7 +1,6 @@
 import { it, describe, expect } from 'vitest';
 
 import { handler } from '../../../../src/modules/get_all_courses/app/get_all_courses_presenter';
-import { CourseMock } from '../../../../src/core/structure/mocks/CourseMock';
 import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
 import { TokenAuth } from '../../../../src/core/helpers/functions/token_auth';
 
@@ -10,40 +9,26 @@ describe("Testing getting all courses", () => {
   const user_student = new UserMock().users[1];
 
   it("Should return a success message", async () => {
-    let courses = new CourseMock().courses;
-    let course = courses[0];
     var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
-    console.log('Token:', token);
     const event = {
       headers: {
         Authorization: token,
-      },
-      body: JSON.stringify({
-        user_id: user_student.id,
-        course_id: course.id,
-      }),
+      }
     };
     const response = await handler(event, null);
-    console.log('Response:', response);
-    //expect(response.statusCode).toBe(200);
-    expect(JSON.parse(response.body).message).toBe("User authenticated successfully");
+    expect(response.statusCode).toBe(200);
+    expect(JSON.parse(response.body).message).toBe("Courses found successfully");
   });
 
-  it("Should return a not found error", async () => {
-    var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
-    console.log('Token:', token);
+  it("Should return a success message for student", async () => {
+    var token = (await new TokenAuth().generate_token(user_student.id)).toString();
     const event = {
       headers: {
         Authorization: token,
-      },
-      body: JSON.stringify({
-        user_id: "invalid_id",
-        course_id: "invalid_id",
-      }),
+      }
     };
     const response = await handler(event, null);
-    console.log('Response:', response);
-    //expect(response.statusCode).toBe(404);
-    expect(JSON.parse(response.body).message).toBe("User or Course not found");
+    expect(response.statusCode).toBe(200);
+    expect(JSON.parse(response.body).message).toBe("Courses found successfully");
   });
 });
