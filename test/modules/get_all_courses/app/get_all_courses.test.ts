@@ -13,7 +13,7 @@ describe("Auth User Presenter", () => {
   it("Should return a success message", async () => {
     let courses = new CourseMock().courses;
     let course = courses[0];
-    let token = (await new TokenAuth().generate_token(user_admin.id)).toString();
+    let token = (await new TokenAuth().generate_token(user_admin.id));
     const event = {
       headers: {
         Authorization: token,
@@ -29,7 +29,7 @@ describe("Auth User Presenter", () => {
   });
 
   it("Should return a not found error", async () => {
-    let token = (await new TokenAuth().generate_token(user_admin.id)).toString();
+    let token = (await new TokenAuth().generate_token(user_admin.id));
     const event = {
       headers: {
         Authorization: token,
