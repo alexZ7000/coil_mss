@@ -4,6 +4,7 @@ import {
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
+  NotfoundError,
   UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
@@ -13,6 +14,7 @@ import {
   Forbidden,
   HttpRequest,
   InternalServerError,
+  NotFound,
   OK,
   ParameterError,
   Unauthorized,
@@ -53,6 +55,9 @@ export class AssignUserController {
       }
       if (error instanceof UserNotAllowed) {
         return new Forbidden(error.message);
+      }
+      if (error instanceof NotfoundError) {
+        return new NotFound(error.message);
       }
       if (error instanceof ConflictError) {
         return new Conflict(error.message);
