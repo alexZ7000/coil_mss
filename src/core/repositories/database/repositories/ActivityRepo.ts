@@ -284,7 +284,18 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const response = await ActivityApplication.update({
+            status: status
+        }, {
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        });
+        if (response[0] === 0) {
+            return false;
+        }
+        return true;
     }
 
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
