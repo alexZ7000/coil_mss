@@ -19,7 +19,6 @@ import {
     InstitutionImage as InstitutionImageDB,
     InstitutionSocialMedia as InstitutionSocialMediaDB
 } from "../models/Models";
-import { randomUUID } from "crypto";
 
 
 
@@ -213,7 +212,6 @@ export class ActivityRepo implements IActivityRepo {
         }
 
         await ActivityApplication.create({
-            id: randomUUID(),
             activity_id: activity_id,
             user_id: user_id,
             status: false,
