@@ -25,7 +25,16 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
-        return { assign: true }
+        const applicated = this.activity_mock.activities.find(activity => activity.id === activity_id)?.applicants.find(applicant => applicant.id === user_id);
+        if (applicated) {
+            let index = this.activity_mock.activities.findIndex(activity => activity.id === activity_id);
+            if (index !== -1) {
+                this.activity_mock.activities[index].applicants = this.activity_mock.activities[index].applicants.filter(applicant => applicant.id !== user_id);
+            }
+            return { assign: false };
+        }
+        this.activity_mock.activities.find(activity => activity.id === activity_id)?.applicants.push({ id: user_id, status: false });
+        return { assign: true };
     }
 
     async remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean> {
