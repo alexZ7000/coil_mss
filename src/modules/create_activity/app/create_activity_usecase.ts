@@ -74,8 +74,11 @@ export class CreateActivityUsecase {
     if (!body.type_activity) {
       throw new MissingParameter("Type Activity");
     }
-    if (new Date(body.start_date) > new Date(body.end_date)) {
-      throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
+    if (new Date(body.start_date) < new Date()) {
+      throw new InvalidParameter("StartDate", "Start Date must be in the future");
+    }
+    if (new Date(body.start_date) >= new Date(body.end_date)) {
+      throw new InvalidParameter("StartDate and EndDate", "StartDate must be before EndDate");
     }
 
     const user_id = await this.token_auth
