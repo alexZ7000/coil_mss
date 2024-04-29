@@ -109,15 +109,18 @@ export class UpdateActivityUsecase {
     console.log(activity);
 
     if (body.start_date && body.end_date) {
-      if (new Date(body.start_date) > new Date(body.end_date)) {
+      if (new Date(body.start_date) < new Date()) {
+        throw new InvalidParameter("StartDate", "Start Date must be in the future");
+      }
+      if (new Date(body.start_date) >= new Date(body.end_date)) {
         throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
       }
     } else if (body.start_date && !body.end_date) {
-      if (new Date(body.start_date) > activity.end_date) {
+      if (new Date(body.start_date) >= activity.end_date) {
         throw new InvalidParameter("StartDate", "Start Date must be before End Date");
       }
     } else if (!body.start_date && body.end_date) {
-      if (activity.start_date > new Date(body.end_date)) {
+      if (activity.start_date >= new Date(body.end_date)) {
         throw new InvalidParameter("EndDate", "End Date must be after Start Date");
       }
     }
