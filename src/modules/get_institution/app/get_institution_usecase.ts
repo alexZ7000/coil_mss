@@ -28,6 +28,11 @@ export class GetInstitutionUsecase {
                 throw new MissingParameter("Authorization");
             }
 
+        if (!institutionData.institution_id) {
+            throw new MissingParameter("Institution ID");
+        }
+        
+
         const user_id = await this.token_auth
             .decode_token(headers.Authorization)
             .then((response) => {
@@ -42,7 +47,7 @@ export class GetInstitutionUsecase {
             throw new UserNotAuthenticated();
         }
 
-        if (user.user_type === UserTypeEnum.STUDENT) {
+        if (!([UserTypeEnum.MODERATOR, UserTypeEnum.ADMIN].includes(user.user_type))) {
             throw new UserNotAllowed();
         }
         
