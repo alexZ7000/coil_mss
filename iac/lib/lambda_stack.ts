@@ -49,11 +49,11 @@ export class LambdaStack extends Construct {
             }
         );
 
-        restapi_resource.addResource(function_name.replace("_", "-"), {
+        restapi_resource.addResource(function_name.replace(/_/g, "-"), {
             defaultCorsPreflightOptions: {
-                allowOrigins: origins,
-                allowMethods: [method],
-                allowHeaders: ["*"],
+            allowOrigins: origins,
+            allowMethods: [method],
+            allowHeaders: ["*"],
             }
         }).addMethod(method, new apigw.LambdaIntegration(function_lambda));
 
