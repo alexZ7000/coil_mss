@@ -63,33 +63,18 @@ import {
       }
     
       const activity = await this.activity_repo.get_activity(body.activity_id);
-      if (!activity) {
-        throw new NotfoundError("Activity not found");
-      }
+        if (!activity) {
+          throw new NotfoundError("Activity not found");
+        }
       const applicantIndex = activity.applicants.findIndex(applicant => applicant.id === body.applicant.id);
         if (applicantIndex === -1) {
-        throw new NotfoundError("Applicant not found");
+          throw new NotfoundError("Applicant not found");
         }
 
-      activity.applicants[applicantIndex].status = body.applicant.status;
-    
-      const activity_update: Activity = new Activity({
-        id: activity.id,
-        title: activity.title,
-        description: activity.description,
-        start_date: activity.start_date,
-        end_date: activity.end_date,
-        languages: activity.languages,
-        courses: activity.courses,
-        partner_institutions: activity.partner_institutions,
-        criterias: activity.criterias,
-        status_activity: activity.status_activity,
-        type_activity: activity.type_activity,
-        created_at: activity.created_at,
-        updated_at: new Date(),
-        applicants: activity.applicants
-      });
-    
-      await this.activity_repo.update_activity(activity_update);
+      const updateStatusResult = await this.activity_repo.update_user_activity_status(body.activity_id, body.applicant.id, body.applicant.status);
+
+      if (!updateStatusResult) {
+        throw new NotfoundError("Activity not found");
+      }
     }
-}
+  }
