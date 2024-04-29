@@ -12,7 +12,7 @@ describe("Testing getting all courses", () => {
   it("Should return a success message", async () => {
     let courses = new CourseMock().courses;
     let course = courses[0];
-    let token = (await new TokenAuth().generate_token(user_admin.id)).toString();
+    var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
     console.log('Token:', token);
     const event = {
       headers: {
@@ -30,7 +30,7 @@ describe("Testing getting all courses", () => {
   });
 
   it("Should return a not found error", async () => {
-    let token = (await new TokenAuth().generate_token(user_admin.id)).toString();
+    var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
     console.log('Token:', token);
     const event = {
       headers: {
