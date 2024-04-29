@@ -154,7 +154,7 @@ export class ActivityRepo implements IActivityRepo {
                     model: ActivityCourse,
                     as: 'courses',
                     include: [{ model: Course, as: 'course', attributes: ['name']}],
-                    attributes: []
+                    attributes: ['course_id']
                 },
                 { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
                 {
@@ -165,7 +165,10 @@ export class ActivityRepo implements IActivityRepo {
                         as: 'institution',
                         include: [{
                             model: InstitutionImageDB,
-                            as: 'images'
+                            as: 'images',
+                            limit: 1,
+                            order: [['id', 'ASC']],
+                            attributes: ['image']
                         }],
                         attributes: ['name']
                     }],
