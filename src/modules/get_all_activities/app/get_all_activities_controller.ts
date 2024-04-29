@@ -14,6 +14,7 @@ import {
 } from "../../../core/helpers/errors/ModuleError";
 import { GetAllActivitiesByStatusUsecase } from "./get_all_activities_usecase";
 
+
 export class GetAllActivitiesByStatusController {
   public usecase: GetAllActivitiesByStatusUsecase;
 
