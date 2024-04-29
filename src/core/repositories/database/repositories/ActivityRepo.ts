@@ -153,7 +153,7 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: 'course', attributes: ['name']}],
+                    include: [{ model: Course, as: 'course', attributes: ['name'] }],
                     attributes: ['course_id']
                 },
                 { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
@@ -193,8 +193,29 @@ export class ActivityRepo implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
-    async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
+        const applicated = await ActivityApplication.findOne({
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        });
+
+        if (applicated) {
+            await ActivityApplication.destroy({
+                where: {
+                    activity_id: activity_id,
+                    user_id: user_id
+                }
+            });
+            return { assign: false };
+        }
+
+        await ActivityApplication.create({
+            activity_id: activity_id,
+            user_id: user_id
+        });
+        return { assign: true };
     }
 
     async remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean> {
