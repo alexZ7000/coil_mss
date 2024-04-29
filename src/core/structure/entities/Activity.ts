@@ -102,9 +102,6 @@ export class Activity {
         if (!(start_date instanceof Date)) {
             throw new EntityError("Parameter start_date must be a Date object");
         }
-        if (start_date < new Date()) {
-            throw new EntityError("Parameter start_date must be a date in the future");
-        }
         return start_date;
     }
 
@@ -181,9 +178,6 @@ export class Activity {
         }
         if (!(created_at instanceof Date)) {
             throw new EntityError("Parameter created_at must be a Date object");
-        }
-        if (created_at > new Date()) {
-            throw new EntityError("Parameter created_at must be a date in the past");
         }
         return created_at;
     }
