@@ -57,6 +57,6 @@ export class GetAllActivitiesByStatusUsecase {
     }
 
     const activities = await this.activity_repo.get_all_activities_by_status(statusAllowed, type_activity);
-    return activities ? activities.map(activity => activity.to_json()) : [];
+    return activities ? activities : [];
   }
 }

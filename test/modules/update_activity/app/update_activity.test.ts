@@ -87,7 +87,7 @@ describe("Update Activity Presenter", () => {
     };
     const response = await handler(event, null);
     expect(response.statusCode).toBe(422);
-    expect(JSON.parse(response.body).message).toBe("EntityError: Parameter start_date must be a date in the future");
+    expect(JSON.parse(response.body).message).toBe("Invalid parameter: StartDate: Start Date must be in the future");
   });
 
   it("Shouldn't update activity if user is not an admin", async () => {
