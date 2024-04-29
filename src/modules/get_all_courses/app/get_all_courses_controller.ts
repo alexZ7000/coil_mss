@@ -29,13 +29,8 @@ export class GetAllCoursesController {
         if (!request.headers) {
             throw new InvalidRequest("Headers");
         }
-        if (!request.body) {
-            throw new InvalidRequest("Body");
-        }
     
-        const queryParams = request.body.queryStringParameters;
-    
-        const response = await this.usecase.execute(request.headers, queryParams);
+        const response = await this.usecase.execute(request.headers);
         return new OK(response, "Courses found successfully");
         } catch (error) {
         if (error instanceof InvalidRequest) {

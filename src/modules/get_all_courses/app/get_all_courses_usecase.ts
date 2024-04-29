@@ -15,7 +15,7 @@ export class GetAllCoursesUsecase {
         this.course_repo = course_repo;
     }
     
-    async execute(headers: { [key: string]: any }, queryStringParameters: { [key: string]: any }) {
+    async execute(headers: { [key: string]: any }) {
         if (!headers) {
         throw new InvalidRequest("Headers");
         }

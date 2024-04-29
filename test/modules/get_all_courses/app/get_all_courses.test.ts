@@ -1,6 +1,6 @@
 import { it, describe, expect } from 'vitest';
 
-import { handler } from '../../../../src/modules/auth_user/app/auth_user_presenter';
+import { handler } from '../../../../src/modules/get_all_courses/app/get_all_courses_presenter';
 import { CourseMock } from '../../../../src/core/structure/mocks/CourseMock';
 import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
 import { TokenAuth } from '../../../../src/core/helpers/functions/token_auth';
