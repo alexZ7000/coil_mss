@@ -169,12 +169,11 @@ export class ActivityRepo implements IActivityRepo {
                         }],
                         attributes: ['name']
                     }],
-                    attributes: []
+                    attributes: ['institution_id']
                 },
                 { model: ActivityStatus, as: 'activity_status' },
                 { model: ActivityType, as: 'activity_type' }
             ],
-
             order: [
                 ['start_date', 'ASC']
             ]
