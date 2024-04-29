@@ -148,10 +148,10 @@ export class ActivityRepo implements IActivityRepo {
             where: {
                 status_id: statuses
             },
+            attributes: { exclude: ['description'] },
             include: [
                 { model: ActivityCourse, as: 'courses', include: [{ model: Course, as: 'course' }] },
                 { model: ActivityLanguage, as: 'languages' },
-                { model: ActivityCriteria, as: 'criterias' },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -161,21 +161,20 @@ export class ActivityRepo implements IActivityRepo {
                         include: [{
                             model: InstitutionImageDB,
                             as: 'images'
-                        }, {
-                            model: InstitutionSocialMediaDB,
-                            as: 'social_medias'
-                        }]
+                        }],
+                        attributes: ['name', 'images']
                     }]
                 },
                 { model: ActivityStatus, as: 'activity_status' },
                 { model: ActivityType, as: 'activity_type' }
             ],
+
             order: [
                 ['start_date', 'ASC']
             ]
         });
 
-        return activities.map(activity => this.ActivityDTO.to_entity(activity.toJSON()));
+        return activities.map(activity => activity.toJSON());
     }
 
     async get_all_activities(): Promise<Activity[]> {
