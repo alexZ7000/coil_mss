@@ -38,6 +38,7 @@ export class GetAllCoursesUsecase {
         }
     
         const courses = await this.course_repo.get_all_courses();
-        return courses ? courses : [];
+        const coursesJson = courses.map(course => course.to_json());
+        return coursesJson ? coursesJson : [];
     }
     }
