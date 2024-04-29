@@ -41,7 +41,7 @@ export class ActivityRepoMock implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
+    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 

@@ -19,6 +19,7 @@ import {
     InstitutionImage as InstitutionImageDB,
     InstitutionSocialMedia as InstitutionSocialMediaDB
 } from "../models/Models";
+import { randomUUID } from "crypto";
 
 
 
@@ -212,8 +213,12 @@ export class ActivityRepo implements IActivityRepo {
         }
 
         await ActivityApplication.create({
+            id: randomUUID(),
             activity_id: activity_id,
-            user_id: user_id
+            user_id: user_id,
+            status: false,
+            created_at: new Date(),
+            updated_at: new Date()
         });
         return { assign: true };
     }
@@ -283,7 +288,7 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
+    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
         const response = await ActivityApplication.update({
             status: status
         }, {
