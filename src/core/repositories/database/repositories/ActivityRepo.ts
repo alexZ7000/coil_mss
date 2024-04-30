@@ -15,6 +15,9 @@ import {
   ActivityStatus,
   ActivityType,
   User as UserDB,
+  Institution,
+  InstitutionImage as InstitutionImageDB,
+  Course,
 } from "../models/Models";
 
 export class ActivityRepo implements IActivityRepo {
@@ -57,24 +60,38 @@ export class ActivityRepo implements IActivityRepo {
     const activities = await ActivityDB.findAll({
       include: [
         {
-          model: ActivityApplication,
-          as: ActivityApplication.name,
-          where: { user_id: user_id },
+          model: ActivityCourse,
+          as: 'courses',
+          include: [{ model: Course, as: "course", attributes: ['name'] }],
+          attributes: ['course_id']
         },
-        { model: ActivityCourse, as: ActivityCourse.name },
-        { model: ActivityLanguage, as: ActivityLanguage.name },
-        { model: ActivityCriteria, as: ActivityCriteria.name },
+        { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
         {
           model: ActivityPartnerInstitution,
-          as: ActivityPartnerInstitution.name,
+          as: 'partner_institutions',
+          include: [{
+            model: Institution,
+            as: 'institution',
+            include: [{
+              model: InstitutionImageDB,
+              as: 'images',
+              limit: 1,
+              order: [['id', 'ASC']],
+              attributes: ['image']
+            }],
+            attributes: ['name']
+          }],
+          attributes: ['institution_id']
         },
         {
           model: ActivityStatus,
-          as: ActivityStatus.name,
+          as: 'activity_status',
           where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
         },
-        { model: ActivityType, as: ActivityType.name, where: { id: type } },
+        { model: ActivityType, as: 'activity_type', where: { id: type } },
+        { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
       ],
+      order: [['start_date', 'ASC']],
     });
 
     if (!activities) {
@@ -82,7 +99,7 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     return activities.map((activity) =>
-      this.ActivityDTO.to_entity(activity.toJSON())
+      activity.toJSON()
     );
   }
 
