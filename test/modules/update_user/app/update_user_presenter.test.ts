@@ -62,7 +62,7 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    // expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(400);
     expect(JSON.parse(response.body).message).toBe("Body not found");
   });
 
@@ -79,7 +79,7 @@ describe("Testing Update User Presenter", () => {
       null
     );
 
-    // expect(response.statusCode).toBe(400);
+    expect(response.statusCode).toBe(400);
     expect(JSON.parse(response.body).message).toBe("Headers not found");
   });
 });

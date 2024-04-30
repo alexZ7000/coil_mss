@@ -25,10 +25,15 @@ jobs:
           npm install -g aws-cdk
           npm install -g ts-node
           npm install
-          npm run populate-db
           cd iac
           npm install
+          
+      - name: Populate DB
+        run: |
+          echo "Populating DB"
+          npm run populate-db
         env:
+          STAGE: ${{ github.ref_name }}
           RDS_HOSTNAME: ${{ secrets.RDS_HOSTNAME }}
           RDS_USERNAME: ${{ secrets.RDS_USERNAME }}
           RDS_PASSWORD: ${{ secrets.RDS_PASSWORD }}

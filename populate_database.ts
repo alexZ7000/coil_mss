@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
+
 import {
     User, Course, UserType, ActivityCourse, Institution, InstitutionImage, InstitutionSocialMedia,
     ActivityStatus, ActivityType, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution,
@@ -17,10 +18,10 @@ const courses: string[] = [
 ];
 
 const institutions = [
-    { 
+    {
         id: randomUUID(),
         name: "Fontys University of Applied Sciences",
-        county: "Netherlands",
+        country: "Netherlands",
         email: "teste@test.com"
     }
 ];
@@ -38,31 +39,21 @@ const activityTypes: ActivityTypeEnum[] = [
 ];
 
 async function handleDatabaseCreation(): Promise<void> {
-    await Promise.all([
-        UserType,
-        Course,
-        Institution,
-        User,
-        ActivityStatus,
-        ActivityType,
-        InstitutionImage,
-        InstitutionSocialMedia,
-        Activity,
-        ActivityApplication,
-        ActivityLanguage,
-        ActivityCriteria,
-        ActivityPartnerInstitution,
-        ActivityCourse
-    ].map(model => model.sync({ alter: true })));    
+    const stage = process.env.STAGE || "";
+    const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
+
+    for (const model of models) {
+        await model.sync({ alter: true });
+    }
 }
 
-async function createOrUpdateUser(name: string, email: string, userType: UserTypeEnum, courseId: number | null, semester: number | null): Promise<void> {
+async function createOrUpdateUser(id: string, name: string, email: string, userType: UserTypeEnum, courseId: number | null, semester: number | null): Promise<void> {
     let user = await User.findOne({ where: { email } });
     if (user) {
         await user.update({ userTypeId: userType, courseId, semester });
     } else {
         await User.create({
-            id: randomUUID(),
+            id: id,
             name,
             email,
             user_type_id: userType,
@@ -116,10 +107,12 @@ async function handleCoursesCreation(): Promise<void> {
         await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
         console.log("Enums checked/created");
-        await createOrUpdateUser("Relações Internacionais", "relacoes-internacionais@maua.br", UserTypeEnum.ADMIN, 1, null);
+        await createOrUpdateUser(randomUUID(), "Relações Internacionais", "relacoes-internacionais@maua.br", UserTypeEnum.ADMIN, 1, null);
         const stage = process.env.STAGE || "";
         if (["dev", "test"].includes(stage)) {
-            await createOrUpdateUser("Felipe Carillo", "23.00765-6@maua.br", UserTypeEnum.ADMIN, 1, 1);
+            await createOrUpdateUser("beba67f0-c5f2-4c18-9d30-2fa262763e62", "Felipe Carillo", "23.00765-6@maua.br", UserTypeEnum.ADMIN, null, null);
+            await createOrUpdateUser("d34c5cef-e295-40a6-b9a0-26eabdcc6d91", "Master Chief", "84560320168@maua.br", UserTypeEnum.MODERATOR, null, null);
+            await createOrUpdateUser("ae706466-c2e2-412b-8da1-230cb752f925", "Alejandro", "10000006@maua.br", UserTypeEnum.STUDENT, 1, 1);
         }
         console.log("Users checked/created");
         await createOrUpdateInstitution(institutions[0]);

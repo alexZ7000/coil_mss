@@ -1,20 +1,22 @@
 import {
+  InvalidParameter,
   InvalidRequest,
   MissingParameter,
   NotfoundError,
   UserNotAllowed,
   UserNotAuthenticated,
+
 } from "../../../core/helpers/errors/ModuleError";
 import { UniqueConstraintError } from "sequelize";
 import { Course } from "../../../core/structure/entities/Course";
+import { Activity } from "../../../core/structure/entities/Activity";
 import { Criteria } from "../../../core/structure/entities/Criteria";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
+import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
-import { ActivityTypeEnum } from "../../../core/helpers/enums/ActivityTypeEnum";
 import { EventBridgeManager } from "../../../core/helpers/functions/event_bridge";
 import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
-import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 
 export class UpdateActivityUsecase {
   public token_auth: TokenAuth;
@@ -45,11 +47,6 @@ export class UpdateActivityUsecase {
     if (!body.activity_id) {
       throw new MissingParameter("Activity ID");
     }
-    if (body.title && await this.activity_repo.check_activity_by_title(body.title)) {
-      throw new UniqueConstraintError({
-        message: "Activity with this title already exists"
-      });
-    }
 
     const user_id = await this.token_auth
       .decode_token(headers.Authorization)
@@ -64,62 +61,91 @@ export class UpdateActivityUsecase {
     if (!user) {
       throw new UserNotAuthenticated();
     }
-    if (user.user_type === UserTypeEnum.STUDENT) {
-      throw new UserNotAllowed()
+    let user_type_permission: UserTypeEnum[] = [UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR];
+    if (!user_type_permission.includes(user.user_type)) {
+      throw new UserNotAllowed();
     }
 
-    const courses = body.courses.map((course: { [key: string]: any }) => {
-      return new Course({
-        id: course.id,
-        name: course.name
+    if (body.title && await this.activity_repo.check_activity_by_title(body.title)) {
+      throw new UniqueConstraintError({
+        message: "Activity with this title already exists"
       });
-    });
+    }
 
-    const criterias = body.criterias.map((criteria: string) => {
-      return new Criteria({
-        id: 0,
-        criteria: criteria
+    let courses: Course[] = [];
+    if (body.courses) {
+      courses = body.courses.map((course: { [key: string]: any }) => {
+        return new Course({
+          id: course.id,
+          name: course.name
+        });
       });
-    });
+    }
 
-    const partner_institutions = body.partner_institutions.map(
-      (institution: string) => {
+    let criterias: Criteria[] = [];
+    if (body.criterias) {
+      criterias = body.criterias.map((criteria: string) => {
+        return new Criteria({
+          id: 0,
+          criteria: criteria
+        });
+      });
+    }
+
+    let partner_institutions: { id: string }[] = [];
+    if (body.partner_institutions) {
+      partner_institutions = body.partner_institutions.map((institution: string) => {
         return {
           id: institution
         };
-      }
-    );
+      });
+    }
 
     const activity = await this.activity_repo.get_activity(body.activity_id);
     if (!activity) {
       throw new NotfoundError("Activity not found");
     }
 
-    activity.update({
-      id: body.id as string,
-      title: body.title as string,
-      description: body.description as string,
-      type_activity: body.type_activity as ActivityTypeEnum,
-      status_activity: body.status_activity as ActivityStatusEnum,
-      start_date: body.start_date as Date,
-      end_date: body.end_date as Date,
-      languages: body.languages as string[],
-      partner_institutions: partner_institutions as { id: string; name?: string }[],
-      criterias: criterias as Criteria[],
-      courses: courses as Course[],
-      applicants: activity.applicants,
-      created_at: activity.created_at as Date,
-      updated_at: new Date()
+    console.log(activity);
+
+    if (body.start_date && body.end_date) {
+      if (new Date(body.start_date) < new Date()) {
+        throw new InvalidParameter("StartDate", "Start Date must be in the future");
+      }
+      if (new Date(body.start_date) >= new Date(body.end_date)) {
+        throw new InvalidParameter("StartDate and EndDate", "Start Date must be before End Date");
+      }
+    } else if (body.start_date && !body.end_date) {
+      if (new Date(body.start_date) >= activity.end_date) {
+        throw new InvalidParameter("StartDate", "Start Date must be before End Date");
+      }
+    } else if (!body.start_date && body.end_date) {
+      if (activity.start_date >= new Date(body.end_date)) {
+        throw new InvalidParameter("EndDate", "End Date must be after Start Date");
+      }
+    }
+
+    const activity_update: Activity = new Activity({
+      id: activity.id,
+      title: body.title ? body.title : activity.title,
+      description: body.description ? body.description : activity.description,
+      start_date: body.start_date ? new Date(body.start_date) : activity.start_date,
+      end_date: body.end_date ? new Date(body.end_date) : activity.end_date,
+      languages: body.languages ? body.languages : activity.languages,
+      courses: courses ? courses : activity.courses,
+      partner_institutions: partner_institutions ? partner_institutions : activity.partner_institutions,
+      criterias: criterias ? criterias : activity.criterias,
+      status_activity: body.status_activity ? body.status_activity : activity.status_activity,
+      type_activity: body.type_activity ? body.type_activity : activity.type_activity,
+      created_at: activity.created_at,
+      updated_at: new Date(),
+      applicants: activity.applicants
     });
 
-    await this.activity_repo.update_activity(activity).then(async (response) => {
-      if (response) {
-        if (body.end_date !== activity.end_date) {
+    await this.activity_repo.update_activity(activity_update).then(async (response) => {
+      if (response && process.env.STAGE === "prod") {
+        if (activity_update.start_date !== activity.start_date) {
           // Delete the previous trigger and create a new one
-          await this.event_bridge.delete_trigger(
-            "START_ACTIVITY_" + activity.id,
-            "Update_Activity_Event"
-          )
           await this.event_bridge.delete_trigger(
             "START_ACTIVITY_" + activity.id,
             "Update_Activity_Event"
@@ -127,7 +153,7 @@ export class UpdateActivityUsecase {
           await this.event_bridge.create_trigger(
             "START_ACTIVITY_" + activity.id,
             "Update_Activity_Event",
-            activity.start_date,
+            activity_update.start_date,
             {
               "body": {
                 activity_id: activity.id,
@@ -135,10 +161,17 @@ export class UpdateActivityUsecase {
               }
             }
           );
+        }
+        if (activity_update.end_date !== activity.end_date) {
+          // Delete the previous trigger and create a new one
+          await this.event_bridge.delete_trigger(
+            "END_ACTIVITY_" + activity.id,
+            "Update_Activity_Event"
+          );
           await this.event_bridge.create_trigger(
             "END_ACTIVITY_" + activity.id,
             "Update_Activity_Event",
-            activity.end_date,
+            activity_update.end_date,
             {
               "body": {
                 activity_id: activity.id,

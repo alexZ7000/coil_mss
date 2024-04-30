@@ -18,18 +18,31 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async check_activity_by_title(title: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        return this.activity_mock.activities.some(activity => activity.title === title);
     }
 
-    async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    async check_activity_by_id(id: string): Promise<boolean> {
+        return this.activity_mock.activities.some(activity => activity.id === id);
+    }
+
+    async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
+        const applicated = this.activity_mock.activities.find(activity => activity.id === activity_id)?.applicants.find(applicant => applicant.id === user_id);
+        if (applicated) {
+            let index = this.activity_mock.activities.findIndex(activity => activity.id === activity_id);
+            if (index !== -1) {
+                this.activity_mock.activities[index].applicants = this.activity_mock.activities[index].applicants.filter(applicant => applicant.id !== user_id);
+            }
+            return { assign: false };
+        }
+        this.activity_mock.activities.find(activity => activity.id === activity_id)?.applicants.push({ id: user_id, status: false });
+        return { assign: true };
     }
 
     async remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
+    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
@@ -37,7 +50,7 @@ export class ActivityRepoMock implements IActivityRepo {
         throw new Error("Method not implemented.");    
     }
 
-    async get_activity(id: string): Promise<Activity | null> {
+    async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
         return this.activity_mock.activities.find(activity => activity.id === id) || null;
     }
 

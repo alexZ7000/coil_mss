@@ -7,9 +7,16 @@ export class LambdaStack extends Construct {
     private auth_user: lambda_js.NodejsFunction;
     private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+    
     private create_institution: lambda_js.NodejsFunction;
+    private update_institution: lambda_js.NodejsFunction;
+
+    private assign_user: lambda_js.NodejsFunction; 
+    private create_activity: lambda_js.NodejsFunction;
+    private update_activity: lambda_js.NodejsFunction;
+    private get_all_activities: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
-    private readonly create_activity: lambda_js.NodejsFunction;
+
 
     public functions_need_s3_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
@@ -43,11 +50,11 @@ export class LambdaStack extends Construct {
             }
         );
 
-        restapi_resource.addResource(function_name.replace("_", "-"), {
+        restapi_resource.addResource(function_name.replace(/_/g, "-"), {
             defaultCorsPreflightOptions: {
-                allowOrigins: origins,
-                allowMethods: [method],
-                allowHeaders: ["*"],
+            allowOrigins: origins,
+            allowMethods: [method],
+            allowHeaders: ["*"],
             }
         }).addMethod(method, new apigw.LambdaIntegration(function_lambda));
 
@@ -108,6 +115,14 @@ export class LambdaStack extends Construct {
             origins
         );
 
+        this.update_activity = this.create_lambda(
+            "update_activity",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
         this.update_activity_event = new lambda_js.NodejsFunction(
             this,
             "Update_Activity_Event_Coil",
@@ -130,12 +145,38 @@ export class LambdaStack extends Construct {
             origins
         );
 
+        this.update_institution = this.create_lambda(
+            "update_institution",
+            environment_variables,
+            "POST",
+            restapi_resource,
+            origins
+        );
+
+        this.get_all_activities = this.create_lambda(
+            "get_all_activities",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.assign_user = this.create_lambda(
+            "assign_user",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
         this.functions_need_s3_access = [
             this.create_institution,
+            this.update_institution,
         ]
 
         this.functions_need_event_bridge_access = [
-            this.create_activity
+            this.create_activity,
+            this.update_activity,
         ]
     }
 }

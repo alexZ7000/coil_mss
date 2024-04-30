@@ -1,5 +1,6 @@
-import { UpdateActivityUsecase } from "./update_activity_usecase";
+import { AssignUserUsecase } from "./assign_user_usecase";
 import {
+  ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
@@ -9,6 +10,7 @@ import {
 } from "../../../core/helpers/errors/ModuleError";
 import {
   BadRequest,
+  Conflict,
   Forbidden,
   HttpRequest,
   InternalServerError,
@@ -16,15 +18,14 @@ import {
   OK,
   ParameterError,
   Unauthorized,
-  Unprocessable_Entity,
 } from "../../../core/helpers/http/http_codes";
 import { EntityError } from "../../../core/helpers/errors/EntityError";
-import { UniqueConstraintError } from "sequelize";
 
-export class UpdateActivityController {
-  public usecase: UpdateActivityUsecase;
 
-  constructor(usecase: UpdateActivityUsecase) {
+export class AssignUserController {
+  public usecase: AssignUserUsecase;
+
+  constructor(usecase: AssignUserUsecase) {
     this.usecase = usecase;
   }
 
@@ -42,14 +43,12 @@ export class UpdateActivityController {
         throw new InvalidRequest("Body");
       }
 
-      const updatedUser = await this.usecase.execute(request.headers, request.body.body);
-      return new OK({}, "Activity updated successfully");
+      const usecase = await this.usecase.execute(request.headers, request.body.queryStringParameters);
+      let message: string = usecase.assign ? "User assigned successfully" : "User unassigned successfully";
+      return new OK({}, message);
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
-      }
-      if (error instanceof UniqueConstraintError) {
-        return new Unprocessable_Entity(error.message);
       }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
@@ -60,7 +59,10 @@ export class UpdateActivityController {
       if (error instanceof NotfoundError) {
         return new NotFound(error.message);
       }
-      if (error instanceof EntityError) { 
+      if (error instanceof ConflictError) {
+        return new Conflict(error.message);
+      }
+      if (error instanceof EntityError) {
         return new ParameterError(error.message);
       }
       if (error instanceof InvalidParameter) {
