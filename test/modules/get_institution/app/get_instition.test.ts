@@ -5,31 +5,43 @@ import { Repository } from '../../../../src/core/repositories/Repository';
 import { HttpRequest } from '../../../../src/core/helpers/http/http_codes';
 import { InstitutionRepoMock } from '../../../../src/core/repositories/mocks/InstitutionRepoMock';
 import { UserRepoMock } from '../../../../src/core/repositories/mocks/UserRepoMock';
-import { HttpRequest } from '../../../../src/core/helpers/http/http_codes';
+
+import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
+
+import {TokenAuth} from '../../../../src/core/helpers/functions/token_auth';
 
 describe("Testing Get Institution Presenter", () => {
+    const mockUserRepo = new UserRepoMock();
+    const mockInstitutionRepo = new InstitutionRepoMock();
+
+
+    const usecase = new GetInstitutionUsecase(
+        mockInstitutionRepo, mockUserRepo
+    );
+    const controller = new GetInstitutionController(usecase);
+
+    const mockAdmin = new UserMock().users[0];
+
+
     it("should return institution data", async () => {
-        const mockUserRepo = new UserRepoMock();
-        const mockInstitutionRepo = new InstitutionRepoMock();
-
-
-        const usecase = new GetInstitutionUsecase(
-            mockInstitutionRepo, mockUserRepo
-        );
-        const controller = new GetInstitutionController(usecase);
-
-        const mockEvent = {
-            body: {
-                property1: "value1",
-                property2: "value2",
-            },
+        var token = (await new TokenAuth().generate_token(mockAdmin.id)).toString();
+       const mockEvent = {
             headers: {
-                Authorization: "Bearer token",
-                "Content-Type": "application/json",
+                Authorization: 
+                token,
             },
+            body: JSON.stringify({
+                id: mockAdmin.id,
+                name: mockAdmin.name,
+                email: mockAdmin.email,
+                user_type: mockAdmin.user_type,
+                course: mockAdmin.course,
+                semester_course: mockAdmin.semester_course,
+                created_at: mockAdmin.created_at,
+                updated_at: mockAdmin.updated_at
+            }),
             queryStringParameters: {
-                param1: "value1",
-                param2: "value2",
+                id: 1,
             },
         };
 
