@@ -74,10 +74,14 @@ export class GetActivityUsecase {
             activity.status_activity
           ));
       if (condition) {
-        throw new NotFound("Activity not found");
+        throw new NotFoundError("Activity not found");
       }
     }
 
+
+    if (![UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type)) {
+      throw new UserNotAuthenticated("Only admin and moderator can execute this");
+    }
     const enrolled_users = await this.activity_repo.get_users_assigned_to_activity(
       activity.id
     );
