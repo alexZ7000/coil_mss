@@ -3,6 +3,7 @@ import {
   MissingParameter,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
+import { NotFoundError } from "../../../core/helpers/errors/RepoError";
 import {
   BadRequest,
   HttpRequest,
@@ -46,6 +47,9 @@ export class GetActivityController {
         return new Unauthorized(error.message);
       }
       if (error instanceof MissingParameter) {
+        return new NotFound(error.message);
+      }
+      if (error instanceof NotFoundError) {
         return new NotFound(error.message);
       }
       return new InternalServerError(error.message);
