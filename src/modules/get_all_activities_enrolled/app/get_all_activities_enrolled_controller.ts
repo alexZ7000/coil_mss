@@ -2,6 +2,7 @@ import {
   InvalidRequest,
   MissingParameter,
   NotfoundError,
+  UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import {
@@ -13,6 +14,7 @@ import {
   ParameterError,
   Unauthorized,
   NotFound,
+  Forbidden,
 } from "../../../core/helpers/http/http_codes";
 import { GetAllActivitiesEnrolledUsecase } from "./get_all_activities_enrolled_usecase";
 
@@ -49,6 +51,9 @@ export class GetAllActivitiesEnrolledController {
       }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
+      }
+      if( error instanceof UserNotAllowed) {
+        return new Forbidden(error.message);
       }
       if (error instanceof MissingParameter) {
         return new ParameterError(error.message);
