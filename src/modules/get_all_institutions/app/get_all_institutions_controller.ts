@@ -32,7 +32,7 @@ export class GetAllInstitutionsController {
       }
 
       const response = await this.usecase.execute(request.headers);
-      return new OK(response, "Activities found successfully");
+      return new OK(response, "Institutions found successfully");
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
