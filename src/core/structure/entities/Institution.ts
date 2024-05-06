@@ -61,6 +61,9 @@ export class Institution {
         if (typeof name !== "string") {
             throw new EntityError("Parameter name must be a string")
         }
+        if (name.length < 3 || name.length > 255) {
+            throw new EntityError("Parameter name must have between 3 and 255 characters")
+        }
         return name;
     }
 
@@ -71,6 +74,9 @@ export class Institution {
         if (typeof description !== "string") {
             throw new EntityError("Parameter description must be a string")
         }
+        if (description.length < 3 || description.length > 65535) {
+            throw new EntityError("Parameter description must have between 3 and 255 characters")
+        }
         return description;
     }
 
@@ -80,6 +86,9 @@ export class Institution {
         }
         if (typeof email !== "string") {
             throw new EntityError("Parameter email must be a string")
+        }
+        if (email.length < 3 || email.length > 255) {
+            throw new EntityError("Parameter email must have between 3 and 255 characters")
         }
         let standard: RegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!standard.test(email)) {
@@ -95,6 +104,9 @@ export class Institution {
         }
         if (typeof country !== "string") {
             throw new EntityError("Parameter country has to be a string")
+        }
+        if (country.length < 3 || country.length > 255) {
+            throw new EntityError("Parameter country must have between 3 and 255 characters")
         }
         return country;
     }
@@ -124,6 +136,9 @@ export class Institution {
         for (const social_media of social_medias) {
             if (typeof social_media.media !== "string" || typeof social_media.link !== "string") {
                 throw new EntityError("Each social media object must have a media and a link")
+            }
+            if (social_media.media.length < 3 || social_media.media.length > 255) {
+                throw new EntityError("Parameter media must have between 3 and 255 characters")
             }
         }
         return social_medias;
