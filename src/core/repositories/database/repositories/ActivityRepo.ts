@@ -69,7 +69,6 @@ export class ActivityRepo implements IActivityRepo {
             return null;
         }
 
-        console.log(activity.toJSON());
         return this.ActivityDTO.to_entity(activity.toJSON());
     }
 
