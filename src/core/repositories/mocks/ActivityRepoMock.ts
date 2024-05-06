@@ -14,7 +14,7 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async get_activities_by_user_id(user_id: string, type: ActivityTypeEnum): Promise<Activity[] | null> {
-        throw new Error("Method not implemented.");
+        return this.activity_mock.activities.filter(activity => activity.applicants.some(applicant => applicant.id === user_id && activity.type_activity === type));
     }
 
     async check_activity_by_title(title: string): Promise<boolean> {
