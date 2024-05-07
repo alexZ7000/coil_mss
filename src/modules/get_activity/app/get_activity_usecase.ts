@@ -57,8 +57,9 @@ export class GetActivityUsecase {
     const activity = await this.activity_repo.get_activity(
       queryStringParameters.activity_id
     );
+    console.log("activity aqui", activity)
     if (!activity) {
-      throw new NotFoundError("Activity not found");
+      throw new NotFoundError("Activity");
     }
 
     if (user.user_type === UserTypeEnum.STUDENT) {
