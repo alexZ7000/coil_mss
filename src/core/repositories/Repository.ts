@@ -19,9 +19,9 @@ class RepositoryProps {
 
 export class Repository {
     public UserRepo: UserRepo | UserRepoMock;
+    public CourseRepo: CourseRepo | CourseRepoMock ;
     public ActivityRepo: ActivityRepo | ActivityRepoMock;
     public InstitutionRepo: InstitutionRepo | InstitutionRepoMock;
-    public CourseRepo: CourseRepo | CourseRepoMock;
 
     constructor(props: RepositoryProps) {
         if (props.user_repo) {
