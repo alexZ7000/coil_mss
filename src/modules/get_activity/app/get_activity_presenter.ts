@@ -3,7 +3,7 @@ import { GetActivityController } from "./get_activity_controller";
 import { GetActivityUsecase } from "./get_activity_usecase";
 import { Repository } from "../../../core/repositories/Repository";
 
-const repository = new Repository({ activity_repo: true });
+const repository = new Repository({ activity_repo: true, user_repo: true});
 
 const usecase = new GetActivityUsecase(
   repository.UserRepo,
