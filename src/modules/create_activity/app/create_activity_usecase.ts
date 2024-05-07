@@ -145,7 +145,7 @@ export class CreateActivityUsecase {
     });
 
     await this.activity_repo.create_activity(activity).then(async (response) => {
-      if (response && process.env.STAGE === "prod") {
+      if (response && process.env.STAGE !== "test") {
         await this.event_bridge.create_trigger(
           "START_ACTIVITY_" + activity.id,
           "Update_Activity_Event",
