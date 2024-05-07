@@ -17,7 +17,6 @@ import {
   User as UserDB,
 } from "../models/Models";
 
-
 export class ActivityRepo implements IActivityRepo {
   async get_activity(id: string): Promise<Activity | null> {
     throw new Error("Method not implemented.");
@@ -34,15 +33,62 @@ export class ActivityRepo implements IActivityRepo {
   async get_all_activities_by_status(
     status: ActivityStatusEnum | ActivityStatusEnum[]
   ): Promise<Activity[]> {
-    throw new Error("Method not implemented.");
+    const activities = await ActivityDB.findAll({
+      where: {
+        status_activity: status,
+      },
+    });
+
+    return activities.map((activity: any) => new Activity(activity));
   }
 
   async get_all_activities(): Promise<Activity[]> {
-    throw new Error("Method not implemented.");
+    const activities = await ActivityDB.findAll({
+      include: [
+        {
+          model: ActivityCourse,
+          as: "courses",
+          include: [Course],
+        },
+        {
+          model: ActivityLanguage,
+          as: "languages",
+        },
+        {
+          model: ActivityCriteria,
+          as: "criterias",
+        },
+        {
+          model: ActivityPartnerInstitution,
+          as: "partner_institutions",
+          include: [Institution],
+        },
+        {
+          model: ActivityStatus,
+          as: "status_activity",
+        },
+        {
+          model: ActivityType,
+          as: "type_activity",
+        },
+        {
+          model: UserDB,
+          as: "applicants",
+        },
+      ],
+    });
+
+    return activities.map((activity: any) => new Activity(activity));
   }
 
   async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
-    throw new Error("Method not implemented.");
+    const users = await ActivityApplication.findAll({
+      where: {
+        activity_id: activity_id,
+      },
+    });
+
+    return users.map((user: any) => new User(user));
   }
 
   async assign_user_to_activity(
@@ -64,7 +110,12 @@ export class ActivityRepo implements IActivityRepo {
   }
 
   async get_activities_by_user_id(user_id: string): Promise<Activity[] | null> {
-    throw new Error("Method not implemented.");
+    const activities = await ActivityApplication.findAll({
+      where: {
+        user_id: user_id,
+      },
+    });
+    return activities.map((activity: any) => new Activity(activity));
   }
 
   async check_activity_enrolled_by_user(
