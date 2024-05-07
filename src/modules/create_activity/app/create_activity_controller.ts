@@ -7,6 +7,7 @@ import {
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
+  UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import {
@@ -52,6 +53,9 @@ export class CreateActivityController {
       }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
+      }
+      if (error instanceof UserNotAllowed) {
+        return new Forbidden(error.message);
       }
       if (error instanceof ConflictError) {
         return new Forbidden(error.message);
