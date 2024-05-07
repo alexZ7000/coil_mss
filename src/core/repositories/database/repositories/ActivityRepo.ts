@@ -213,9 +213,9 @@ export class ActivityRepo implements IActivityRepo {
                             as: 'images',
                             limit: 1,
                             order: [['id', 'ASC']],
-                            attributes: ['id', 'image']
+                            attributes: ['image']
                         }],
-                        attributes: ['name']
+                        attributes: ['id', 'name']
                     }],
                     attributes: ['institution_id'],
                 },
