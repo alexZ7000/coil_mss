@@ -12,7 +12,6 @@ describe("Testing Get Activity Presenter", () => {
     const token = await new TokenAuth().generate_token(user_admin.id);
 
     const activity = activityMock.activities[0];
-    console.log("mock: " + activity.id);
 
     const response = await handler(
       {
@@ -26,11 +25,11 @@ describe("Testing Get Activity Presenter", () => {
       null
     );
 
-    // expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(200);
     expect(JSON.parse(response.body).message).toBe(
       "Activity found successfully"
     );
-    expect(JSON.parse(response.body).data.activity.id).toBe(activity.id);
+    expect(JSON.parse(response.body).data.id).toBe(activity.id);
   });
 
   it("should not get activity applicants if user is a student", async () => {
@@ -53,8 +52,6 @@ describe("Testing Get Activity Presenter", () => {
     );
 
     expect(response.statusCode).toBe(200);
-    console.log(JSON.parse(response.body).data.applicants);
-    console.log(JSON.parse(response.body).data.id);
     expect(JSON.parse(response.body).data.applicants).toEqual([]);
   });
 
