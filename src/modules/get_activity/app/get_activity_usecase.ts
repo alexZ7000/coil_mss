@@ -7,7 +7,6 @@ import {
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
-import { NotFound } from "../../../core/helpers/http/http_codes";
 import { NotFoundError } from "../../../core/helpers/errors/RepoError";
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
@@ -54,10 +53,19 @@ export class GetActivityUsecase {
       throw new UserNotAuthenticated();
     }
 
+    let need_applicants = false;
+
+    if (
+      ![UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type)
+    ) {
+      need_applicants = true;
+    }
+
     const activity = await this.activity_repo.get_activity(
-      queryStringParameters.activity_id
+      queryStringParameters.activity_id,
+      need_applicants
     );
-    console.log("activity aqui", activity)
+
     if (!activity) {
       throw new NotFoundError("Activity");
     }
@@ -79,17 +87,6 @@ export class GetActivityUsecase {
       }
     }
 
-
-    if (![UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type)) {
-      throw new UserNotAuthenticated("Only admin and moderator can execute this");
-    }
-    const enrolled_users = await this.activity_repo.get_users_assigned_to_activity(
-      activity.id
-    );
-
-    return {
-      activity: activity.to_json(),
-      enrolled_users: enrolled_users.map((user) => user.to_json()),
-    };
+    return activity;
   }
 }
