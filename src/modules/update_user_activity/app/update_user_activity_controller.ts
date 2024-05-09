@@ -32,23 +32,16 @@ export class UpdateUserActivityController {
       if (!request) {
         throw new InvalidRequest();
       }
-
       if (!request.headers) {
         throw new InvalidRequest("Headers");
       }
-
       if (!request.body) {
         throw new InvalidRequest("Body");
       }
 
-      const updatedUser = await this.usecase.execute(request.headers, {
-        activity_id: request.body.body.activity_id,
-        applicant: {
-          id: request.body.body.applicant.id,
-          status: request.body.body.applicant.status
-        }
-      });
-      return new OK({}, "Activity updated successfully");
+      const updatedUser = await this.usecase.execute(request.headers, request.body.body);
+      return new OK({}, "User activity updated successfully");
+
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
@@ -62,7 +55,7 @@ export class UpdateUserActivityController {
       if (error instanceof NotfoundError) {
         return new NotFound(error.message);
       }
-      if (error instanceof EntityError) { 
+      if (error instanceof EntityError) {
         return new ParameterError(error.message);
       }
       if (error instanceof InvalidParameter) {
