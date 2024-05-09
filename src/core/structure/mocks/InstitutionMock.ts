@@ -9,6 +9,7 @@ export class InstitutionMock {
             new Institution({
                 id: "1c92b625-eb2a-4e56-8d9b-99e3c4a93b58",
                 name: "Example University",
+                description: "This is an example university",
                 email: "example@example.com",
                 country: "CountryName",
                 social_medias: [{
@@ -23,6 +24,7 @@ export class InstitutionMock {
             new Institution({
                 id: "2b968d1e-df34-49db-86d7-4c69a75e07c4",
                 name: "Another University",
+                description: "This is another university",
                 email: "another@example.com",
                 country: "AnotherCountry",
                 social_medias: [{
