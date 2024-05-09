@@ -2,6 +2,7 @@ import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { IInstitutionRepo } from "../../../core/repositories/interfaces/IInstitutionRepo";
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from "../../../core/helpers/errors/ModuleError";
+import { count } from "console";
 
 
 export class GetAllInstitutionsUsecase {
@@ -43,6 +44,7 @@ export class GetAllInstitutionsUsecase {
         id: institution.id,
         name: institution.name,
         logo: institution.images[0],
+        country: institution.country
       };
     }) || [];
   }
