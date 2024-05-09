@@ -1,4 +1,3 @@
-import { request } from "http";
 import { UpdateUserUsecase } from "./update_user_usecase";
 import {
   ConflictError,
@@ -40,7 +39,7 @@ export class UpdateUserController {
       }
 
       const updatedUser = await this.usecase.execute(request.headers, request.body.body);
-      return new OK(updatedUser.to_json(), "User updated successfully.");
+      return new OK(updatedUser.to_json(), "User updated successfully");
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);

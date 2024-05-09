@@ -2,11 +2,27 @@ import { CourseDTO } from "../dtos/CourseDTO";
 import { Course as CourseDB } from "../models/Models";
 import { ICourseRepo } from "../../interfaces/ICourseRepo";
 import { Course } from "../../../structure/entities/Course";
+
+
 export class CourseRepo implements ICourseRepo {
     private courseDTO: CourseDTO;
 
     constructor() {
         this.courseDTO = new CourseDTO();
+    }
+
+    public async get_course(id: number): Promise<Course | null> {
+        let course_found = await CourseDB.findOne({
+            where: {
+                id: id
+            }
+        });
+
+        if (!course_found) {
+            return null;
+        }
+
+        return this.courseDTO.to_entity(course_found.toJSON());
     }
 
     public async get_all_courses(): Promise<Course[]> {

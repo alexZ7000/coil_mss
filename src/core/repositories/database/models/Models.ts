@@ -90,7 +90,7 @@ const ActivityLanguage = instance.define('ActivityLanguage', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    name: {
+    language: {
         type: DataTypes.STRING,
         allowNull: false
     }
@@ -144,9 +144,10 @@ const ActivityCriteria = instance.define('ActivityCriteria', {
 
 const ActivityApplication = instance.define('ActivityApplication', {
     id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        autoIncrement: true
     },
     user_id: {
         type: DataTypes.UUID,
@@ -157,8 +158,9 @@ const ActivityApplication = instance.define('ActivityApplication', {
         allowNull: false
     },
     status: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     },
     created_at: {
         type: DataTypes.DATE,
@@ -326,7 +328,7 @@ const InstitutionSocialMedia = instance.define('InstitutionSocialMedia', {
         allowNull: false
     }
 }, {
-    tableName: 'institution_social_media',
+    tableName: 'institution_social_medias',
     timestamps: false,
     modelName: 'InstitutionSocialMedia',
 });
@@ -352,20 +354,36 @@ const InstitutionImage = instance.define('InstitutionImage', {
     modelName: 'InstitutionImage',
 });
 
-User.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'SET NULL' });
-User.belongsTo(UserType, { foreignKey: 'user_type_id' });
-User.hasMany(ActivityApplication, { foreignKey: 'user_id', onDelete: 'CASCADE' });
-Course.hasMany(ActivityCourse, { foreignKey: 'course_id', onDelete: 'CASCADE' });
-Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id' });
-Activity.belongsTo(ActivityType, { foreignKey: 'type_id' });
-Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE' });
-ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', onDelete: 'CASCADE' });
-Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
-Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE' });
+// Relationships
+// User
+User.belongsTo(Course, { foreignKey: 'course_id', as: 'course', onDelete: 'SET NULL' });
+User.belongsTo(UserType, { foreignKey: 'user_type_id', as: 'user_type' });
+
+// Activity
+Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id', as: 'activity_status'});
+Activity.belongsTo(ActivityType, { foreignKey: 'type_id', as: 'activity_type' });
+
+// ActivityApplication
+Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'applications'});
+ActivityApplication.belongsTo(User, { foreignKey: 'user_id', as: 'user'});
+
+// Activity Language
+Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'languages'});
+
+// Activity Partner Institution
+Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'partner_institutions'});
+ActivityPartnerInstitution.belongsTo(Institution, { foreignKey: 'institution_id', as: 'institution'});
+
+// Activity Criteria
+Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'criterias'});
+
+// Activity Course
+Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'courses'});
+ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', as: 'course' });
+
+// Institution
+Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'social_medias'});
+Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'images'});
 
 export {
     User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage,

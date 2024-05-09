@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 import { UserMock } from "./UserMock";
 import { CourseMock } from "./CourseMock";
 import { CriteriaMock } from "./CriteriaMock";
@@ -90,3 +92,5 @@ export class ActivityMock {
         ];
     }
 }
+
+
