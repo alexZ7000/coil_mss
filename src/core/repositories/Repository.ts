@@ -12,16 +12,16 @@ import { CourseRepo } from "./database/repositories/CourseRepo";
 
 class RepositoryProps {
     user_repo?: boolean = false;
-    course_repo?: boolean = false;
     activity_repo?: boolean = false;
     institution_repo?: boolean = false;
+    course_repo?: boolean = false;
 }
 
 export class Repository {
     public UserRepo: UserRepo | UserRepoMock;
-    public CourseRepo: CourseRepo | CourseRepoMock ;
     public ActivityRepo: ActivityRepo | ActivityRepoMock;
     public InstitutionRepo: InstitutionRepo | InstitutionRepoMock;
+    public CourseRepo: CourseRepo | CourseRepoMock;
 
     constructor(props: RepositoryProps) {
         if (props.user_repo) {

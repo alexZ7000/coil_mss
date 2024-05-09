@@ -1,10 +1,9 @@
 import { CreateModeratorUsecase } from "./create_moderator_usecase";
 
-import { UniqueConstraintError } from "sequelize";
 import { EntityError } from '../../../core/helpers/errors/EntityError';
+import { Conflict, Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
+import { ConflictError, InvalidParameter, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
-import { Conflict, Created, Forbidden, HttpRequest, HttpResponse, Unauthorized, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
-import { ConflictError, InvalidParameter, InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class CreateModeratorController {
@@ -25,7 +24,7 @@ export class CreateModeratorController {
             if (!request.body) {
                 throw new InvalidRequest("Body");
             }
-
+            
             let response = await this.usecase.execute(request.headers, request.body.body);
             return new Created(response, "Moderator created successfully");
 
@@ -36,9 +35,6 @@ export class CreateModeratorController {
             if (error instanceof UserNotAuthenticated) {
                 return new Unauthorized(error.message);
             }
-            if (error instanceof UserNotAllowed) {
-                return new Forbidden(error.message);
-            }
             if (error instanceof ConflictError) {
                 return new Conflict(error.message);
             }
@@ -47,9 +43,6 @@ export class CreateModeratorController {
             }
             if (error instanceof InvalidParameter) {
                 return new ParameterError(error.message);
-            }
-            if (error instanceof UniqueConstraintError) {
-                return new Unprocessable_Entity(error.message);
             }
             if (error instanceof MissingParameter) {
                 return new ParameterError(error.message);

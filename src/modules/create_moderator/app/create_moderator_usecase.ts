@@ -1,17 +1,16 @@
 import { randomUUID } from "crypto";
-import { UniqueConstraintError } from "sequelize";
 
 import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
-import { InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { ConflictError, InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class CreateModeratorUsecase {
     public token_auth: TokenAuth;
     public database_repo: IUserRepo;
-
+    
     constructor(database_repo: IUserRepo) {
         this.token_auth = new TokenAuth();
         this.database_repo = database_repo;
@@ -32,22 +31,22 @@ export class CreateModeratorUsecase {
         }
 
         const user_admin_id = await this.token_auth.decode_token(headers.Authorization)
-            .then(response => {
-                return response;
-            }).catch(error => {
-                throw new UserNotAuthenticated("Invalid or expired token");
-            });
-            
+        .then(response => {
+            return response;
+        }).catch(error => {
+            throw new UserNotAuthenticated("Invalid or expired token");
+        });
+
         const user_admin = await this.database_repo.get_user(user_admin_id);
         if (!user_admin) {
             throw new UserNotAuthenticated();
         }
         if (user_admin.user_type !== UserTypeEnum.ADMIN) {
-            throw new UserNotAllowed();
+            throw new UserNotAuthenticated();
         }
 
         if (await this.database_repo.get_user_by_email(body.email)) {
-            throw new UniqueConstraintError({ message: "Email already in use" });
+            throw new ConflictError("Email already in use");
         }
 
         const moderator = new User({
