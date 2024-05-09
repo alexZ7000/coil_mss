@@ -98,7 +98,7 @@ export class ActivityRepo implements IActivityRepo {
                             order: [['id', 'ASC']],
                             attributes: ['image']
                         }],
-                        attributes: ['id', 'name']
+                        attributes: ['id', 'name', 'country']
                     }],
                     attributes: ['institution_id'],
                 },
@@ -215,7 +215,7 @@ export class ActivityRepo implements IActivityRepo {
                             order: [['id', 'ASC']],
                             attributes: ['image']
                         }],
-                        attributes: ['id', 'name']
+                        attributes: ['id', 'name', 'country']
                     }],
                     attributes: ['institution_id'],
                 },
