@@ -73,53 +73,53 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_activities_by_user_id(
-      user_id: string,
-      type: ActivityTypeEnum
+        user_id: string,
+        type: ActivityTypeEnum
     ): Promise<Activity[] | null> {
-      const activities = await ActivityDB.findAll({
-        include: [
-          {
-            model: ActivityCourse,
-            as: 'courses',
-            include: [{ model: Course, as: "course", attributes: ['name'] }],
-            attributes: ['course_id']
-          },
-          { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
-          {
-            model: ActivityPartnerInstitution,
-            as: 'partner_institutions',
-            include: [{
-              model: Institution,
-              as: 'institution',
-              include: [{
-                model: InstitutionImageDB,
-                as: 'images',
-                limit: 1,
-                order: [['id', 'ASC']],
-                attributes: ['image']
-              }],
-              attributes: ['name']
-            }],
-            attributes: ['institution_id']
-          },
-          {
-            model: ActivityStatus,
-            as: 'activity_status',
-            where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
-          },
-          { model: ActivityType, as: 'activity_type', where: { id: type } },
-          { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
-        ],
-        order: [['start_date', 'ASC']],
-      });
-  
-      if (!activities) {
-        return null;
-      }
-  
-      return activities.map((activity) =>
-        activity.toJSON()
-      );
+        const activities = await ActivityDB.findAll({
+            include: [
+                {
+                    model: ActivityCourse,
+                    as: 'courses',
+                    include: [{ model: Course, as: "course", attributes: ['name'] }],
+                    attributes: ['course_id']
+                },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
+                {
+                    model: ActivityPartnerInstitution,
+                    as: 'partner_institutions',
+                    include: [{
+                        model: Institution,
+                        as: 'institution',
+                        include: [{
+                            model: InstitutionImageDB,
+                            as: 'images',
+                            limit: 1,
+                            order: [['id', 'ASC']],
+                            attributes: ['image']
+                        }],
+                        attributes: ['id', 'name']
+                    }],
+                    attributes: ['institution_id'],
+                },
+                {
+                    model: ActivityStatus,
+                    as: 'activity_status',
+                    where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
+                },
+                { model: ActivityType, as: 'activity_type', where: { id: type } },
+                { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
+            ],
+            order: [['start_date', 'ASC']],
+        });
+
+        if (!activities) {
+            return null;
+        }
+
+        return activities.map((activity) =>
+            activity.toJSON()
+        );
     }
 
     async create_activity(activity: Activity): Promise<boolean> {
