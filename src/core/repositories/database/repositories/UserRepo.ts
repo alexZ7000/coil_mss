@@ -12,8 +12,8 @@ export class UserRepo implements IUserRepo {
         id: id,
       },
       include: [
-        { model: UserTypeDB, as: UserTypeDB.name },
-        { model: CourseDB, as: CourseDB.name },
+        { model: UserTypeDB, as: 'user_type' },
+        { model: CourseDB, as: 'course' },
       ]
     });
 
@@ -30,8 +30,8 @@ export class UserRepo implements IUserRepo {
         email: email,
       },
       include: [
-        { model: UserTypeDB, as: UserTypeDB.name },
-        { model: CourseDB, as: CourseDB.name },
+        { model: UserTypeDB, as: 'user_type' },
+        { model: CourseDB, as: 'course' },
       ],
     });
 

@@ -11,11 +11,21 @@ export class InstitutionRepo implements IInstitutionRepo {
         this.institutionDTO = new InstitutionDTO();
     }
 
+    public async check_institution_exists_by_name(name: string): Promise<boolean> {
+        let institution_found = await InstitutionDB.findOne({
+            where: {
+                name: name
+            }
+        });
+
+        return institution_found ? true : false;
+    }
+
     public async get_all_institutions(): Promise<Institution[]> {
         let institutions_found = await InstitutionDB.findAll({
             include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+                { model: InstitutionSocialMediaDB, as: 'social_medias' },
+                { model: InstitutionImageDB, as: 'images' },
             ]
         });
 
@@ -28,27 +38,23 @@ export class InstitutionRepo implements IInstitutionRepo {
         let institution_created = await InstitutionDB.create({
             id: institution.id,
             name: institution.name,
+            description: institution.description,
             email: institution.email,
-            country: institution.country,
-            InstitutionSocialMedia: institution.social_medias.map(sm => {
-                return {
-                    institution_id: institution.id,
-                    media: sm.media,
-                    link: sm.link,
-                }
-            }),
-            InstitutionImage: institution.images.map(img => {
-                return {
-                    institution_id: institution.id,
-                    image: img,
-                }
-            })
-        }, {
-            include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
-            ]
+            country: institution.country
         });
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map((sm: { media: string; link: string; }) => {
+            return {
+                institution_id: institution.id,
+                media: sm.media,
+                link: sm.link
+            }
+        }));
+        await InstitutionImageDB.bulkCreate(institution.images.map((img: string) => {
+            return {
+                institution_id: institution.id,
+                image: img
+            }
+        }));
 
         return institution_created ? true : false;
     }
@@ -64,23 +70,29 @@ export class InstitutionRepo implements IInstitutionRepo {
                 id: institution.id
             }
         });
-        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map(sm => {
+        await InstitutionSocialMediaDB.destroy({
+            where: {
+                institution_id: institution.id
+            }
+        });
+        await InstitutionImageDB.destroy({
+            where: {
+                institution_id: institution.id
+            }
+        });
+        await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map((sm: { media: string; link: string; }) => {
             return {
                 institution_id: institution.id,
                 media: sm.media,
                 link: sm.link
             }
-        }), {
-            updateOnDuplicate: ['media', 'link']
-        });
-        await InstitutionImageDB.bulkCreate(institution.images.map(img => {
+        }));
+        await InstitutionImageDB.bulkCreate(institution.images.map((img: string) => {
             return {
                 institution_id: institution.id,
                 image: img
             }
-        }), {
-            updateOnDuplicate: ['image']
-        });
+        }));
 
         return true;
     }
@@ -101,8 +113,8 @@ export class InstitutionRepo implements IInstitutionRepo {
                 id: id
             },
             include: [
-                { model: InstitutionSocialMediaDB, as: InstitutionSocialMediaDB.name },
-                { model: InstitutionImageDB, as: InstitutionImageDB.name },
+                { model: InstitutionSocialMediaDB, as: 'social_medias' },
+                { model: InstitutionImageDB, as: 'images' },
             ]
         });
 
