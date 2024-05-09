@@ -1,32 +1,31 @@
-import { UniqueConstraintError } from "sequelize";
-
-import { CreateActivityUsecase } from "./create_activity_usecase";
-import { EntityError } from "../../../core/helpers/errors/EntityError";
+import { AssignUserUsecase } from "./assign_user_usecase";
 import {
   ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
+  NotfoundError,
   UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import {
   BadRequest,
   Conflict,
-  Created,
   Forbidden,
   HttpRequest,
   InternalServerError,
+  NotFound,
+  OK,
   ParameterError,
   Unauthorized,
-  Unprocessable_Entity,
 } from "../../../core/helpers/http/http_codes";
+import { EntityError } from "../../../core/helpers/errors/EntityError";
 
 
-export class CreateActivityController {
-  public usecase: CreateActivityUsecase;
+export class AssignUserController {
+  public usecase: AssignUserUsecase;
 
-  constructor(usecase: CreateActivityUsecase) {
+  constructor(usecase: AssignUserUsecase) {
     this.usecase = usecase;
   }
 
@@ -44,9 +43,9 @@ export class CreateActivityController {
         throw new InvalidRequest("Body");
       }
 
-      const usecase = await this.usecase.execute(request.headers, request.body.body);
-      return new Created({}, "Activity created successfully");
-
+      const usecase = await this.usecase.execute(request.headers, request.body.queryStringParameters);
+      let message: string = usecase.assign ? "User assigned successfully" : "User unassigned successfully";
+      return new OK({}, message);
     } catch (error) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
@@ -57,8 +56,11 @@ export class CreateActivityController {
       if (error instanceof UserNotAllowed) {
         return new Forbidden(error.message);
       }
+      if (error instanceof NotfoundError) {
+        return new NotFound(error.message);
+      }
       if (error instanceof ConflictError) {
-        return new Forbidden(error.message);
+        return new Conflict(error.message);
       }
       if (error instanceof EntityError) {
         return new ParameterError(error.message);
@@ -68,9 +70,6 @@ export class CreateActivityController {
       }
       if (error instanceof MissingParameter) {
         return new ParameterError(error.message);
-      }
-      if (error instanceof UniqueConstraintError) {
-        return new Unprocessable_Entity(error.message);
       }
       return new InternalServerError(error.message);
     }

@@ -1,8 +1,9 @@
-import { Includeable } from "sequelize";
+import { Includeable, Op } from "sequelize";
 import { ActivityDTO } from "../dtos/ActivityDTO";
 import { User } from "../../../structure/entities/User";
 import { IActivityRepo } from "../../interfaces/IActivityRepo";
 import { Activity } from "../../../structure/entities/Activity";
+import { ActivityTypeEnum } from "../../../helpers/enums/ActivityTypeEnum";
 import { ActivityStatusEnum } from "../../../helpers/enums/ActivityStatusEnum";
 import {
     Course,
@@ -19,7 +20,6 @@ import {
     InstitutionImage as InstitutionImageDB,
     InstitutionSocialMedia as InstitutionSocialMediaDB
 } from "../models/Models";
-
 
 
 export class ActivityRepo implements IActivityRepo {
@@ -69,12 +69,57 @@ export class ActivityRepo implements IActivityRepo {
             return null;
         }
 
-        console.log(activity.toJSON());
         return this.ActivityDTO.to_entity(activity.toJSON());
     }
 
-    async get_activities_by_user_id(user_id: string, type: ActivityStatusEnum): Promise<Activity[] | null> {
-        throw new Error("Method not implemented.");
+    async get_activities_by_user_id(
+        user_id: string,
+        type: ActivityTypeEnum
+    ): Promise<Activity[] | null> {
+        const activities = await ActivityDB.findAll({
+            include: [
+                {
+                    model: ActivityCourse,
+                    as: 'courses',
+                    include: [{ model: Course, as: "course", attributes: ['name'] }],
+                    attributes: ['course_id']
+                },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
+                {
+                    model: ActivityPartnerInstitution,
+                    as: 'partner_institutions',
+                    include: [{
+                        model: Institution,
+                        as: 'institution',
+                        include: [{
+                            model: InstitutionImageDB,
+                            as: 'images',
+                            limit: 1,
+                            order: [['id', 'ASC']],
+                            attributes: ['image']
+                        }],
+                        attributes: ['id', 'name', 'country']
+                    }],
+                    attributes: ['institution_id'],
+                },
+                {
+                    model: ActivityStatus,
+                    as: 'activity_status',
+                    where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
+                },
+                { model: ActivityType, as: 'activity_type', where: { id: type } },
+                { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
+            ],
+            order: [['start_date', 'ASC']],
+        });
+
+        if (!activities) {
+            return null;
+        }
+
+        return activities.map((activity) =>
+            activity.toJSON()
+        );
     }
 
     async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null> {
@@ -189,9 +234,9 @@ export class ActivityRepo implements IActivityRepo {
                             order: [['id', 'ASC']],
                             attributes: ['image']
                         }],
-                        attributes: ['name']
+                        attributes: ['id', 'name', 'country']
                     }],
-                    attributes: ['institution_id']
+                    attributes: ['institution_id'],
                 },
                 { model: ActivityStatus, as: 'activity_status' },
                 { model: ActivityType, as: 'activity_type' }
@@ -208,8 +253,36 @@ export class ActivityRepo implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
-    async assign_user_to_activity(activity_id: string, user_id: string): Promise<boolean> {
+    async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
         throw new Error("Method not implemented.");
+    }
+
+    async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
+        const applicated = await ActivityApplication.findOne({
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        });
+
+        if (applicated) {
+            await ActivityApplication.destroy({
+                where: {
+                    activity_id: activity_id,
+                    user_id: user_id
+                }
+            });
+            return { assign: false };
+        }
+
+        await ActivityApplication.create({
+            activity_id: activity_id,
+            user_id: user_id,
+            status: false,
+            created_at: new Date(),
+            updated_at: new Date()
+        });
+        return { assign: true };
     }
 
     async remove_user_from_activity(activity_id: string, user_id: string): Promise<boolean> {
@@ -276,19 +349,33 @@ export class ActivityRepo implements IActivityRepo {
         })));
         return true;
     }
-
-    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
-        throw new Error("Method not implemented.");
-    }
-
+  
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
-        await ActivityDB.update({
+        const response = await ActivityDB.update({
             status_id: status
         }, {
             where: {
                 id: activity_id
             }
         });
+        if (response[0] === 0) {
+            return false;
+        }
+        return true;
+    }
+
+    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
+        const response = await ActivityApplication.update({
+            status: status
+        }, {
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        });
+        if (response[0] === 0) {
+            return false;
+        }
         return true;
     }
 }

@@ -92,6 +92,9 @@ export class Activity {
         if (title == null || title.trim() === "") {
             throw new EntityError("Parameter title is required");
         }
+        if (title.length < 3 || title.length > 255) {
+            throw new EntityError("Parameter title must be between 3 and 255 characters");
+        }
         return title;
     }
 
@@ -122,6 +125,9 @@ export class Activity {
         if (description == null || description.trim() === "") {
             throw new EntityError("Parameter description is required");
         }
+        if (description.length < 3 || description.length > 65535) {
+            throw new EntityError("Parameter description must be between 3 and 65535 characters");
+        }
         return description;
     }
 
@@ -134,6 +140,9 @@ export class Activity {
         }
         if (languages.some((language) => typeof language !== "string")) {
             throw new EntityError("Parameter languages must be an array of strings");
+        }
+        if (languages.some((language) => language.length < 3 || language.length > 255)) {
+            throw new EntityError("Parameter languages must be an array of strings with length between 3 and 255 characters");
         }
         return languages;
     }

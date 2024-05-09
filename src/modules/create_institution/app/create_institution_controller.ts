@@ -2,10 +2,11 @@ import { CreateInstitutionUsecase } from "./create_institution_usecase";
 import { Institution } from "../../../core/structure/entities/Institution";
 
 import { EntityError } from '../../../core/helpers/errors/EntityError';
-import { Created, HttpRequest, HttpResponse, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
+import { Created, Forbidden, HttpRequest, HttpResponse, Unauthorized, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
 import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
 import { MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 import { UniqueConstraintError } from "sequelize";
+import { UnauthenticatedAction } from "aws-cdk-lib/aws-elasticloadbalancingv2";
 
 export class CreateInstitutionController {
     usecase: CreateInstitutionUsecase;
@@ -37,10 +38,10 @@ export class CreateInstitutionController {
                 return new ParameterError(error.message);
             }
             if (error instanceof UserNotAllowed) {
-                return new BadRequest(error.message);
+                return new Forbidden(error.message);
             }
             if (error instanceof UserNotAuthenticated) {
-                return new BadRequest(error.message);
+                return new Unauthorized(error.message);
             }
             if (error instanceof UniqueConstraintError) {
                 return new Unprocessable_Entity(error.message)

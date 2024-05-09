@@ -144,9 +144,10 @@ const ActivityCriteria = instance.define('ActivityCriteria', {
 
 const ActivityApplication = instance.define('ActivityApplication', {
     id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         primaryKey: true,
-        allowNull: false
+        allowNull: false,
+        autoIncrement: true
     },
     user_id: {
         type: DataTypes.UUID,
@@ -157,8 +158,9 @@ const ActivityApplication = instance.define('ActivityApplication', {
         allowNull: false
     },
     status: {
-        type: DataTypes.INTEGER,
-        allowNull: false
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
     },
     created_at: {
         type: DataTypes.DATE,

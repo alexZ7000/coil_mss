@@ -10,13 +10,17 @@ export class LambdaStack extends Construct {
     
     private create_institution: lambda_js.NodejsFunction;
     private update_institution: lambda_js.NodejsFunction;
+    private get_all_institutions: lambda_js.NodejsFunction;
 
+    private assign_user: lambda_js.NodejsFunction; 
     private create_activity: lambda_js.NodejsFunction;
     private update_activity: lambda_js.NodejsFunction;
     private get_all_activities: lambda_js.NodejsFunction;
     private update_user_activity: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
+    private get_all_activities_enrolled: lambda_js.NodejsFunction;
 
+    private get_all_courses: lambda_js.NodejsFunction;
 
     public functions_need_s3_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
@@ -165,6 +169,38 @@ export class LambdaStack extends Construct {
             "update_user_activity",
             environment_variables,
             "POST",
+            restapi_resource,
+            origins
+        );
+
+        this.assign_user = this.create_lambda(
+            "assign_user",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.get_all_courses = this.create_lambda(
+            "get_all_courses",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.get_all_activities_enrolled = this.create_lambda(
+            "get_all_activities_enrolled",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.get_all_institutions = this.create_lambda(
+            "get_all_institutions",
+            environment_variables,
+            "GET",
             restapi_resource,
             origins
         );
