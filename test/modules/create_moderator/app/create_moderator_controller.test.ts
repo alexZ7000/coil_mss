@@ -77,7 +77,7 @@ describe("Testing Create Moderator Controller", () => {
             queryStringParameters: {}
         }));
 
-        expect(response.statusCode).toBe(403);
-        expect(response.body.message).toBe("User not allowed");
+        expect(response.statusCode).toBe(401);
+        expect(response.body.message).toBe("User not authentificated");
     });
 });

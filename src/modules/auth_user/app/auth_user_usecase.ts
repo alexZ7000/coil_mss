@@ -5,7 +5,7 @@ import { Course } from '../../../core/structure/entities/Course';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
-import { InvalidRequest, MissingParameter, UserNotAuthenticated, UserNotAllowed } from '../../../core/helpers/errors/ModuleError';
+import { InvalidRequest, MissingParameter, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class AuthUserUsecase {
@@ -24,18 +24,18 @@ export class AuthUserUsecase {
         if (!headers.Authorization) {
             throw new MissingParameter("Authorization");
         }
-
+        
         const token_response = await this.token_auth.verify_azure_token(headers.Authorization)
-            .then
-            (response => {
-                return response;
-            }).catch(error => {
-                throw new UserNotAuthenticated(error.message);
-            });
+        .then
+        (response => {
+            return response;
+        }).catch(error => {
+            throw new UserNotAuthenticated(error.message);
+        });
 
         const padrao: RegExp = /@maua\.br$/;
         if (!padrao.test(token_response.mail)) {
-            throw new UserNotAllowed('Invalid Email, must be a maua.br domain.');
+            throw new UserNotAuthenticated('Invalid Email, must be a maua.br domain.');
         }
 
         let user: User;
@@ -44,7 +44,7 @@ export class AuthUserUsecase {
         if (get_user) {
             if (!get_user.name) {
                 get_user.name = token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-                await this.database_repo.update_user(get_user);
+                this.database_repo.update_user(get_user);
             }
             user = new User({
                 id: get_user.id,
@@ -70,7 +70,7 @@ export class AuthUserUsecase {
                 created_at: new Date(),
                 updated_at: new Date()
             });
-            await this.database_repo.create_user(user);
+            this.database_repo.create_user(user);
         }
 
         return {

@@ -1,25 +1,27 @@
 import { Institution } from "../../../structure/entities/Institution";
 
 
-class InstitutionProps {
+class Props {
     id: string;
     name: string;
     description: string;
     email: string;
     country: string;
-    social_medias?: {id: number, institution_id: string, media: string, link: string}[];
-    images?: {id: number, institution_id: string, image: string}[];
+    InstitutionSocialMedia?: {id: number, institution_id: string, media: string, link: string}[];
+    InstitutionImage?: {id: number, institution_id: string, image: string}[];
 }
 
-class InstitutionDTO {
-    public to_entity(institution: InstitutionProps): Institution {
+
+export class InstitutionDTO {
+
+    public to_entity(course: Props): Institution {
         return new Institution({
-            id: institution.id,
-            name: institution.name,
-            description: institution.description,
-            email: institution.email,
-            country: institution.country,
-            social_medias: institution.social_medias ? institution.social_medias.map(sm => {
+            id: course.id,
+            name: course.name,
+            description: course.description,
+            email: course.email,
+            country: course.country,
+            social_medias: course.InstitutionSocialMedia ? course.InstitutionSocialMedia.map(sm => {
                 return {
                     id: sm.id,
                     institution_id: sm.institution_id,
@@ -27,11 +29,9 @@ class InstitutionDTO {
                     link: sm.link,
                 }
             }) : [],
-            images: institution.images ? institution.images.map(img => {
+            images: course.InstitutionImage ? course.InstitutionImage.map(img => {
                 return img.image;
             }) : [],
         });
     }
 }
-
-export { InstitutionDTO, InstitutionProps };

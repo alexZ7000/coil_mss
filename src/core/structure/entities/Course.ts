@@ -20,8 +20,8 @@ export class Course {
     }
 
     private validate_set_name(name: string): string {
-        if (name.length < 3 || name.length > 255) {
-            throw new Error("Parameter name must be between 3 and 255 characters");
+        if (name.length < 3) {
+            throw new Error("Course name must have at least 3 characters");
         }
         return name;
     }

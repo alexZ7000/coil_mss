@@ -10,7 +10,7 @@ describe("Testing Course entity", () => {
                 id: 1,
                 name: "CS"
             })
-        }).rejects.toThrow("Parameter name must be between 3 and 255 characters");
+        }).rejects.toThrow("Course name must have at least 3 characters");
     });
 
     it("should not throw an error if the name is 3 characters or more", async () => {

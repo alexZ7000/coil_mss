@@ -67,7 +67,7 @@ describe("Testing Create Moderator Usecase", () => {
             {
                 email: "moderator@maua.br"
             });
-        }).rejects.toThrow("User not allowed");
+        }).rejects.toThrow("User not authentificated");
     });
 
     it("should not create a moderator with email already in use", async () => {

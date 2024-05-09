@@ -3,15 +3,15 @@ import { Course } from "../../../structure/entities/Course";
 import { UserTypeEnum } from "../../../helpers/enums/UserTypeEnum";
 
 
-class UserProps {
+class ToEntityProps {
     id: string;
     name: string | null;
     email: string;
-    user_type: {
+    UserType: {
         id: number;
         name: string;
     };
-    course: 
+    Course: 
     { 
         id: number,
         name: string 
@@ -21,16 +21,17 @@ class UserProps {
     updated_at: Date;
 }
 
-class UserDTO {
-    public to_entity(user: UserProps): User {
+
+export class UserDTO {
+    public to_entity(user: ToEntityProps): User {
         return new User({
             id: user.id,
             name: user.name || null,
             email: user.email,
-            user_type: UserTypeEnum[user.user_type.name],
-            course: user.course ? new Course({
-                id: user.course.id,
-                name: user.course.name,
+            user_type: UserTypeEnum[user.UserType.name],
+            course: user.Course ? new Course({
+                id: user.Course.id,
+                name: user.Course.name,
             }) : null,
             semester_course: user.semester || null,
             created_at: user.created_at,
@@ -38,5 +39,3 @@ class UserDTO {
         });
     }
 }
-
-export { UserDTO, UserProps };

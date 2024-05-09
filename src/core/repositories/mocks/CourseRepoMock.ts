@@ -10,17 +10,6 @@ export class CourseRepoMock implements ICourseRepo {
         this.course_mock = new CourseMock();
     }
 
-    async get_course(id: number): Promise<Course | null> {
-        return new Promise((resolve, reject) => {
-            let course = this.course_mock.courses.find(course => course.id === id);
-            if (course) {
-                resolve(course);
-            } else {
-                reject("Course not found");
-            }
-        });
-    }
-
     async create_course(course: Course): Promise<boolean> {
         this.course_mock.courses.push(course);
         return true;

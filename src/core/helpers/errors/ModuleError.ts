@@ -33,22 +33,6 @@ export class UserNotAuthenticated extends MainError {
     }
 }
 
-export class UserNotAllowed extends MainError {
-    constructor(message?: string) {
-        if (message) {
-            super(message);
-        } else {
-            super("User not allowed");
-        }
-    }
-}
-
-export class NotfoundError extends MainError {
-    constructor(message: string) {
-        super(message);
-    }
-}
-
 export class ConflictError extends MainError {
     constructor(message: string) {
         super(message);

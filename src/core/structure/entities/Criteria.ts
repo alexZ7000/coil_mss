@@ -39,9 +39,6 @@ export class Criteria{
         if (typeof criteria !== "string") {
             throw new EntityError("Parameter criteria is not a string");
         }
-        if (criteria.length < 3 || criteria.length > 255) {
-            throw new EntityError("Parameter criteria must be between 3 and 255 characters");
-        }
         return criteria;
     }
 }
