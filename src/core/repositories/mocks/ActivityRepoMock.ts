@@ -1,4 +1,5 @@
 import { User } from '../../structure/entities/User';
+import { UserMock } from '../../structure/mocks/UserMock';
 import { IActivityRepo } from '../interfaces/IActivityRepo';
 import { Activity } from '../../structure/entities/Activity';
 import { ActivityMock } from '../../structure/mocks/ActivityMock';
@@ -8,13 +9,26 @@ import { ActivityTypeEnum } from '../../helpers/enums/ActivityTypeEnum';
 
 export class ActivityRepoMock implements IActivityRepo {
     private activity_mock: ActivityMock;
+    private user_mock: UserMock;
 
     constructor() {
+        this.user_mock = new UserMock();
         this.activity_mock = new ActivityMock();
     }
 
     async get_activities_by_user_id(user_id: string, type: ActivityTypeEnum): Promise<Activity[] | null> {
         return this.activity_mock.activities.filter(activity => activity.applicants.some(applicant => applicant.id === user_id && activity.type_activity === type));
+    }
+
+    async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string; status: boolean; } | null> {
+        const activity = this.activity_mock.activities.find(activity => activity.id === activity_id);
+        if (activity) {
+            const applicant = activity.applicants.find(applicant => applicant.id === user_id);
+            if (applicant) {
+                return { user_id: user_id, status: applicant.status };
+            }
+        }
+        return null;
     }
 
     async check_activity_by_title(title: string): Promise<boolean> {
@@ -43,11 +57,19 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const activity = this.activity_mock.activities.find(activity => activity.id === activity_id);
+        if (activity) {
+            const applicant = activity.applicants.find(applicant => applicant.id === user_id);
+            if (applicant) {
+                applicant.status = status;
+                return true;
+            }
+        }
+        return false;
     }
 
     async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
-        throw new Error("Method not implemented.");    
+        throw new Error("Method not implemented.");
     }
 
     async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
@@ -65,11 +87,11 @@ export class ActivityRepoMock implements IActivityRepo {
 
     async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[]): Promise<Activity[]> {
         let statuses = Array.isArray(status) ? status : [status];
-        return this.activity_mock.activities.filter(activity => statuses.includes(activity.status_activity));        
+        return this.activity_mock.activities.filter(activity => statuses.includes(activity.status_activity));
     }
 
     async get_all_activities(): Promise<Activity[]> {
-        return this.activity_mock.activities; 
+        return this.activity_mock.activities;
     }
 
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
@@ -81,7 +103,7 @@ export class ActivityRepoMock implements IActivityRepo {
             } else {
                 reject(false);
             }
-        });    
+        });
     }
 
     async update_activity(activity: Activity): Promise<boolean> {

@@ -122,6 +122,25 @@ export class ActivityRepo implements IActivityRepo {
         );
     }
 
+    async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null> {
+        const applicant = await ActivityApplication.findOne({
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        }).then(applicant => applicant?.toJSON())
+            .catch(err => null);
+
+        if (!applicant) {
+            return null;
+        }
+
+        return {
+            user_id: applicant.user_id,
+            status: applicant.status
+        };
+    }
+
     async create_activity(activity: Activity): Promise<boolean> {
         await ActivityDB.create({
             id: activity.id,
@@ -330,7 +349,7 @@ export class ActivityRepo implements IActivityRepo {
         })));
         return true;
     }
-
+  
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
         const response = await ActivityDB.update({
             status_id: status
