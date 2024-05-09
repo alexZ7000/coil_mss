@@ -77,6 +77,25 @@ export class ActivityRepo implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
+    async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null> {
+        const applicant = await ActivityApplication.findOne({
+            where: {
+                activity_id: activity_id,
+                user_id: user_id
+            }
+        }).then(applicant => applicant?.toJSON())
+            .catch(err => null);
+
+        if (!applicant) {
+            return null;
+        }
+
+        return {
+            user_id: applicant.user_id,
+            status: applicant.status
+        };
+    }
+
     async create_activity(activity: Activity): Promise<boolean> {
         await ActivityDB.create({
             id: activity.id,
@@ -153,7 +172,7 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: 'course', attributes: ['name']}],
+                    include: [{ model: Course, as: 'course', attributes: ['name'] }],
                     attributes: ['course_id']
                 },
                 { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
@@ -186,10 +205,6 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_all_activities(): Promise<Activity[]> {
-        throw new Error("Method not implemented.");
-    }
-
-    async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
         throw new Error("Method not implemented.");
     }
 
@@ -262,7 +277,7 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: ActivityStatusEnum): Promise<boolean> {
+    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
