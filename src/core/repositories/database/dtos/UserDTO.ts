@@ -11,11 +11,11 @@ class UserProps {
         id: number;
         name: string;
     };
-    course: 
-    { 
-        id: number,
-        name: string 
-    } | null;
+    course:
+        {
+            id: number,
+            name: string
+        } | null;
     semester: number | null;
     created_at: Date;
     updated_at: Date;

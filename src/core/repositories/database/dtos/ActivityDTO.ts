@@ -61,20 +61,23 @@ export class ActivityDTO {
                     })) : []
                 }) : undefined
             })) : [],
-            applicants: activity.applications ? activity.applications.map(application => ({
+            applicants: activity.applications?.map((application: { id?: number; activity_id: string; user: UserProps; status: number; } ) => ({
                 id: application.user.id,
-                status: application.status,
+                status: Boolean(application.status),
                 user: application.user ? new User({
                     id: application.user.id,
                     name: application.user.name,
                     email: application.user.email,
                     user_type: application.user.user_type.id,
-                    course: application.user.course,
-                    semester_course: application.user.semester_course,
+                    course: application.user.course ? new Course({
+                        id: application.user.course.id,
+                        name: application.user.course.name
+                    }) : null,
+                    semester_course: application.user.semester,
                     created_at: application.user.created_at,
                     updated_at: application.user.updated_at
                 }) : undefined
-            })) : []
+            }))
         });
     }
 }
