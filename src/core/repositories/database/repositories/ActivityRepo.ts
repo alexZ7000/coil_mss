@@ -18,7 +18,8 @@ import {
     Activity as ActivityDB,
     ActivityPartnerInstitution,
     InstitutionImage as InstitutionImageDB,
-    InstitutionSocialMedia as InstitutionSocialMediaDB
+    InstitutionSocialMedia as InstitutionSocialMediaDB,
+    UserType
 } from "../models/Models";
 
 
@@ -55,7 +56,16 @@ export class ActivityRepo implements IActivityRepo {
         ];
 
         if (applicants) {
-            include.push({ model: ActivityApplication, as: 'applications', include: [{ model: UserDB, as: 'user' }] });
+            include.push({
+                model: ActivityApplication, as: 'applications', include: [
+                    {
+                        model: UserDB, as: 'user', include: [
+                            { model: Course, as: 'course' },
+                            { model: UserType, as: 'user_type' }
+                        ]
+                    }
+                ]
+            });
         }
 
         const activity = await ActivityDB.findOne({
@@ -80,7 +90,7 @@ export class ActivityRepo implements IActivityRepo {
             }
         });
 
-        return activity ? true : false;    
+        return activity ? true : false;
     }
 
     async get_activities_by_user_id(
@@ -360,7 +370,7 @@ export class ActivityRepo implements IActivityRepo {
         })));
         return true;
     }
-  
+
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
         const response = await ActivityDB.update({
             status_id: status
