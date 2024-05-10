@@ -56,7 +56,7 @@ export class GetActivityUsecase {
     let need_applicants = false;
 
     if (
-      ![UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type)
+      [UserTypeEnum.ADMIN, UserTypeEnum.MODERATOR].includes(user.user_type)
     ) {
       need_applicants = true;
     }
