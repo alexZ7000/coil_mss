@@ -20,7 +20,7 @@ class ActivityProps {
     type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {id: string, status: boolean}[];
+    applicants: {id: string, status: boolean, user?: User}[];
 }
 
 export class Activity {
