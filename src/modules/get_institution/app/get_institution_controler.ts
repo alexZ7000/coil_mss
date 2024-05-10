@@ -29,7 +29,7 @@ export class GetInstitutionController {
                 throw new InvalidRequest("Body");
             }
 
-            let response = await this.usecase.execute(request.body.body, request.headers);
+            let response = await this.usecase.execute(request.headers, request.body.queryStringParameters);
             return new OK(response, "Institution found");
 
         } catch (error) {
