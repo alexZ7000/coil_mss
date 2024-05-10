@@ -68,7 +68,7 @@ export class ActivityDTO {
                     id: application.user.id,
                     name: application.user.name,
                     email: application.user.email,
-                    user_type: application.user.user_type,
+                    user_type: application.user.user_type.id,
                     course: application.user.course,
                     semester_course: application.user.semester_course,
                     created_at: application.user.created_at,
