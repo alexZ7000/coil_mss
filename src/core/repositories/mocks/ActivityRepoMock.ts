@@ -31,6 +31,10 @@ export class ActivityRepoMock implements IActivityRepo {
         return null;
     }
 
+    async check_activity_enrolled_by_user(user_id: string, activity_id: string): Promise<boolean> {
+        return this.activity_mock.activities.some(activity => activity.id === activity_id && activity.applicants.some(applicant => applicant.id === user_id));
+    }
+
     async check_activity_by_title(title: string): Promise<boolean> {
         return this.activity_mock.activities.some(activity => activity.title === title);
     }
@@ -73,6 +77,25 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
     async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
+        let activity = this.activity_mock.activities.find(activity => activity.id === id);
+        if (activity && !applicants) {
+            return new Activity({
+                id: activity.id,
+                title: activity.title,
+                start_date: activity.start_date,
+                end_date: activity.end_date,
+                description: activity.description,
+                languages: activity.languages,
+                partner_institutions: activity.partner_institutions,
+                criterias: activity.criterias,
+                status_activity: activity.status_activity,
+                type_activity: activity.type_activity,
+                created_at: activity.created_at,
+                updated_at: activity.updated_at,
+                courses: activity.courses,
+                applicants: []
+            });
+        }
         return this.activity_mock.activities.find(activity => activity.id === id) || null;
     }
 
@@ -131,4 +154,3 @@ export class ActivityRepoMock implements IActivityRepo {
     }
 
 }
-

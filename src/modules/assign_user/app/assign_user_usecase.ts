@@ -68,7 +68,7 @@ export class AssignUserUsecase {
     if (activity.status_activity !== ActivityStatusEnum.ACTIVE) {
       throw new UserNotAllowed("Activity is not available for assignment");
     }
-
+    
     return await this.activity_repo.assign_user_to_activity(activity_id, user_id);
   }
 }
