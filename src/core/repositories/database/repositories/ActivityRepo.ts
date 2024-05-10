@@ -55,7 +55,7 @@ export class ActivityRepo implements IActivityRepo {
         ];
 
         if (applicants) {
-            include.push({ model: ActivityApplication, as: 'applicants', include: [{ model: UserDB, as: 'user' }] });
+            include.push({ model: ActivityApplication, as: 'applications', include: [{ model: UserDB, as: 'user' }] });
         }
 
         const activity = await ActivityDB.findOne({
