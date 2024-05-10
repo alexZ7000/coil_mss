@@ -69,6 +69,8 @@ export class AssignUserUsecase {
       throw new UserNotAllowed("Activity is not available for assignment");
     }
 
-    return await this.activity_repo.assign_user_to_activity(activity_id, user_id);
+    const teste = await this.activity_repo.assign_user_to_activity(activity_id, user_id);
+    console.log(teste);
+    return teste;
   }
 }
