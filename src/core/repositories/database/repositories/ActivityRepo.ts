@@ -118,7 +118,7 @@ export class ActivityRepo implements IActivityRepo {
     if (applicants) {
       include.push({
         model: ActivityApplication,
-        as: "applicants",
+        as: "applications",
         include: [{ model: UserDB, as: "user" }],
       });
     }
