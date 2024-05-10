@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 import { UserMock } from "./UserMock";
 import { CourseMock } from "./CourseMock";
 import { CriteriaMock } from "./CriteriaMock";
@@ -11,9 +9,9 @@ import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 
 export class ActivityMock {
   public activities: Activity[];
+  private user_mock: UserMock = new UserMock();
   private course_mock: CourseMock = new CourseMock();
   private criteria_mock: CriteriaMock = new CriteriaMock();
-  private user_mock: UserMock = new UserMock();
   private institution_mock: InstitutionMock = new InstitutionMock();
 
   constructor() {
@@ -40,7 +38,7 @@ export class ActivityMock {
         type_activity: ActivityTypeEnum.PROJECT,
         created_at: new Date(),
         updated_at: new Date(),
-        applicants: [{ id: this.user_mock.users[1].id, status: true }],
+        applicants: [{ id: this.user_mock.users[1].id, status: true }]
       }),
       new Activity({
         id: "9166c7b4-6c42-4977-aebe-d87734a5a9c6",
