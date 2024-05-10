@@ -21,8 +21,6 @@ class InstitutionDTO {
             country: institution.country,
             social_medias: institution.social_medias ? institution.social_medias.map(sm => {
                 return {
-                    id: sm.id,
-                    institution_id: sm.institution_id,
                     media: sm.media,
                     link: sm.link,
                 }
