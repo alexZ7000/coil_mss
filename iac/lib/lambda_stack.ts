@@ -13,6 +13,7 @@ export class LambdaStack extends Construct {
     private get_all_institutions: lambda_js.NodejsFunction;
 
     private assign_user: lambda_js.NodejsFunction; 
+    private get_activity: lambda_js.NodejsFunction;
     private create_activity: lambda_js.NodejsFunction;
     private update_activity: lambda_js.NodejsFunction;
     private get_all_activities: lambda_js.NodejsFunction;
@@ -199,6 +200,14 @@ export class LambdaStack extends Construct {
 
         this.get_all_institutions = this.create_lambda(
             "get_all_institutions",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.get_activity = this.create_lambda(
+            "get_activity",
             environment_variables,
             "GET",
             restapi_resource,
