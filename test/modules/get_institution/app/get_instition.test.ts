@@ -17,7 +17,7 @@ describe("Testing Get Institution Presenter", () => {
             headers: {
                 Authorization: token
             },
-            body: JSON.stringify({
+            queryStringParameters: JSON.stringify({
                 institution_id: mockInstitution.institutions[0].id
             })
         }, null);
@@ -31,7 +31,7 @@ describe("Testing Get Institution Presenter", () => {
             headers: {
                 Authorization: "invalid_token"
             },
-            body: JSON.stringify({
+            queryStringParameters: JSON.stringify({
                 institution_id: mockInstitution.institutions[0].id
             })
         }, null);
