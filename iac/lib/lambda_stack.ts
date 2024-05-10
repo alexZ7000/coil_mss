@@ -8,6 +8,7 @@ export class LambdaStack extends Construct {
     private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
     
+    private get_institution: lambda_js.NodejsFunction;
     private create_institution: lambda_js.NodejsFunction;
     private update_institution: lambda_js.NodejsFunction;
     private get_all_institutions: lambda_js.NodejsFunction;
@@ -213,6 +214,14 @@ export class LambdaStack extends Construct {
             restapi_resource,
             origins
         );
+
+        this.get_institution = this.create_lambda(
+            "get_institution",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        )
 
         this.functions_need_s3_access = [
             this.create_institution,
