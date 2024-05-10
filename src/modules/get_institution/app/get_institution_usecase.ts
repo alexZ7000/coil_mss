@@ -15,7 +15,7 @@ export class GetInstitutionUsecase {
         this.user_repo = user_repo;
     }
 
-    async execute(institutionData: any, headers: any) {
+    async execute(headers: any, institutionData: any) {
         if (!headers) {
             throw new InvalidRequest("Headers");
         }
