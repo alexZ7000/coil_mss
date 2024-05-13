@@ -1,122 +1,289 @@
 import dotenv from 'dotenv';
 import { randomUUID } from 'crypto';
 
+// Models
 import {
     User, Course, UserType, ActivityCourse, Institution, InstitutionImage, InstitutionSocialMedia,
     ActivityStatus, ActivityType, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution,
+    Language, Criteria, SocialMedia, Country, InstitutionCountry
 } from './src/core/repositories/database/models/Models';
+
+// Enums
 import { UserTypeEnum } from './src/core/helpers/enums/UserTypeEnum';
 import { ActivityTypeEnum } from './src/core/helpers/enums/ActivityTypeEnum';
 import { ActivityStatusEnum } from './src/core/helpers/enums/ActivityStatusEnum';
 
+// Mocks
+import { CourseMock } from './src/core/structure/mocks/CourseMock';
+import { CountryMock } from './src/core/structure/mocks/CountryMock';
+import { CriteriaMock } from './src/core/structure/mocks/CriteriaMock';
+import { LanguageMock } from './src/core/structure/mocks/LanguageMock';
+import { SocialMediaMock } from './src/core/structure/mocks/SocialMediaMock';
+
+// User Entity
+import { User as UserEntity } from './src/core/structure/entities/User';
+import { Institution as InstitutionEntity } from './src/core/structure/entities/Institution';
+
 dotenv.config();
+const stage = process.env.STAGE || "";
 
-const courses: string[] = [
-    "Ciência da Computação", "Sistema da Inforamação", "Ciência de dados e Inteligencia Artificial", "Engenharia de Computação",
-    "Engenharia de Produção", "Engenharia de Controle e Automação", "Engenharia Elétrica", "Engenharia Mecânica", "Engenharia Química",
-    "Engenharia de Alimentos", "Engenharia Civil"
-];
+// Getting mocks
+const users: UserEntity[] = [
+    new UserEntity({
+        id: randomUUID(),
+        name: "Relações Internacionais",
+        email: "relacoes-internacionais@maua.br",
+        user_type: UserTypeEnum.ADMIN,
+        created_at: new Date(),
+        updated_at: new Date()
+    })
+]
+stage === "dev" || stage === "test" ? users.push(new UserEntity({
+    id: randomUUID(),
+    name: "Felipe Carillo",
+    email: "23.00765-6@maua.br",
+    user_type: UserTypeEnum.ADMIN,
+    created_at: new Date(),
+    updated_at: new Date()
+})) : null;
 
-const institutions = [
-    {
+const institutions: InstitutionEntity[] = [
+    new InstitutionEntity({
         id: randomUUID(),
         name: "Fontys University of Applied Sciences",
-        country: "Netherlands",
-        email: "teste@test.com"
-    }
-];
+        description: "Fontys University of Applied Sciences is a Dutch university of applied sciences with over 44,000 students in several campuses located in the southern Netherlands.",
+        email: "test@test.com",
+        countries: [new CountryMock().countries[0]],
+        social_medias: [{
+            media: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!,
+            link: "https://facebook.com/Fontys.uas"
+        }],
+        images: [
+            "https://th.bing.com/th/id/OIP.3cEyScEWFEowrqodJh7LUAHaHZ?rs=1&pid=ImgDetMain"
+        ]
+    }),
+]
 
+const courses: CourseMock = new CourseMock();
+const countries: CountryMock = new CountryMock();
+const languages: LanguageMock = new LanguageMock();
+const criterias: CriteriaMock = new CriteriaMock();
+const social_medias: SocialMediaMock = new SocialMediaMock();
 const userTypes: UserTypeEnum[] = [
     UserTypeEnum.ADMIN, UserTypeEnum.STUDENT, UserTypeEnum.MODERATOR
 ];
-
 const activityStatuses: ActivityStatusEnum[] = [
     ActivityStatusEnum.CANCELED, ActivityStatusEnum.ACTIVE, ActivityStatusEnum.ON_HOLD, ActivityStatusEnum.ENDED, ActivityStatusEnum.TO_START
 ];
-
 const activityTypes: ActivityTypeEnum[] = [
     ActivityTypeEnum.ACADEMIC_MOBILITY, ActivityTypeEnum.PROJECT
 ];
 
+// Create or update the database
 async function handleDatabaseCreation(): Promise<void> {
-    const stage = process.env.STAGE || "";
-    const models = [UserType, Course, Institution, User, ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia, Activity, ActivityApplication, ActivityLanguage, ActivityCriteria, ActivityPartnerInstitution, ActivityCourse];
+    const models = [
+        UserType, Course, SocialMedia, Language, Country, Criteria, Institution, User,
+        ActivityStatus, ActivityType, InstitutionImage, InstitutionSocialMedia,
+        InstitutionCountry, Activity, ActivityApplication, ActivityLanguage,
+        ActivityCriteria, ActivityPartnerInstitution, ActivityCourse
+    ];
 
     for (const model of models) {
         await model.sync({ alter: true });
     }
+    console.log("Database checked/created");
 }
 
-async function createOrUpdateUser(id: string, name: string, email: string, userType: UserTypeEnum, courseId: number | null, semester: number | null): Promise<void> {
-    let user = await User.findOne({ where: { email } });
-    if (user) {
-        await user.update({ userTypeId: userType, courseId, semester });
-    } else {
+// Create or update users
+async function createOrUpdateUser(user: UserEntity): Promise<void> {
+    let existing = await User.findOne({ where: { email: user.email } });
+    if (!existing) {
         await User.create({
-            id: id,
-            name,
-            email,
-            user_type_id: userType,
-            course_id: courseId,
-            semester,
-            created_at: new Date(),
-            updated_at: new Date()
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            user_type: user.user_type,
+            created_at: user.created_at,
+            updated_at: user.updated_at
         });
+        console.log(`User ${user.email} created`);
+    } else {
+        await User.update({
+            name: user.name,
+            user_type: user.user_type,
+            updated_at: user.updated_at
+        }, { where: { email: user.email } });
+        console.log(`User ${user.email} updated`);
     }
-    console.log(`User ${name} ${user ? 'updated' : 'created'}`);
+    console.log("Users checked/created");
 }
 
-async function createOrUpdateInstitution(institution: any): Promise<void> {
-    let existingInstitution = await Institution.findOne({ where: { name: institution.name } });
-    if (!existingInstitution) {
-        await Institution.create(institution);
-        console.log(`Institution ${institution.name} created`);
+// Create or update courses
+async function handleCoursesCreation(): Promise<void> {
+    for (const course of courses.courses) {
+        let existingCourse = await Course.findOne({ where: { course: course.course } });
+        if (!existingCourse) {
+            await Course.create({ course: course.course });
+            console.log(`Course ${course.course} created`);
+        } else {
+            await Course.update({ course: course.course }, { where: { course: course.course } });
+            console.log(`Course ${course.course} updated`);
+        }
     }
-    console.log(`Institutions checked/created`);
 }
 
-async function createOrUpdateEnumItems(model: any, enumItems: number[], enumType: any): Promise<void> {
-    for (const enumItem of enumItems) {
-        let item = await model.findOne({ where: { id: enumItem } });
-        if (!item) {
-            await model.create({ id: enumItem, name: enumType[enumItem] });
-            console.log(`${model.name} ${enumType[enumItem]} created`);
+// Create or update languages
+async function handleLanguagesCreation(): Promise<void> {
+    for (const language of languages.languages) {
+        let existingLanguage = await Language.findOne({ where: { language: language.language } });
+        if (!existingLanguage) {
+            await Language.create({ language: language.language });
+            console.log(`Language ${language.language} created`);
+        } else {
+            await Language.update({ language: language.language }, { where: { language: language.language } });
+            console.log(`Language ${language.language} updated`);
+        }
+    }
+    console.log("Languages checked/created");
+}
+
+// Create or update countries
+async function handleCountriesCreation(): Promise<void> {
+    for (const country of countries.countries) {
+        let existingCountry = await Country.findOne({ where: { country: country.country } });
+        if (!existingCountry) {
+            await Country.create({ country: country.country, country_code: country.country_code });
+            console.log(`Country ${country.country} created`);
+        } else {
+            await Country.update({ country: country.country, country_code: country.country_code }, { where: { country: country.country } });
+            console.log(`Country ${country.country} updated`);
+        }
+    }
+    console.log("Countries checked/created");
+}
+
+// Create or update criterias
+async function handleCriteriasCreation(): Promise<void> {
+    for (const criteria of criterias.criterias) {
+        let existingCriteria = await Criteria.findOne({ where: { criteria: criteria.criteria } });
+        if (!existingCriteria) {
+            await Criteria.create({ criteria: criteria.criteria });
+            console.log(`Criteria ${criteria.criteria} created`);
+        } else {
+            await Criteria.update({ criteria: criteria.criteria }, { where: { criteria: criteria.criteria } });
+            console.log(`Criteria ${criteria.criteria} updated`);
+        }
+    }
+    console.log("Criterias checked/created");
+}
+
+// Create or update enums
+async function createOrUpdateEnumItems(model: any, items: any[], enumType: any): Promise<void> {
+    for (const item of items) {
+        let existingItem = await model.findOne({ where: { name: item } });
+        if (!existingItem) {
+            await model.create({ name: item, enumType });
+            console.log(`${model.name} ${item} created`);
+        } else {
+            await model.update({ name: item, enumType }, { where: { name: item } });
+            console.log(`${model.name} ${item} updated`);
         }
     }
     console.log(`${model.name} checked/created`);
 }
 
-async function handleCoursesCreation(): Promise<void> {
-    for (const course of courses) {
-        let existingCourse = await Course.findOne({ where: { name: course } });
-        if (!existingCourse) {
-            await Course.create({ name: course });
-            console.log(`Course ${course} created`);
+// Create or update social media
+async function createOrUpdateSocialMedia(): Promise<void> {
+    for (const socialMedia of social_medias.social_medias) {
+        let existingSocialMedia = await SocialMedia.findOne({ where: { name: socialMedia.social_media } });
+        if (!existingSocialMedia) {
+            await SocialMedia.create({
+                name: socialMedia.social_media,
+            });
+            console.log(`Social Media ${socialMedia.social_media} created`);
+        } else {
+            await SocialMedia.update(socialMedia, { where: { name: socialMedia.social_media } });
+            console.log(`Social Media ${socialMedia.social_media} updated`);
         }
     }
-    console.log("Courses checked/created");
+    console.log("Social Media checked/created");
+}
+
+
+async function createOrUpdateInstitution(institution: InstitutionEntity): Promise<void> {
+    let existingInstitution = await Institution.findOne({ where: { name: institution.name } });
+    if (!existingInstitution) {
+        await Institution.create({
+            id: institution.id,
+            name: institution.name,
+            description: institution.description,
+            email: institution.email,
+            created_at: new Date(),
+            updated_at: new Date()
+        });
+        await InstitutionCountry.create({
+            institution_id: institution.id,
+            country_id: countries.countries[0].id
+        });
+        await InstitutionSocialMedia.create({
+            institution_id: institution.id,
+            social_media_id: social_medias.social_medias[0].id,
+            link: institution.social_medias[0].link
+        });
+        await InstitutionImage.create({
+            institution_id: institution.id,
+            image: institution.images[0]
+        });
+        console.log(`Institution ${institution.name} created`);
+    } else {
+        await Institution.update({
+            name: institution.name,
+            description: institution.description,
+            email: institution.email,
+            updated_at: new Date()
+        }, { where: { name: institution.name } });
+        await InstitutionCountry.update({
+            institution_id: institution.id,
+            country_id: countries.countries[0].id
+        }, { where: { institution_id: institution.id } });
+        await InstitutionSocialMedia.update({
+            institution_id: institution.id,
+            social_media_id: social_medias.social_medias[0].id,
+            link: institution.social_medias[0].link
+        }, { where: { institution_id: institution.id } });
+        await InstitutionImage.update({
+            institution_id: institution.id,
+            image: institution.images[0]
+        }, { where: { institution_id: institution.id } });
+        console.log(`Institution ${institution.name} updated`);
+    }
+    console.log("Institutions checked/created");
 }
 
 (async () => {
     try {
         await handleDatabaseCreation();
-        console.log("Database created");
+
         await handleCoursesCreation();
-        console.log("Courses checked/created");
+
+        await handleLanguagesCreation();
+
+        await handleCountriesCreation();
+
+        await handleCriteriasCreation();
+
+        await createOrUpdateSocialMedia();
+
         await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
         await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
-        console.log("Enums checked/created");
-        await createOrUpdateUser(randomUUID(), "Relações Internacionais", "relacoes-internacionais@maua.br", UserTypeEnum.ADMIN, 1, null);
-        const stage = process.env.STAGE || "";
-        if (["dev", "test"].includes(stage)) {
-            await createOrUpdateUser("beba67f0-c5f2-4c18-9d30-2fa262763e62", "Felipe Carillo", "23.00765-6@maua.br", UserTypeEnum.ADMIN, null, null);
-            await createOrUpdateUser("d34c5cef-e295-40a6-b9a0-26eabdcc6d91", "Master Chief", "84560320168@maua.br", UserTypeEnum.MODERATOR, null, null);
-            await createOrUpdateUser("ae706466-c2e2-412b-8da1-230cb752f925", "Alejandro", "10000006@maua.br", UserTypeEnum.STUDENT, 1, 1);
+
+        for (const user of users) {
+            await createOrUpdateUser(user);
         }
-        console.log("Users checked/created");
+
         await createOrUpdateInstitution(institutions[0]);
-        console.log("Institutions checked/created");
+
     } catch (error) {
         console.error(error);
     }
