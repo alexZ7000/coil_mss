@@ -1,24 +1,17 @@
 import { Course } from "../../../structure/entities/Course";
 
 
-class Props {
+export class CourseProps {
     id: number;
-    name: string;
+    course: string;
 }
     
 
 export class CourseDTO {
-    public to_entity(course: Props): Course {
+    public to_entity(course: CourseProps): Course {
         return new Course({
             id: course.id,
-            name: course.name,
+            course: course.course
         });
-    }
-
-    public to_database(course: Course): Props {
-        return {
-            id: course.id,
-            name: course.name,
-        };
     }
 }

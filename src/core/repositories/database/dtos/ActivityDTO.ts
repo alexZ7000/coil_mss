@@ -1,10 +1,16 @@
 import { UserProps } from "./UserDTO";
+import { CourseProps } from "./CourseDTO";
+import { CriteriaProps } from "./CriteriaDTO";
+import { LanguageProps } from "./LanguageDTO";
 import { InstitutionProps } from "./InstitutionDTO";
+import { User } from "../../../structure/entities/User";
 import { Course } from "../../../structure/entities/Course";
+import { Country } from "../../../structure/entities/Country";
+import { Language } from "../../../structure/entities/Language";
 import { Activity } from "../../../structure/entities/Activity";
 import { Criteria } from "../../../structure/entities/Criteria";
 import { Institution } from "../../../structure/entities/Institution";
-import { User } from "../../../structure/entities/User";
+import { SocialMedia } from "../../../structure/entities/SocialMedia";
 
 
 class ActivityProps {
@@ -17,11 +23,11 @@ class ActivityProps {
     end_date: Date;
     created_at: Date;
     updated_at: Date;
-    languages: { id: number, activity_id: string, language: string }[] | [];
-    courses: { id: number, activity_id: string, course: { id: number, name: string } }[] | [];
-    criterias: { id?: number, activity_id: string, criteria: string }[] | [];
-    partner_institutions: InstitutionProps[] | [];
-    applications: { id?: number, activity_id: string, user: UserProps, status: number }[] | [];
+    courses: { id: number, course: CourseProps }[];
+    languages: { id: number, language: LanguageProps }[];
+    criterias: { id: number, criteria: CriteriaProps }[];
+    partner_institutions: { id: number, institution: InstitutionProps }[];
+    applications: { id: string, user: UserProps, status: number }[];
 }
 
 export class ActivityDTO {
@@ -36,16 +42,28 @@ export class ActivityDTO {
             end_date: activity.end_date,
             created_at: activity.created_at,
             updated_at: activity.updated_at,
-            courses: activity.courses ? activity.courses.map(course => new Course({
+            courses: activity.courses ? activity.courses.map(course => ({
                 id: course.course.id,
-                name: course.course.name
+                course: new Course({
+                    id: course.course.id,
+                    course: course.course.course
+                })
             })) : [],
-            languages: activity.languages ? activity.languages.map(language => language.language) : [],
-            criterias: activity.criterias ? activity.criterias.map(criteria =>
-                new Criteria({
-                    id: criteria.id,
-                    criteria: criteria.criteria
-                })) : [],
+            languages: activity.languages ? activity.languages.map(language => ({
+                id: language.language.id,
+                language: new Language({
+                    id: language.language.id,
+                    language: language.language.language,
+                    language_code: language.language.language_code
+                })
+            })) : [],
+            criterias: activity.criterias ? activity.criterias.map(criteria => ({
+                id: criteria.criteria.id,
+                criteria: new Criteria({
+                    id: criteria.criteria.id,
+                    criteria: criteria.criteria.criteria
+                })
+            })) : [],
             partner_institutions: activity.partner_institutions ? activity.partner_institutions.map(institution => ({
                 id: institution.institution.id,
                 institution: institution.institution ? new Institution({
@@ -53,31 +71,33 @@ export class ActivityDTO {
                     name: institution.institution.name,
                     description: institution.institution.description,
                     email: institution.institution.email,
-                    country: institution.institution.country,
+                    countries: institution.institution.countries ? institution.institution.countries.map(country => new Country({
+                        id: country.contry.id,
+                        country: country.contry.country,
+                        country_code: country.contry.country_code
+                    })) : [],
                     images: institution.institution.images ? institution.institution.images.map(image => image.image) : [],
-                    social_medias: institution.institution.social_medias ? institution.institution.social_medias.map(sm => ({
-                        media: sm.media,
-                        link: sm.link
-                    })) : []
+                    social_medias: institution.institution.social_medias ? institution.institution.social_medias.map(social_media => ({
+                        media: new SocialMedia({
+                            id: social_media.media.id,
+                            social_media: social_media.media.name,
+                        }),
+                        link: social_media.link
+                    })) : [],
                 }) : undefined
             })) : [],
-            applicants: activity.applications?.map((application: { id?: number; activity_id: string; user: UserProps; status: number; } ) => ({
-                id: application.user.id,
-                status: Boolean(application.status),
-                user: application.user ? new User({
+            applicants: activity.applications ? activity.applications.map(application => ({
+                id: application.id,
+                user: new User({
                     id: application.user.id,
                     name: application.user.name,
                     email: application.user.email,
                     user_type: application.user.user_type.id,
-                    course: application.user.course ? new Course({
-                        id: application.user.course.id,
-                        name: application.user.course.name
-                    }) : null,
-                    semester_course: application.user.semester,
                     created_at: application.user.created_at,
                     updated_at: application.user.updated_at
-                }) : undefined
-            }))
+                }),
+                status: application.status === 1
+            })) : []
         });
     }
 }

@@ -11,12 +11,6 @@ class UserProps {
         id: number;
         name: string;
     };
-    course:
-        {
-            id: number,
-            name: string
-        } | null;
-    semester: number | null;
     created_at: Date;
     updated_at: Date;
 }
@@ -28,11 +22,6 @@ class UserDTO {
             name: user.name || null,
             email: user.email,
             user_type: UserTypeEnum[user.user_type.name],
-            course: user.course ? new Course({
-                id: user.course.id,
-                name: user.course.name,
-            }) : null,
-            semester_course: user.semester || null,
             created_at: user.created_at,
             updated_at: user.updated_at,
         });

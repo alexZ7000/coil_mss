@@ -5,7 +5,6 @@ export class LambdaStack extends Construct {
 
     private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
-    private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
     
     private get_institution: lambda_js.NodejsFunction;
@@ -101,14 +100,6 @@ export class LambdaStack extends Construct {
             "get_user",
             environment_variables,
             "GET",
-            restapi_resource,
-            origins
-        );
-
-        this.update_user = this.create_lambda(
-            "update_user",
-            environment_variables,
-            "POST",
             restapi_resource,
             origins
         );

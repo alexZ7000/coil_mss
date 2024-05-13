@@ -1,4 +1,8 @@
+import { CountryProps } from "./CountryDTO";
+import { SocialMediaProps } from "./SocialMediaDTO";
+import { Country } from "../../../structure/entities/Country";
 import { Institution } from "../../../structure/entities/Institution";
+import { SocialMedia } from "../../../structure/entities/SocialMedia";
 
 
 class InstitutionProps {
@@ -6,9 +10,9 @@ class InstitutionProps {
     name: string;
     description: string;
     email: string;
-    country: string;
-    social_medias?: {id: number, institution_id: string, media: string, link: string}[];
-    images?: {id: number, institution_id: string, image: string}[];
+    countries: { contry: CountryProps }[];
+    social_medias: { media: SocialMediaProps, link: string }[];
+    images?: { id: number, institution_id: string, image: string }[];
 }
 
 class InstitutionDTO {
@@ -18,13 +22,22 @@ class InstitutionDTO {
             name: institution.name,
             description: institution.description,
             email: institution.email,
-            country: institution.country,
-            social_medias: institution.social_medias ? institution.social_medias.map(sm => {
+            countries: institution.countries.map(country => {
+                return new Country({
+                    id: country.contry.id,
+                    country: country.contry.country,
+                    country_code: country.contry.country_code
+                });
+            }),
+            social_medias: institution.social_medias.map(social_media => {
                 return {
-                    media: sm.media,
-                    link: sm.link,
-                }
-            }) : [],
+                    media: new SocialMedia({
+                        id: social_media.media.id,
+                        social_media: social_media.media.name
+                    }),
+                    link: social_media.link
+                };
+            }),
             images: institution.images ? institution.images.map(img => {
                 return img.image;
             }) : [],

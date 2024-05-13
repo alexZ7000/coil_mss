@@ -1,3 +1,5 @@
+import { Country } from "./Country";
+import { SocialMedia } from "./SocialMedia";
 import { EntityError } from "../../helpers/errors/EntityError";
 
 
@@ -6,9 +8,9 @@ class InstitutionProps {
     name: string;
     description: string | null;
     email: string;
-    country: string;
+    countries: Country[];
     images: string[] | [];
-    social_medias: { media: string, link: string }[] | [];
+    social_medias: { media: SocialMedia, link: string }[];
 }
 
 export class Institution {
@@ -16,16 +18,16 @@ export class Institution {
     name: string;
     description: string | null;
     email: string;
-    country: string;
+    countries: Country[];
     images: string[] | [];
-    social_medias: { media: string, link: string }[] | [];
+    social_medias: { media: SocialMedia, link: string }[];
 
     constructor(props: InstitutionProps) {
         this.id = this.validate_set_id(props.id);
         this.name = this.validate_set_name(props.name);
         this.description = this.validate_set_description(props.description);
         this.email = this.validate_set_email(props.email);
-        this.country = this.validate_set_country(props.country);
+        this.countries = this.validate_set_country(props.countries);
         this.images = this.validate_set_images(props.images);
         this.social_medias = this.validate_set_social_medias(props.social_medias);
     }
@@ -35,7 +37,7 @@ export class Institution {
             id: this.id,
             name: this.name,
             email: this.email,
-            country: this.country,
+            countries: this.countries,
             images: this.images,
             social_medias: this.social_medias
         }
@@ -98,17 +100,11 @@ export class Institution {
     }
 
 
-    private validate_set_country(country: string) {
-        if (country == null || country == "") {
-            throw new EntityError("Parameter country is required")
+    private validate_set_country(countries: Country[]) {
+        if (countries == null || countries == undefined) {
+            throw new EntityError("Parameter countries is required")
         }
-        if (typeof country !== "string") {
-            throw new EntityError("Parameter country has to be a string")
-        }
-        if (country.length < 3 || country.length > 255) {
-            throw new EntityError("Parameter country must have between 3 and 255 characters")
-        }
-        return country;
+        return countries;
     }
 
     private validate_set_images(images: string[]) {
@@ -126,7 +122,7 @@ export class Institution {
         return images;
     }
 
-    private validate_set_social_medias(social_medias: { media: string, link: string }[] | []) {
+    private validate_set_social_medias(social_medias: { media: SocialMedia, link: string }[]) {
         if (social_medias == null || social_medias.length == 0) {
             return [];
         }
@@ -134,11 +130,11 @@ export class Institution {
             throw new EntityError("Parameter social_medias must be an array of objects")
         }
         for (const social_media of social_medias) {
-            if (typeof social_media.media !== "string" || typeof social_media.link !== "string") {
-                throw new EntityError("Each social media object must have a media and a link")
+            if (typeof social_media.media !== "object") {
+                throw new EntityError("Each media in the social_medias array must be an object")
             }
-            if (social_media.media.length < 3 || social_media.media.length > 255) {
-                throw new EntityError("Parameter media must have between 3 and 255 characters")
+            if (typeof social_media.link !== "string") {
+                throw new EntityError("Each link in the social_medias array must be a string")
             }
         }
         return social_medias;

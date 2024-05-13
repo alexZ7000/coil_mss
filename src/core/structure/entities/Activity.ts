@@ -1,10 +1,12 @@
 import { User } from "./User";
 import { Course } from "./Course";
+import { Language } from "./Language";
 import { Criteria } from "./Criteria";
 import { Institution } from "./Institution";
 import { EntityError } from "../../helpers/errors/EntityError";
 import { ActivityTypeEnum } from "../../helpers/enums/ActivityTypeEnum";
 import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
+import { name } from "aws-sdk/clients/importexport";
 
 class ActivityProps {
     id: string;
@@ -12,15 +14,15 @@ class ActivityProps {
     start_date: Date;
     end_date: Date;
     description: string;
-    languages: string[] | [];
-    courses: Course[]
-    partner_institutions: {id: string, institution?: Institution}[];
-    criterias: Criteria[];
+    languages: { id: number, language?: Language }[];
+    courses: { id: number, course?: Course }[];
+    partner_institutions: { id: string, institution?: Institution }[];
+    criterias: { id: number, criteria?: Criteria }[];
     status_activity: ActivityStatusEnum;
     type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {id: string, status: boolean, user?: User}[];
+    applicants: { id: string, status: boolean, user?: User }[];
 }
 
 export class Activity {
@@ -29,15 +31,15 @@ export class Activity {
     start_date: Date;
     end_date: Date;
     description: string;
-    languages: string[] | [];
-    courses: Course[];
-    partner_institutions: {id: string, institution?: Institution}[];
-    criterias: Criteria[];
+    languages: { id: number, language?: Language }[];
+    courses: { id: number, course?: Course }[];
+    partner_institutions: { id: string, institution?: Institution }[];
+    criterias: { id: number, criteria?: Criteria }[];
     status_activity: ActivityStatusEnum;
     type_activity: ActivityTypeEnum;
     created_at: Date;
     updated_at: Date;
-    applicants: {id: string, status: boolean, user?: User}[];
+    applicants: { id: string, status: boolean, user?: User }[];
 
     constructor(props: ActivityProps) {
         this.id = this.validate_set_id(props.id);
@@ -56,22 +58,22 @@ export class Activity {
         this.courses = this.validate_set_courses(props.courses);
     }
 
-    public to_json(): {[key: string]: any}{
+    public to_json(): { [key: string]: any } {
         return {
             id: this.id,
             title: this.title,
             start_date: this.start_date,
             end_date: this.end_date,
             description: this.description,
-            languages: this.languages,
-            partner_institutions: this.partner_institutions,
-            criterias: this.criterias.map(criteria => criteria.to_json()),
+            languages: this.languages.map(language => language.language?.to_json()),
+            partner_institutions: this.partner_institutions.map(institution => institution.institution?.to_json()),
+            criterias: this.criterias.map(criteria => criteria.criteria?.to_json()),
             status_activity: this.status_activity,
             type_activity: this.type_activity,
             created_at: this.created_at,
             updated_at: this.updated_at,
             applicants: this.applicants,
-            courses: this.courses.map(course => course.to_json())
+            courses: this.courses.map(course => course.course?.to_json())
         };
     }
 
@@ -131,30 +133,21 @@ export class Activity {
         return description;
     }
 
-    private validate_set_languages(languages: string[] | []) {
+    private validate_set_languages(languages: { id: number, language?: Language }[]) {
         if (languages == null || languages.length === 0) {
             return [];
-        }
-        if (!Array.isArray(languages)) {
-            throw new EntityError("Parameter languages is not an array");
-        }
-        if (languages.some((language) => typeof language !== "string")) {
-            throw new EntityError("Parameter languages must be an array of strings");
-        }
-        if (languages.some((language) => language.length < 3 || language.length > 255)) {
-            throw new EntityError("Parameter languages must be an array of strings with length between 3 and 255 characters");
         }
         return languages;
     }
 
-    private validate_set_partner_institutions(partner_institutions: {id: string, institution?: Institution}[]) {
+    private validate_set_partner_institutions(partner_institutions: { id: string, institution?: Institution }[]) {
         if (partner_institutions == null || partner_institutions.length === 0) {
             return [];
         }
         return partner_institutions;
     }
 
-    private validate_set_criterias(criterias: Criteria[] | []) {
+    private validate_set_criterias(criterias: { id: number, criteria?: Criteria }[]) {
         if (criterias == null || criterias.length === 0) {
             return [];
         }
@@ -204,14 +197,14 @@ export class Activity {
         return updated_at;
     }
 
-    private validate_set_applicants(applicants: {id: string, status: boolean}[]) {
+    private validate_set_applicants(applicants: { id: string, status: boolean, user?: User }[]) {
         if (applicants == null || applicants.length === 0) {
             return [];
         }
         return applicants;
     }
 
-    private validate_set_courses(courses: Course[]) {
+    private validate_set_courses(courses: { id: number, course?: Course }[]) {
         if (courses == null || courses.length === 0) {
             return [];
         }
