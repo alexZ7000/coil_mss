@@ -129,14 +129,6 @@ export class Institution {
         if (!Array.isArray(social_medias)) {
             throw new EntityError("Parameter social_medias must be an array of objects")
         }
-        for (const social_media of social_medias) {
-            if (typeof social_media.media !== "object") {
-                throw new EntityError("Each media in the social_medias array must be an object")
-            }
-            if (typeof social_media.link !== "string") {
-                throw new EntityError("Each link in the social_medias array must be a string")
-            }
-        }
         return social_medias;
     }
 }

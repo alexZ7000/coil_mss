@@ -4,7 +4,7 @@ import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
 export class UserMock {
     public users: User[];
-
+    
     constructor() {
         this.users = [
             new User({
@@ -35,6 +35,6 @@ export class UserMock {
                     updated_at: new Date()
                 }
             )
-        ];                
+        ];
     }
 }

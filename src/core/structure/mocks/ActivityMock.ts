@@ -1,7 +1,7 @@
 import { UserMock } from "./UserMock";
 import { CourseMock } from "./CourseMock";
 import { CriteriaMock } from "./CriteriaMock";
-import { LanguagesMock } from "./LanguagesMock";
+import { LanguageMock } from "./LanguageMock";
 import { InstitutionMock } from "./InstitutionMock";
 
 import { Activity } from "../entities/Activity";
@@ -13,7 +13,7 @@ export class ActivityMock {
   private user_mock: UserMock = new UserMock();
   private course_mock: CourseMock = new CourseMock();
   private criteria_mock: CriteriaMock = new CriteriaMock();
-  private languages_mock: LanguagesMock = new LanguagesMock();
+  private languages_mock: LanguageMock = new LanguageMock();
   private institution_mock: InstitutionMock = new InstitutionMock();
 
   constructor() {
