@@ -1,7 +1,7 @@
 import { UserDTO } from "../dtos/UserDTO";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
-import { User as UserDB, UserType as UserTypeDB, Course as CourseDB, Course } from "../models/Models";
+import { User as UserDB, UserType as UserTypeDB } from "../models/Models";
 
 export class UserRepo implements IUserRepo {
   private user_dto: UserDTO = new UserDTO();
@@ -12,8 +12,7 @@ export class UserRepo implements IUserRepo {
         id: id,
       },
       include: [
-        { model: UserTypeDB, as: 'user_type' },
-        { model: CourseDB, as: 'course' },
+        { model: UserTypeDB, as: 'user_type' }
       ]
     });
 
@@ -30,8 +29,7 @@ export class UserRepo implements IUserRepo {
         email: email,
       },
       include: [
-        { model: UserTypeDB, as: 'user_type' },
-        { model: CourseDB, as: 'course' },
+        { model: UserTypeDB, as: 'user_type' }
       ],
     });
 
@@ -48,8 +46,6 @@ export class UserRepo implements IUserRepo {
       name: user.name,
       email: user.email,
       user_type_id: user.user_type,
-      course_id: user.course?.id,
-      semester: user.semester_course,
       created_at: user.created_at,
       updated_at: user.updated_at,
     });
@@ -62,8 +58,6 @@ export class UserRepo implements IUserRepo {
       name: updatedUser.name,
       email: updatedUser.email,
       user_type_id: updatedUser.user_type,
-      course_id: updatedUser.course?.id,
-      semester: updatedUser.semester_course,
       updated_at: updatedUser.updated_at,
     }, {
       where: {

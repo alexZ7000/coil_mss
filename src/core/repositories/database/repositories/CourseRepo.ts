@@ -11,57 +11,11 @@ export class CourseRepo implements ICourseRepo {
         this.courseDTO = new CourseDTO();
     }
 
-    public async get_course(id: number): Promise<Course | null> {
-        let course_found = await CourseDB.findOne({
-            where: {
-                id: id
-            }
-        });
-
-        if (!course_found) {
-            return null;
-        }
-
-        return this.courseDTO.to_entity(course_found.toJSON());
-    }
 
     public async get_all_courses(): Promise<Course[]> {
-        let courses_found = await CourseDB.findAll();
-
-        return courses_found.map(course => {
-            return this.courseDTO.to_entity(course.toJSON());
-        });
-    }
-
-    public async create_course(course: Course): Promise<boolean> {
-        await CourseDB.create({
-            name: course.name,
-        });
-
-        return true;
-    }
-
-    public async update_course(course: Course): Promise<boolean> {
-        await CourseDB.update({
-            name: course.name,
-        }, {
-            where: {
-                id: course.id
-            }
-        });
-
-        return true;
-    }
-
-    public async delete_course(id: number): Promise<boolean> {
-        await CourseDB.destroy({
-            where: {
-                id: id
-            }
-        });
-
-        return true;
+        const coursesDB = await CourseDB.findAll();        
+        return coursesDB.map(course => this.courseDTO.to_entity(course.toJSON()));
     }
 }
-    
+
 
