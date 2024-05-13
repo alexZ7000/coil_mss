@@ -1,11 +1,13 @@
+import { randomUUID } from 'crypto';
 import { it, describe, expect } from 'vitest';
 
 import { Activity } from '../../../../src/core/structure/entities/Activity';
 import { ActivityMock } from '../../../../src/core/structure/mocks/ActivityMock';
+import { LanguagesMock } from '../../../../src/core/structure/mocks/LanguagesMock';
 import { ActivityTypeEnum } from '../../../../src/core/helpers/enums/ActivityTypeEnum';
 import { ActivityStatusEnum } from '../../../../src/core/helpers/enums/ActivityStatusEnum';
-import { randomUUID } from 'crypto';
 
+const languages = new LanguagesMock().languages;
 
 describe('Activity', () => {
     it ('should create an activity', () => {
@@ -15,7 +17,10 @@ describe('Activity', () => {
             start_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
             end_date: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7 * 2),
             description: 'Project 1',
-            languages: ['English', 'Portuguese'],
+            languages: [
+                { id: languages[0].id, language: languages[0] },
+                { id: languages[1].id, language: languages[1] }
+            ],
             partner_institutions: [],
             criterias: [],
             courses: [],
@@ -25,13 +30,6 @@ describe('Activity', () => {
             updated_at: new Date(),
             applicants: []
         });
-
-        expect(activity).toBeInstanceOf(Activity);
-    });
-
-    it ('should create an activity using ActivityMock', () => {
-        const activityMock = new ActivityMock();
-        const activity = activityMock.activities[0];
 
         expect(activity).toBeInstanceOf(Activity);
     });

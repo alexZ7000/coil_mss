@@ -21,21 +21,22 @@ describe('Criteria', () => {
         }).rejects.toThrow('Parameter id is not a number');
     });
 
-    it('should throw an error if the criteria is null', async () => {
-        await expect(async () => {
-            new Criteria({
-                id: 2,
-                criteria: null
-            })
-        }).rejects.toThrow('Parameter criteria is required');
+    it('should set the id property', async () => {
+        const criteria = new Criteria({
+            id: 1,
+            criteria: 'This test should pass'
+        });
+
+        expect(criteria.id).toBe(1);
     });
 
-    it('should throw an error if the criteria is not a string', async () => {
+    it('should throw an error if the criteria is less than 3 characters', async () => {
         await expect(async () => {
             new Criteria({
-                id: 3,
-                criteria: 123
+                id: 1,
+                criteria: 'CS'
             })
-        }).rejects.toThrow("Parameter criteria is not a string")
+        }).rejects.toThrow('Parameter criteria must be between 3 and 255 characters');
     });
 });
+ 

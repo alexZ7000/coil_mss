@@ -1,7 +1,13 @@
 import { it, describe, expect } from 'vitest';
 import { EntityError } from '../../../../src/core/helpers/errors/EntityError';
 import { Institution } from "../../../../src/core/structure/entities/Institution";
+import { SocialMediaMock } from '../../../../src/core/structure/mocks/SocialMediaMock';
+import { Country } from '../../../../src/core/structure/entities/Country';
+import { CountryMock } from '../../../../src/core/structure/mocks/CountryMock';
 
+
+const socialMedia = new SocialMediaMock().social_medias;
+const country = new CountryMock().countries;
 
 describe('Institution', () => {
     it('should throw an error if id is null', async () => {
@@ -10,12 +16,11 @@ describe('Institution', () => {
                 id: null,
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
-                social_medias: [{
-                    media: 'twitter',
-                    link: 'twitter.com'
-                }]
+                social_medias: [
+                    {media: socialMedia[0], link: 'twitter.com'}
+                ]
             });
         }).rejects.toThrow("Parameter id is required");
     });
@@ -26,10 +31,10 @@ describe('Institution', () => {
                 id: 123,
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
-                    media: 'twitter',
+                    media: socialMedia[0],
                     link: 'twitter.com'
                 }]
             });
@@ -42,7 +47,7 @@ describe('Institution', () => {
                 id: 'invalid_id_length',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -58,7 +63,7 @@ describe('Institution', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -76,7 +81,7 @@ describe('validate_set_name', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: null,
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -92,7 +97,7 @@ describe('validate_set_name', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: '',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -108,7 +113,7 @@ describe('validate_set_name', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 123,
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -124,7 +129,7 @@ describe('validate_set_name', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -142,7 +147,7 @@ describe('validate_set_email', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: null,
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -158,7 +163,7 @@ describe('validate_set_email', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: '',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -174,7 +179,7 @@ describe('validate_set_email', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 123,
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -190,7 +195,7 @@ describe('validate_set_email', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'invalid_email_format',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -206,7 +211,7 @@ describe('validate_set_email', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -224,14 +229,15 @@ describe('validate_set_country', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: null,
+                description: 'Test Description',
+                countries: null,
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
-                    media: 'twitter',
+                    media: socialMedia[0],
                     link: 'twitter.com'
                 }]
             });
-        }).rejects.toThrow("Parameter country is required");
+        }).rejects.toThrow("Parameter countries is required");
     });
 
     it('should throw an error if country is an empty string', async () => {
@@ -247,7 +253,7 @@ describe('validate_set_country', () => {
                     link: 'twitter.com'
                 }]
             });
-        }).rejects.toThrow("Parameter country is required");
+        }).rejects.toThrow("Parameter countries is required");
     });
 
     it('should throw an error if country is not a string', async () => {
@@ -263,16 +269,16 @@ describe('validate_set_country', () => {
                     link: 'twitter.com'
                 }]
             });
-        }).rejects.toThrow("Parameter country has to be a string");
+        }).rejects.toThrow("Parameter countries is required");
     });
 
     it('should not throw an error if country is valid', async () => {
         await expect(async () => {
-            new Institution({
+            new Institution({ 
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -290,7 +296,7 @@ describe('validate_set_images', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: null,
                 social_medias: [{
                     media: 'twitter',
@@ -306,7 +312,7 @@ describe('validate_set_images', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: [123, true, {}],
                 social_medias: [{
                     media: 'twitter',
@@ -322,7 +328,7 @@ describe('validate_set_images', () => {
                 id: '123e4567-e89b-12d3-a456-426614174000',
                 name: 'Test',
                 email: 'test@example.com',
-                country: 'Test Country',
+                countries: [country[0]],
                 images: ['image1.jpg', 'image2.jpg'],
                 social_medias: [{
                     media: 'twitter',
@@ -331,4 +337,4 @@ describe('validate_set_images', () => {
             });
         }).not.toThrow();
     });
-});
+}); 
