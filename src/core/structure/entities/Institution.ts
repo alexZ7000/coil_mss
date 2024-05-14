@@ -8,9 +8,9 @@ class InstitutionProps {
     name: string;
     description: string | null;
     email: string;
-    countries: Country[];
+    countries: { id: number, country?: Country }[];
     images: string[] | [];
-    social_medias: { media: SocialMedia, link: string }[];
+    social_medias: { id: number, media?: SocialMedia, link: string }[];
 }
 
 export class Institution {
@@ -18,9 +18,9 @@ export class Institution {
     name: string;
     description: string | null;
     email: string;
-    countries: Country[];
+    countries: { id: number, country?: Country }[];
     images: string[] | [];
-    social_medias: { media: SocialMedia, link: string }[];
+    social_medias: { id: number, media?: SocialMedia, link: string }[];
 
     constructor(props: InstitutionProps) {
         this.id = this.validate_set_id(props.id);
@@ -100,9 +100,12 @@ export class Institution {
     }
 
 
-    private validate_set_country(countries: Country[]) {
-        if (countries == null || countries == undefined) {
+    private validate_set_country(countries: { id: number, country?: Country }[]) {
+        if (countries == null || countries.length == 0) {
             throw new EntityError("Parameter countries is required")
+        }
+        if (!countries || !Array.isArray(countries)) {
+            throw new EntityError("Parameter countries must be an array of objects");
         }
         return countries;
     }
@@ -122,7 +125,7 @@ export class Institution {
         return images;
     }
 
-    private validate_set_social_medias(social_medias: { media: SocialMedia, link: string }[]) {
+    private validate_set_social_medias(social_medias: { id: number, media?: SocialMedia, link: string }[]) {
         if (social_medias == null || social_medias.length == 0) {
             return [];
         }
