@@ -72,23 +72,25 @@ export class UpdateActivityUsecase {
       });
     }
 
-    let courses: Course[] = [];
+    let courses: { id: number, course?: Course }[] = [];
     if (body.courses) {
-      courses = body.courses.map((course: { [key: string]: any }) => {
-        return new Course({
-          id: course.id,
-          name: course.name
-        });
+      courses = body.courses.map((course_id: number) => {
+        return {
+          id: course_id
+        }
       });
     }
 
-    let criterias: Criteria[] = [];
+    let criterias: { id: number, criteria?: Criteria }[] = [];
     if (body.criterias) {
-      criterias = body.criterias.map((criteria: string) => {
-        return new Criteria({
-          id: 0,
-          criteria: criteria
-        });
+      criterias = body.criterias.map((criteria: { id?: number, criteria?: string }) => {
+        return {
+          id: criteria.id ? criteria.id : -1,
+          criteria: criteria.criteria ? new Criteria({
+            id: 1,
+            criteria: criteria.criteria
+          }) : null
+        }
       });
     }
 
