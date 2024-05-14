@@ -37,7 +37,7 @@ export class CreateModeratorUsecase {
             }).catch(error => {
                 throw new UserNotAuthenticated("Invalid or expired token");
             });
-            
+
         const user_admin = await this.database_repo.get_user(user_admin_id);
         if (!user_admin) {
             throw new UserNotAuthenticated();
@@ -46,25 +46,26 @@ export class CreateModeratorUsecase {
             throw new UserNotAllowed();
         }
 
-        if (await this.database_repo.get_user_by_email(body.email)) {
-            throw new UniqueConstraintError({ message: "Email already in use" });
+        const user = await this.database_repo.get_user_by_email(body.email);
+        if (user) {
+            user.user_type = UserTypeEnum.MODERATOR;
+            this.database_repo.update_user(user);
+        }
+        else {
+            const moderator = new User({
+                id: randomUUID(),
+                name: null,
+                email: body.email,
+                user_type: UserTypeEnum.MODERATOR,
+                created_at: new Date(),
+                updated_at: new Date()
+            });
+
+            await this.database_repo.create_user(moderator);
         }
 
-        const moderator = new User({
-            id: randomUUID(),
-            name: null,
-            email: body.email,
-            course: null,
-            semester_course: null,
-            user_type: UserTypeEnum.MODERATOR,
-            created_at: new Date(),
-            updated_at: new Date()
-        });
-
-        await this.database_repo.create_user(moderator);
-
         return {
-            email: moderator.email,
+            email: body.email,
         }
     }
 } 
