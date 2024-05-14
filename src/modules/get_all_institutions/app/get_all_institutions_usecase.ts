@@ -43,7 +43,7 @@ export class GetAllInstitutionsUsecase {
         id: institution.id,
         name: institution.name,
         logo: institution.images[0] || null,
-        country: institution.country
+        countries: institution.countries.map(country => country.to_json())
       };
     }) || [];
   }
