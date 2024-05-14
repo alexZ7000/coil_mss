@@ -23,14 +23,18 @@ class InstitutionDTO {
             description: institution.description,
             email: institution.email,
             countries: institution.countries.map(country => {
-                return new Country({
+                return {
                     id: country.contry.id,
-                    country: country.contry.country,
-                    country_code: country.contry.country_code
-                });
+                    country: new Country({
+                        id: country.contry.id,
+                        country: country.contry.country,
+                        country_code: country.contry.country_code
+                    })
+                };
             }),
             social_medias: institution.social_medias.map(social_media => {
                 return {
+                    id: social_media.media.id,
                     media: new SocialMedia({
                         id: social_media.media.id,
                         social_media: social_media.media.name
