@@ -1,6 +1,5 @@
 import { AssignUserUsecase } from "./assign_user_usecase";
 import {
-  ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
@@ -10,7 +9,6 @@ import {
 } from "../../../core/helpers/errors/ModuleError";
 import {
   BadRequest,
-  Conflict,
   Forbidden,
   HttpRequest,
   InternalServerError,
@@ -58,9 +56,6 @@ export class AssignUserController {
       }
       if (error instanceof NotfoundError) {
         return new NotFound(error.message);
-      }
-      if (error instanceof ConflictError) {
-        return new Conflict(error.message);
       }
       if (error instanceof EntityError) {
         return new ParameterError(error.message);
