@@ -23,11 +23,11 @@ class ActivityProps {
     end_date: Date;
     created_at: Date;
     updated_at: Date;
-    courses: { id: number, course: CourseProps }[];
-    languages: { id: number, language: LanguageProps }[];
-    criterias: { id: number, criteria: CriteriaProps }[];
-    partner_institutions: { id: number, institution: InstitutionProps }[];
-    applications: { id: string, user: UserProps, status: number }[];
+    courses: { course_id: number, course: CourseProps }[];
+    languages: { language_id: number, language: LanguageProps }[];
+    criterias: { criteria_id: number, criteria: CriteriaProps }[];
+    partner_institutions: { institution_id: string, institution: InstitutionProps }[];
+    applications: { user_id: string, user: UserProps, status: number }[];
 }
 
 export class ActivityDTO {
@@ -58,36 +58,40 @@ export class ActivityDTO {
                 })
             })) : [],
             criterias: activity.criterias ? activity.criterias.map(criteria => ({
-                id: criteria.criteria.id,
+                id: criteria.criteria_id,
                 criteria: new Criteria({
                     id: criteria.criteria.id,
                     criteria: criteria.criteria.criteria
                 })
             })) : [],
             partner_institutions: activity.partner_institutions ? activity.partner_institutions.map(institution => ({
-                id: institution.institution.id,
+                id: institution.institution_id,
                 institution: institution.institution ? new Institution({
                     id: institution.institution.id,
                     name: institution.institution.name,
                     description: institution.institution.description,
                     email: institution.institution.email,
-                    countries: institution.institution.countries ? institution.institution.countries.map(country => new Country({
+                    countries: institution.institution.countries ? institution.institution.countries.map(country => ({
                         id: country.contry.id,
-                        country: country.contry.country,
-                        country_code: country.contry.country_code
+                        country: new Country({
+                            id: country.contry.id,
+                            country: country.contry.country,
+                            country_code: country.contry.country_code
+                        })
                     })) : [],
                     images: institution.institution.images ? institution.institution.images.map(image => image.image) : [],
                     social_medias: institution.institution.social_medias ? institution.institution.social_medias.map(social_media => ({
+                        id: social_media.media.id,
                         media: new SocialMedia({
                             id: social_media.media.id,
-                            social_media: social_media.media.name,
+                            social_media: social_media.media.name
                         }),
                         link: social_media.link
                     })) : [],
                 }) : undefined
             })) : [],
             applicants: activity.applications ? activity.applications.map(application => ({
-                id: application.id,
+                id: application.user_id,
                 user: new User({
                     id: application.user.id,
                     name: application.user.name,
