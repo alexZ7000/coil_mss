@@ -2,14 +2,14 @@ import { EntityError } from "../../helpers/errors/EntityError";
 
 class CountryProps {
     id: number;
-    country: string;
-    country_code: string;
+    country: string | null;
+    country_code: string | null;
 }
 
 export class Country {
     id: number;
-    country: string;
-    country_code: string;
+    country: string | null;
+    country_code: string | null;
 
     constructor(props: CountryProps) {
         this.id = this.validate_set_id(props.id);
@@ -35,9 +35,9 @@ export class Country {
         return id;
     }
 
-    private validate_set_country(country: string) {
+    private validate_set_country(country: string | null) {
         if (country == null || country == "") {
-            throw new EntityError("Parameter country is required");
+            return null;
         }
         if (typeof country !== "string") {
             throw new EntityError("Parameter country is not a string");
