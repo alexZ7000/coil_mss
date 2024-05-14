@@ -100,7 +100,7 @@ export class CreateInstitutionUsecase {
             social_medias: social_medias
         });
 
-        if (process.env.STAGE === 'prod') {
+        if (process.env.STAGE !== 'test') {
             images.map(async (image: string, index: number) => {
                 const content_type = image.split(';')[0].split(':')[1];
                 const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;
