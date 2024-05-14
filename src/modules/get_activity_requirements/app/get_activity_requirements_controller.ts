@@ -34,7 +34,7 @@ export class GetActivityRequirementsController {
             }
 
             const response = await this.usecase.execute(request.headers);
-            return new OK(response, "Courses found successfully");
+            return new OK(response, "Activity requirements found successfully");
         } catch (error) {
             if (error instanceof InvalidRequest) {
                 return new BadRequest(error.message);
