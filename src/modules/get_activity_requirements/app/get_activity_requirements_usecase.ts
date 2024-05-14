@@ -56,7 +56,7 @@ export class GetActivityRequirementsUsecase {
 
         return {
             courses: courses.map(course => course.to_json()),
-            criteria: criteria.map(criteria => criteria.to_json()),
+            criterias: criteria.map(criteria => criteria.to_json()),
             languages: languages.map(language => language.to_json()),
             institutions: institutions
         };
