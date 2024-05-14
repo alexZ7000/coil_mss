@@ -118,7 +118,7 @@ export class CreateActivityUsecase {
 
     const criterias = body.criterias.map((criteria: { id?: number, criteria?: string }) => {
       return {
-        id: criteria ? criteria.id : -1,
+        id: criteria.id || -1,
         criteria: criteria.criteria ? new Criteria({
           id: 1,
           criteria: criteria.criteria
@@ -151,7 +151,7 @@ export class CreateActivityUsecase {
     });
 
     await this.activity_repo.create_activity(activity).then(async (response) => {
-      if (response && process.env.STAGE !== "test") {
+      if (response && process.env.STAGE === "prod") {
         await this.event_bridge.create_trigger(
           "START_ACTIVITY_" + activity.id,
           "Update_Activity_Event",
@@ -177,5 +177,7 @@ export class CreateActivityUsecase {
         );
       }
     });
+
+    return { id: activity.id };
   }
 }

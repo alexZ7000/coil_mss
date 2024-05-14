@@ -473,7 +473,6 @@ Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE
 ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', as: 'course' });
 
 // Institution
-Institution.belongsTo(Country, { foreignKey: 'country_id', as: 'country' });
 Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'social_medias' });
 Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'images' });
 Institution.hasMany(InstitutionCountry, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'countries' });

@@ -34,7 +34,7 @@ export class GetUserController {
 
       let response = await this.usecase.execute(request.headers);
       return new OK(response, "User found successfully");
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }

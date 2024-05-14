@@ -27,10 +27,10 @@ export class CreateInstitutionController {
                 throw new MissingParameter("Headers");
             }
 
-            await this.usecase.execute(request.body.body, request.headers);
-            return new Created({}, "Institution created successfully");
+            const usecase = await this.usecase.execute(request.body.body, request.headers);
+            return new Created(usecase, "Institution created successfully");
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof EntityError) {
                 return new BadRequest(error.message);
             }

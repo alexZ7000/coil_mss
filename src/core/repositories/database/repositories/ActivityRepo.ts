@@ -55,7 +55,9 @@ export class ActivityRepo implements IActivityRepo {
                     include: [{
                         model: InstitutionImageDB,
                         as: 'images',
-                        order: [['id', 'ASC']]
+                        limit: 1,
+                        order: [['id', 'ASC']],
+                        attributes: ['image']
                     }, {
                         model: InstitutionSocialMediaDB,
                         as: 'social_medias',
@@ -116,11 +118,11 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: "course", attributes: ['name'] }],
+                    include: [{ model: Course, as: "course" }],
                     attributes: ['course_id']
                 },
-                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language', attributes: ['name'] }] },
-                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria', attributes: ['name'] }] },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language' }] },
+                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria' }] },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -138,8 +140,7 @@ export class ActivityRepo implements IActivityRepo {
                             model: InstitutionCountry,
                             as: 'countries',
                             include: [{ model: Country, as: 'country' }]
-                        }],
-                        attributes: ['id', 'name', 'country_id']
+                        }]
                     }],
                     attributes: ['institution_id'],
                 },
@@ -149,7 +150,7 @@ export class ActivityRepo implements IActivityRepo {
                     where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
                 },
                 { model: ActivityType, as: 'activity_type', where: { id: type } },
-                { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
+                { model: ActivityApplication, as: 'applications', where: { user_id: user_id }, attributes: ['id', 'status'] },
             ],
             order: [['start_date', 'ASC']],
         });
@@ -158,9 +159,9 @@ export class ActivityRepo implements IActivityRepo {
             return null;
         }
 
-        return activities.map((activity) =>
-            activity.toJSON()
-        );
+        console.log(activities.map((activity) => activity.toJSON()));
+
+        return activities.map((activity) => this.ActivityDTO.to_entity(activity.toJSON()));
     }
 
     async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null> {
@@ -211,8 +212,10 @@ export class ActivityRepo implements IActivityRepo {
         })));
 
         let new_criterias = await Criteria.bulkCreate(activity.criterias.filter(criteria => criteria.id == -1).map(criteria => ({
-            name: criteria.criteria
-        }), { returning: true }));
+            criteria: criteria.criteria?.criteria
+        }), { returning: true, ignoreDuplicates: true }));
+
+        console.log(new_criterias);
 
         await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
@@ -257,7 +260,7 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
-    async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[]): Promise<Activity[]> {
+    async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[], type: ActivityTypeEnum): Promise<Activity[]> {
         const statuses = Array.isArray(status) ? status : [status];
         const activities = await ActivityDB.findAll({
             where: {
@@ -271,8 +274,8 @@ export class ActivityRepo implements IActivityRepo {
                     include: [{ model: Course, as: 'course' }],
                     attributes: ['course_id']
                 },
-                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language', attributes: ['name'] }] },
-                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria', attributes: ['name'] }] },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language' }] },
+                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria' }] },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -285,8 +288,11 @@ export class ActivityRepo implements IActivityRepo {
                             limit: 1,
                             order: [['id', 'ASC']],
                             attributes: ['image']
-                        },
-                        {
+                        }, {
+                            model: InstitutionSocialMediaDB,
+                            as: 'social_medias',
+                            include: [{ model: SocialMedia, as: 'media' }]
+                        }, {
                             model: InstitutionCountry,
                             as: 'countries',
                             include: [{ model: Country, as: 'country' }]
@@ -295,7 +301,7 @@ export class ActivityRepo implements IActivityRepo {
                     attributes: ['institution_id'],
                 },
                 { model: ActivityStatus, as: 'activity_status' },
-                { model: ActivityType, as: 'activity_type' }
+                { model: ActivityType, as: 'activity_type', where: { id: type } }
             ],
             order: [
                 ['start_date', 'ASC']

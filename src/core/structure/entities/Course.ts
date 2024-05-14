@@ -1,3 +1,4 @@
+
 class CourseProps {
     id: number;
     course: string;
@@ -8,7 +9,7 @@ export class Course {
     course: string;
 
     constructor(props: CourseProps) {
-        this.id = props.id;
+        this.id = 1;
         this.course = this.validate_set_name(props.course);
     }
 

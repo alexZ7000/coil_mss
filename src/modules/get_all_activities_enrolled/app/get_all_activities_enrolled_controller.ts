@@ -1,4 +1,5 @@
 import {
+  InvalidParameter,
   InvalidRequest,
   MissingParameter,
   NotfoundError,
@@ -45,9 +46,12 @@ export class GetAllActivitiesEnrolledController {
       );
 
       return new OK(response || {}, "Activities enrolled found successfully");
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
+      }
+      if (error instanceof InvalidParameter) {
+        return new ParameterError(error.message);
       }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);

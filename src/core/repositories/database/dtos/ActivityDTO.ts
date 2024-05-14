@@ -27,7 +27,7 @@ class ActivityProps {
     languages: { language_id: number, language: LanguageProps }[];
     criterias: { criteria_id: number, criteria: CriteriaProps }[];
     partner_institutions: { institution_id: string, institution: InstitutionProps }[];
-    applications: { user_id: string, user: UserProps, status: number }[];
+    applications: { user_id: string, user?: UserProps, status: number }[];
 }
 
 export class ActivityDTO {
@@ -72,11 +72,11 @@ export class ActivityDTO {
                     description: institution.institution.description,
                     email: institution.institution.email,
                     countries: institution.institution.countries ? institution.institution.countries.map(country => ({
-                        id: country.contry.id,
+                        id: country.country.id,
                         country: new Country({
-                            id: country.contry.id,
-                            country: country.contry.country,
-                            country_code: country.contry.country_code
+                            id: country.country.id,
+                            country: country.country.country,
+                            country_code: country.country.country_code
                         })
                     })) : [],
                     images: institution.institution.images ? institution.institution.images.map(image => image.image) : [],
@@ -92,14 +92,14 @@ export class ActivityDTO {
             })) : [],
             applicants: activity.applications ? activity.applications.map(application => ({
                 id: application.user_id,
-                user: new User({
+                user: application.user ? new User({
                     id: application.user.id,
                     name: application.user.name,
                     email: application.user.email,
                     user_type: application.user.user_type.id,
                     created_at: application.user.created_at,
                     updated_at: application.user.updated_at
-                }),
+                }) : undefined,
                 status: application.status === 1
             })) : []
         });

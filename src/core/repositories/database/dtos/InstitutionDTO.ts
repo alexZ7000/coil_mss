@@ -10,8 +10,8 @@ class InstitutionProps {
     name: string;
     description: string;
     email: string;
-    countries: { contry: CountryProps }[];
-    social_medias: { media: SocialMediaProps, link: string }[];
+    countries?: { country: CountryProps }[];
+    social_medias?: { media: SocialMediaProps, link: string }[];
     images?: { id: number, institution_id: string, image: string }[];
 }
 
@@ -22,17 +22,17 @@ class InstitutionDTO {
             name: institution.name,
             description: institution.description,
             email: institution.email,
-            countries: institution.countries.map(country => {
+            countries: institution.countries ? institution.countries.map(country => {
                 return {
-                    id: country.contry.id,
+                    id: country.country.id,
                     country: new Country({
-                        id: country.contry.id,
-                        country: country.contry.country,
-                        country_code: country.contry.country_code
+                        id: country.country.id,
+                        country: country.country.country,
+                        country_code: country.country.country_code
                     })
                 };
-            }),
-            social_medias: institution.social_medias.map(social_media => {
+            }) : [],
+            social_medias: institution.social_medias ? institution.social_medias.map(social_media => {
                 return {
                     id: social_media.media.id,
                     media: new SocialMedia({
@@ -41,7 +41,7 @@ class InstitutionDTO {
                     }),
                     link: social_media.link
                 };
-            }),
+            }) : [],
             images: institution.images ? institution.images.map(img => {
                 return img.image;
             }) : [],

@@ -21,7 +21,7 @@ class UserDTO {
             id: user.id,
             name: user.name || null,
             email: user.email,
-            user_type: UserTypeEnum[user.user_type.name],
+            user_type: UserTypeEnum[user.user_type.name as keyof typeof UserTypeEnum],
             created_at: user.created_at,
             updated_at: user.updated_at,
         });

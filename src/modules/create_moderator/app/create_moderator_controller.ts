@@ -29,7 +29,7 @@ export class CreateModeratorController {
             let response = await this.usecase.execute(request.headers, request.body.body);
             return new Created(response, "Moderator created successfully");
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof InvalidRequest) {
                 return new BadRequest(error.message);
             }

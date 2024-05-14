@@ -44,12 +44,13 @@ export class InstitutionRepo implements IInstitutionRepo {
         let institutions_found = await InstitutionDB.findAll({
             include: [
                 { model: InstitutionImageDB, as: 'images', order: [['id', 'ASC']], limit: 1 },
+                { model: InstitutionCountry, as: 'countries', include: [{ model: CountryDB, as: 'country' }] }
             ]
         });
 
-        return institutions_found.map(institution => {
+        return institutions_found ? institutions_found.map(institution => {
             return this.institutionDTO.to_entity(institution.toJSON());
-        });
+        }) : [];
     }
 
     public async create_institution(institution: Institution): Promise<boolean> {
@@ -150,6 +151,7 @@ export class InstitutionRepo implements IInstitutionRepo {
     }
 
     public async get_institution(id: string): Promise<Institution | null> {
+        console.log(id);
         let institution_found = await InstitutionDB.findOne({
             where: {
                 id: id
@@ -160,7 +162,6 @@ export class InstitutionRepo implements IInstitutionRepo {
                 { model: InstitutionCountry, as: 'countries', include: [{ model: CountryDB, as: 'country' }] }
             ]
         });
-
         return institution_found ? this.institutionDTO.to_entity(institution_found.toJSON()) : null;
     }
 }

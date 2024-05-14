@@ -25,7 +25,7 @@ export class Country {
         }
     }
 
-    private validate_set_id(id: number) {
+    private validate_set_id(id: number): number {
         if (id == null || id == undefined) {
             throw new EntityError("Parameter id is required");
         }
@@ -35,7 +35,7 @@ export class Country {
         return id;
     }
 
-    private validate_set_country(country: string | null) {
+    private validate_set_country(country: string | null): string | null {
         if (country == null || country == "") {
             return null;
         }

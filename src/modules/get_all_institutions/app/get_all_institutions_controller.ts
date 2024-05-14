@@ -33,7 +33,7 @@ export class GetAllInstitutionsController {
 
       const response = await this.usecase.execute(request.headers);
       return new OK(response, "Institutions found successfully");
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }

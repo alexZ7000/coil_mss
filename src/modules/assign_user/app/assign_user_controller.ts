@@ -44,7 +44,7 @@ export class AssignUserController {
       const usecase = await this.usecase.execute(request.headers, request.body.queryStringParameters);
       let message: string = usecase.assign ? "User assigned successfully" : "User unassigned successfully";
       return new OK({}, message);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }

@@ -74,9 +74,8 @@ export class UpdateInstitutionUsecase {
 
     institution.name = body.name || institution.name;
     institution.description = body.description || institution.description;
-    institution.country = body.country || institution.country;
+    institution.countries = body.country || institution.countries;
     institution.email = body.email || institution.email;
-    institution.country = body.country || institution.country;
     institution.images = body.images || institution.images;
     institution.social_medias = body.social_medias || institution.social_medias;
 

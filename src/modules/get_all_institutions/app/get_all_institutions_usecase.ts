@@ -38,14 +38,17 @@ export class GetAllInstitutionsUsecase {
     }
 
     const institutions = await this.institution_repo.get_all_institutions();
+
     return institutions.map((institution) => {
       return {
         id: institution.id,
         name: institution.name,
         logo: institution.images[0] || null,
-        countries: institution.countries.map(country => country.to_json())
-      };
-    }) || [];
+        countries: institution.countries.map((country) => {
+          return country.country;
+        }),
+      }
+    });
   }
 }
 
