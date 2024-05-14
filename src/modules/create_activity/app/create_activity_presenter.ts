@@ -4,7 +4,7 @@ import { CreateActivityController } from "./create_activity_controller";
 import { Repository } from "../../../core/repositories/Repository";
 import { HttpRequest } from "../../../core/helpers/http/http_codes";
 
-const repository = new Repository({ user_repo: true, activity_repo: true, institution_repo: true, course_repo: true });
+const repository = new Repository({ user_repo: true, activity_repo: true });
 
 const usecase = new CreateActivityUsecase(
   repository.UserRepo,

@@ -7,9 +7,8 @@ import {
   UserNotAuthenticated,
   InvalidParameter,
 } from "../../../core/helpers/errors/ModuleError";
-import { Course } from "../../../core/structure/entities/Course";
-import { Activity } from "../../../core/structure/entities/Activity";
 import { Criteria } from "../../../core/structure/entities/Criteria";
+import { Activity } from "../../../core/structure/entities/Activity";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
@@ -105,26 +104,33 @@ export class CreateActivityUsecase {
       });
     }
 
-    const courses = body.courses.map((course: { [key: string]: any }) => {
-      return new Course({
-        id: course.id,
-        name: course.name
-      });
-    });
-
-    const criterias = body.criterias.map((criteria: string) => {
-      return new Criteria({
-        id: 0,
-        criteria: criteria
-      });
-    });
-
-    const partner_institutions = body.partner_institutions.map(
-      (institution: string) => {
-        return {
-          id: institution
-        };
+    const languages = body.languages.map((language_id: number) => {
+      return {
+        id: language_id
       }
+    });
+
+    const courses = body.courses.map((course_id: number) => {
+      return {
+        id: course_id
+      }
+    });
+
+    const criterias = body.criterias.map((criteria: { id?: number, criteria?: string }) => {
+      return {
+        id: criteria ? criteria.id : -1,
+        criteria: criteria.criteria ? new Criteria({
+          id: 1,
+          criteria: criteria.criteria
+        }) : null
+      }
+    });
+
+    const partner_institutions = body.partner_institutions.map((institution: string) => {
+      return {
+        id: institution
+      };
+    }
     );
 
     const activity = new Activity({
@@ -133,7 +139,7 @@ export class CreateActivityUsecase {
       description: body.description,
       start_date: new Date(body.start_date),
       end_date: new Date(body.end_date),
-      languages: body.languages,
+      languages: languages,
       partner_institutions: partner_institutions,
       courses: courses,
       criterias: criterias,
