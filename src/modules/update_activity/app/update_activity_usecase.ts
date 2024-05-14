@@ -85,7 +85,7 @@ export class UpdateActivityUsecase {
     if (body.criterias) {
       criterias = body.criterias.map((criteria: { id?: number, criteria?: string }) => {
         return {
-          id: criteria.id ? criteria.id : -1,
+          id: criteria.id || -1,
           criteria: criteria.criteria ? new Criteria({
             id: 1,
             criteria: criteria.criteria

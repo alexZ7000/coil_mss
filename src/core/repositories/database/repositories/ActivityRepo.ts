@@ -215,8 +215,6 @@ export class ActivityRepo implements IActivityRepo {
             criteria: criteria.criteria?.criteria
         }), { returning: true, ignoreDuplicates: true }));
 
-        console.log(new_criterias);
-
         await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
             criteria_id: criteria.toJSON().id
@@ -398,8 +396,8 @@ export class ActivityRepo implements IActivityRepo {
         })));
 
         let new_criterias = await Criteria.bulkCreate(activity.criterias.filter(criteria => criteria.id == -1).map(criteria => ({
-            name: criteria.criteria
-        }), { returning: true }));
+            name: criteria.criteria?.criteria
+        }), { returning: true, ignoreDuplicates: true }));
 
         await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
