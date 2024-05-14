@@ -4,6 +4,7 @@ import { UserMock } from "../../../../src/core/structure/mocks/UserMock";
 import { TokenAuth } from "../../../../src/core/helpers/functions/token_auth";
 import { handler } from "../../../../src/modules/get_all_activities_enrolled/app/get_all_activities_enrolled_presenter";
 import { ActivityMock } from "../../../../src/core/structure/mocks/ActivityMock";
+import { ActivityTypeEnum } from "../../../../src/core/helpers/enums/ActivityTypeEnum";
 
 describe("Testing Get All Activities Enrolled Presenter", () => {
   const user_student = new UserMock().users[1];
@@ -20,7 +21,7 @@ describe("Testing Get All Activities Enrolled Presenter", () => {
           Authorization: token,
         },
         queryStringParameters: {
-          type_activity: "PROJECT"
+          type_activity: ActivityTypeEnum.PROJECT
         }
       },
       null
@@ -42,7 +43,7 @@ describe("Testing Get All Activities Enrolled Presenter", () => {
           Authorization: token,
         },
         queryStringParameters: {
-          type_activity: "PROJECT"
+          type_activity: ActivityTypeEnum.PROJECT
         }
       },
       null
@@ -59,7 +60,7 @@ describe("Testing Get All Activities Enrolled Presenter", () => {
           Authorization: "invalid_token",
         },
         queryStringParameters: {
-          type_activity: "PROJECT"
+          type_activity: ActivityTypeEnum.PROJECT
         }
       },
       null
