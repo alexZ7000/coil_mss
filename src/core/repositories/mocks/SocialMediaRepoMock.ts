@@ -1,6 +1,6 @@
 import { ISocialMediaRepo } from "../interfaces/ISocialMediaRepo";
 import { SocialMedia } from "../../structure/entities/SocialMedia";
-import { SocialMediaMock } from "../../structure/mocks/SocialMediasMock";
+import { SocialMediaMock } from "../../structure/mocks/SocialMediaMock";
 
 
 export class SocialMediaRepoMock implements ISocialMediaRepo {
