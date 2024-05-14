@@ -268,7 +268,7 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: 'course', attributes: ['name'] }],
+                    include: [{ model: Course, as: 'course' }],
                     attributes: ['course_id']
                 },
                 { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language', attributes: ['name'] }] },
@@ -285,8 +285,12 @@ export class ActivityRepo implements IActivityRepo {
                             limit: 1,
                             order: [['id', 'ASC']],
                             attributes: ['image']
+                        },
+                        {
+                            model: InstitutionCountry,
+                            as: 'countries',
+                            include: [{ model: Country, as: 'country' }]
                         }],
-                        attributes: ['id', 'name', 'country']
                     }],
                     attributes: ['institution_id'],
                 },
@@ -387,10 +391,20 @@ export class ActivityRepo implements IActivityRepo {
             language: language
         })));
 
-        await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+        let new_criterias = await Criteria.bulkCreate(activity.criterias.filter(criteria => criteria.id == -1).map(criteria => ({
+            name: criteria.criteria
+        }), { returning: true }));
+
+        await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
-            criteria: criteria.criteria
+            criteria_id: criteria.toJSON().id
         })));
+
+        await ActivityCriteria.bulkCreate(activity.criterias.filter(criteria => criteria.id != -1).map(criteria => ({
+            activity_id: activity.id,
+            criteria_id: criteria.id
+        })));
+
         return true;
     }
 
