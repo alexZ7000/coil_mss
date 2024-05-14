@@ -62,6 +62,6 @@ export class GetAllActivitiesEnrolledUsecase {
       user_id,
       queryStringParameters.type_activity
     );
-    return activities ? activities : [];
+    return activities ? activities.map((activity) => activity.to_json()) : [];
   }
 }
