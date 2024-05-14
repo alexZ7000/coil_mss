@@ -1,19 +1,43 @@
 import { User } from '../../structure/entities/User';
-import { UserMock } from '../../structure/mocks/UserMock';
 import { IActivityRepo } from '../interfaces/IActivityRepo';
 import { Activity } from '../../structure/entities/Activity';
 import { ActivityMock } from '../../structure/mocks/ActivityMock';
-import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 import { ActivityTypeEnum } from '../../helpers/enums/ActivityTypeEnum';
+import { ActivityStatusEnum } from "../../helpers/enums/ActivityStatusEnum";
 
 
 export class ActivityRepoMock implements IActivityRepo {
     private activity_mock: ActivityMock;
-    private user_mock: UserMock;
 
     constructor() {
-        this.user_mock = new UserMock();
         this.activity_mock = new ActivityMock();
+    }
+
+    async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
+        const activity = this.activity_mock.activities.find(activity => activity.id === id);
+        if (activity && applicants) {
+            return activity;
+        }
+        if (activity) {
+            const copy_activity = new Activity({
+                id: activity.id,
+                title: activity.title,
+                description: activity.description,
+                type_activity: activity.type_activity,
+                status_activity: activity.status_activity,
+                applicants: [],
+                start_date: activity.start_date,
+                end_date: activity.end_date,
+                created_at: activity.created_at,
+                updated_at: activity.updated_at,
+                courses: activity.courses,
+                languages: activity.languages,
+                criterias: activity.criterias,
+                partner_institutions: activity.partner_institutions
+            });
+            return copy_activity;
+        }
+        return null;
     }
 
     async get_activities_by_user_id(user_id: string, type: ActivityTypeEnum): Promise<Activity[] | null> {
@@ -74,29 +98,6 @@ export class ActivityRepoMock implements IActivityRepo {
 
     async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
         throw new Error("Method not implemented.");
-    }
-
-    async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
-        let activity = this.activity_mock.activities.find(activity => activity.id === id);
-        if (activity && !applicants) {
-            return new Activity({
-                id: activity.id,
-                title: activity.title,
-                start_date: activity.start_date,
-                end_date: activity.end_date,
-                description: activity.description,
-                languages: activity.languages,
-                partner_institutions: activity.partner_institutions,
-                criterias: activity.criterias,
-                status_activity: activity.status_activity,
-                type_activity: activity.type_activity,
-                created_at: activity.created_at,
-                updated_at: activity.updated_at,
-                courses: activity.courses,
-                applicants: []
-            });
-        }
-        return this.activity_mock.activities.find(activity => activity.id === id) || null;
     }
 
     async create_activity(activity: Activity): Promise<boolean> {
