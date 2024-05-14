@@ -39,4 +39,4 @@ describe('Criteria', () => {
         }).rejects.toThrow('Parameter criteria must be between 3 and 255 characters');
     });
 });
- 
+  

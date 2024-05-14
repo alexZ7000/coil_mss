@@ -39,4 +39,4 @@ describe("Testing Course entity", () => {
 
         expect(course.id).toBe(1);
     });
-}); 
+});  

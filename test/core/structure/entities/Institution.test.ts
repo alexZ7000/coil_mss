@@ -337,4 +337,4 @@ describe('validate_set_images', () => {
             });
         }).not.toThrow();
     });
-}); 
+});  

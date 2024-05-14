@@ -3,11 +3,11 @@ import { it, describe, expect } from 'vitest';
 
 import { Activity } from '../../../../src/core/structure/entities/Activity';
 import { ActivityMock } from '../../../../src/core/structure/mocks/ActivityMock';
-import { LanguagesMock } from '../../../../src/core/structure/mocks/LanguagesMock';
+import { LanguageMock } from '../../../../src/core/structure/mocks/LanguageMock';
 import { ActivityTypeEnum } from '../../../../src/core/helpers/enums/ActivityTypeEnum';
 import { ActivityStatusEnum } from '../../../../src/core/helpers/enums/ActivityStatusEnum';
 
-const languages = new LanguagesMock().languages;
+const languages = new LanguageMock().languages;
 
 describe('Activity', () => {
     it ('should create an activity', () => {
@@ -45,7 +45,7 @@ describe('Activity', () => {
     it ('should not create an activity without a start date', () => {
         const activityMock = new ActivityMock();
         const activity = activityMock.activities[0];
-        activity.start_date = null;
+        activity.start_date = null; 
 
         expect(() => new Activity(activity)).toThrowError('EntityError: Parameter start_date is required');
     });
