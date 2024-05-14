@@ -15,8 +15,12 @@ export class InstitutionMock {
                 name: "Example University",
                 description: "This is an example university",
                 email: "example@example.com",
-                countries: this.country_mock.countries.slice(0, 1),
+                countries: [
+                    { id: this.country_mock.countries[0].id, country: this.country_mock.countries[0] },
+                    { id: this.country_mock.countries[1].id, country: this.country_mock.countries[1] }
+                ],
                 social_medias: [{
+                    id: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!.id,
                     media: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Twitter")!,
                     link: "https://twitter.com/example"
                 }],
@@ -30,8 +34,12 @@ export class InstitutionMock {
                 name: "Another University",
                 description: "This is another university",
                 email: "another@example.com",
-                countries: this.country_mock.countries.slice(1, 2),
+                countries: [
+                    { id: this.country_mock.countries[0].id, country: this.country_mock.countries[0] },
+                    { id: this.country_mock.countries[1].id, country: this.country_mock.countries[1] }
+                ],
                 social_medias: [{
+                    id: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!.id,
                     media: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!,
                     link: "https://facebook.com/another"
                 }],
