@@ -7,6 +7,7 @@ export interface IInstitutionRepo {
     update_institution(institution: Institution): Promise<boolean>;
 
     get_all_institutions(): Promise<Institution[]>;
+    get_all_institutions_names(): Promise<{ id: string, name: string }[]>;
     get_institution(id: string): Promise<Institution | null>;
 
     delete_institution(id: string): Promise<boolean>;
