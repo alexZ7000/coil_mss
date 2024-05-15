@@ -104,6 +104,60 @@ export class CreateActivityUsecase {
       });
     }
 
+    if (!Array.isArray(body.languages)) {
+      throw new InvalidParameter("Languages", "must be an array of ids");
+    }
+    body.languages.forEach((language_id: number) => {
+      if (!language_id) {
+        throw new MissingParameter("Language ID");
+      }
+      if (typeof language_id !== 'number') {
+        throw new InvalidParameter("Language ID", "must be a number");
+      }
+    });
+
+    if (!Array.isArray(body.courses)) {
+      throw new InvalidParameter("Courses", "must be an array of ids");
+    }
+    body.courses.forEach((course_id: number) => {
+      if (!course_id) {
+        throw new MissingParameter("Course ID");
+      }
+      if (typeof course_id !== 'number') {
+        throw new InvalidParameter("Course ID", "must be a number");
+      }
+    });
+
+    if (!Array.isArray(body.criterias)) {
+      throw new InvalidParameter("Criterias", "must be an array of criterias");
+    }
+    body.criterias.forEach((criteria: { id?: number, criteria?: string }) => {
+      if (!criteria.criteria) {
+        throw new MissingParameter("Criteria");
+      }
+      if (criteria.criteria && criteria.id) {
+        throw new InvalidParameter("Criteria or Criteria ID", "You must provide only the criteria or the criteria id");
+      }
+      if (criteria.id && typeof criteria.id !== 'number') {
+        throw new InvalidParameter("Criteria ID", "must be a number");
+      }
+      if (criteria.criteria && typeof criteria.criteria !== 'string') {
+        throw new InvalidParameter("Criteria", "must be a string");
+      }
+    });
+
+    if (!Array.isArray(body.partner_institutions)) {
+      throw new InvalidParameter("Partner Institutions", "must be an array of ids");
+    }
+    body.partner_institutions.forEach((institution: string) => {
+      if (!institution) {
+        throw new MissingParameter("Partner Institution");
+      }
+      if (typeof institution !== 'string') {
+        throw new InvalidParameter("Partner Institution", "must be a string");
+      }
+    });
+
     const languages = body.languages.map((language_id: number) => {
       return {
         id: language_id
@@ -122,7 +176,7 @@ export class CreateActivityUsecase {
         criteria: criteria.criteria ? new Criteria({
           id: 1,
           criteria: criteria.criteria
-        }) : null
+        }) : undefined
       }
     });
 
