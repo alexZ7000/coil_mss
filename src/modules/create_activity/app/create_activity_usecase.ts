@@ -132,11 +132,11 @@ export class CreateActivityUsecase {
       throw new InvalidParameter("Criterias", "must be an array of criterias");
     }
     body.criterias.forEach((criteria: { id?: number, criteria?: string }) => {
-      if (!criteria.criteria) {
-        throw new MissingParameter("Criteria");
-      }
       if (criteria.criteria && criteria.id) {
         throw new InvalidParameter("Criteria or Criteria ID", "You must provide only the criteria or the criteria id");
+      }
+      if (!criteria.criteria && !criteria.id) {
+        throw new MissingParameter("Criteria or Criteria ID");
       }
       if (criteria.id && typeof criteria.id !== 'number') {
         throw new InvalidParameter("Criteria ID", "must be a number");
