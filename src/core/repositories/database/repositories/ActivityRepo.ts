@@ -355,7 +355,7 @@ export class ActivityRepo implements IActivityRepo {
                 id: activity.id
             }
         });
-
+        
         await ActivityPartnerInstitution.destroy({
             where: {
                 activity_id: activity.id
