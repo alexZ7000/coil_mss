@@ -118,7 +118,7 @@ export class InstitutionRepo implements IInstitutionRepo {
         await InstitutionSocialMediaDB.bulkCreate(institution.social_medias.map((sm: { id: number, media?: SocialMedia, link: string }) => {
             return {
                 institution_id: institution.id,
-                media: sm.media,
+                social_media_id: sm.id,
                 link: sm.link
             }
         }));
