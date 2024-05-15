@@ -6,7 +6,7 @@ import { Institution } from "../../../core/structure/entities/Institution";
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
 import { ImageManager } from '../../../core/helpers/functions/image_manager';
 import { IInstitutionRepo } from '../../../core/repositories/interfaces/IInstitutionRepo';
-import { MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { InvalidParameter, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 export class CreateInstitutionUsecase {
     public token_auth: TokenAuth;
@@ -45,13 +45,30 @@ export class CreateInstitutionUsecase {
         }
 
         const images = institutionData.images;
+        if (!Array.isArray(images)) {
+            throw new InvalidParameter("Images", "must be an array");
+        }
         images.forEach((image: string) => {
             if (!image) {
                 throw new MissingParameter("Image");
             }
+            if (typeof image !== 'string') {
+                throw new InvalidParameter("Image", "must be a string");
+            }
+            if (!image.includes('data:image')) {
+                throw new InvalidParameter("Image", "must be a base64 image");
+            }
+            const allowedImageTypes = ['jpg', 'jpeg', 'png'];
+            const imageExtension = image.split(';')[0].split(':')[1].split('/')[1];
+            if (!allowedImageTypes.includes(imageExtension)) {
+                throw new InvalidParameter("Image", "must be a valid image type (jpg, jpeg, png)");
+            }
         });
 
-        const social_medias = institutionData.social_medias || [];
+        const social_medias = institutionData.social_medias;
+        if (!Array.isArray(social_medias)) {
+            throw new InvalidParameter("Social Medias", "must be an array");
+        }
         social_medias.forEach((social_media: { id: number, link: string }) => {
             if (!social_media.id) {
                 throw new MissingParameter("Social Media Id");
@@ -59,8 +76,17 @@ export class CreateInstitutionUsecase {
             if (!social_media.link) {
                 throw new MissingParameter("Social Media Link");
             }
+            if (typeof social_media.id !== 'number') {
+                throw new InvalidParameter("Social Media Id", "must be a number");
+            }
+            if (typeof social_media.link !== 'string') {
+                throw new InvalidParameter("Social Media Link", "must be a string");
+            }
         });
 
+        if (!Array.isArray(institutionData.countries)) {
+            throw new InvalidParameter("Countries", "must be an array of country_ids");
+        }
         const countries = institutionData.countries.map((country_id: number) => {
             return { id: country_id };
         });
