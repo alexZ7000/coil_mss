@@ -130,10 +130,20 @@ export class UpdateInstitutionUsecase {
       });
     }
 
-    let countries = [];
+    let countries: { id: number }[] = [];
     if (body.countries) {
       countries = body.countries.map((country_id: number) => {
         return { id: country_id };
+      });
+    }
+
+    let social_medias: { id: number, link: string }[] = [];
+    if (body.social_medias) {
+      social_medias = body.social_medias.map((social_media: { id: number, link: string }) => {
+        return {
+          id: social_media.id,
+          link: social_media.link
+        };
       });
     }
 
@@ -142,12 +152,12 @@ export class UpdateInstitutionUsecase {
     institution.description = body.description ? body.description : institution.description;
     institution.countries = countries.length > 0 ? countries : institution.countries;
     institution.images = body.images ? body.images : institution.images;
-    institution.social_medias = body.social_medias ? body.social_medias : institution.social_medias;
+    institution.social_medias = social_medias.length > 0 ? social_medias : institution.social_medias;
 
     console.log(institution.id, institution.name, institution.email, institution.description, institution.countries, institution.images, institution.social_medias);
 
     if (process.env.STAGE !== 'test') {
-      if (body.images) {
+      if (body.images && body.images.length > 0) {
         await this.bucket.delete_folder(`institution/${institution.id}/`).then(() => {
           institution.images.map(async (image: string, index: number) => {
             const content_type = image.split(';')[0].split(':')[1];
