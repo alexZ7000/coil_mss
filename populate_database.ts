@@ -37,15 +37,17 @@ const users: UserEntity[] = [
         created_at: new Date(),
         updated_at: new Date()
     })
-]
-stage === "dev" || stage === "test" ? users.push(new UserEntity({
-    id: "764f9730-433c-42df-b0bc-517fcf3778be",
-    name: "Felipe Carillo",
-    email: "23.00765-6@maua.br",
-    user_type: UserTypeEnum.ADMIN,
-    created_at: new Date(),
-    updated_at: new Date()
-})) : null;
+];
+if (stage === "dev" || stage === "test") {
+    users.push(new UserEntity({
+        id: "764f9730-433c-42df-b0bc-517fcf3778be",
+        name: "Felipe Carillo",
+        email: "23.00765-6@maua.br",
+        user_type: UserTypeEnum.ADMIN,
+        created_at: new Date(),
+        updated_at: new Date()
+    }));
+}
 
 const institutions: InstitutionEntity[] = [
     new InstitutionEntity({
@@ -96,29 +98,6 @@ async function handleDatabaseCreation(): Promise<void> {
     console.log("Database checked/created");
 }
 
-// Create or update users
-async function createOrUpdateUser(user: UserEntity): Promise<void> {
-    let existing = await User.findOne({ where: { email: user.email } });
-    if (!existing) {
-        await User.create({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            user_type_id: user.user_type,
-            created_at: user.created_at,
-            updated_at: user.updated_at
-        });
-        console.log(`User ${user.email} created`);
-    } else {
-        await User.update({
-            name: user.name,
-            user_type: user.user_type,
-            updated_at: user.updated_at
-        }, { where: { email: user.email } });
-        console.log(`User ${user.email} updated`);
-    }
-    console.log("Users checked/created");
-}
 
 // Create or update courses
 async function handleCoursesCreation(): Promise<void> {
@@ -211,7 +190,6 @@ async function createOrUpdateSocialMedia(): Promise<void> {
     console.log("Social Media checked/created");
 }
 
-
 async function createOrUpdateInstitution(institution: InstitutionEntity): Promise<void> {
     let existingInstitution = await Institution.findOne({ where: { name: institution.name } });
     if (!existingInstitution) {
@@ -262,6 +240,35 @@ async function createOrUpdateInstitution(institution: InstitutionEntity): Promis
     console.log("Institutions checked/created");
 }
 
+// Create or update users
+async function createOrUpdateUser(user: UserEntity): Promise<void> {
+    try {
+        let existing = await User.findOne({ where: { email: user.email } });
+        if (!existing) {
+            await User.create({
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                user_type_id: user.user_type,
+                created_at: user.created_at,
+                updated_at: user.updated_at
+            });
+            console.log(`User ${user.email} created`);
+        } else {
+            await User.update({
+                name: user.name,
+                email: user.email,
+                user_type_id: user.user_type,
+                updated_at: user.updated_at
+            }, { where: { id: existing.toJSON().id } });
+            console.log(`User ${user.email} updated`);
+        }
+        console.log("Users checked/created");
+    } catch (error) {
+        console.error(`Error creating or updating user ${user.email}:`, error);
+    }
+}
+
 (async () => {
     try {
         await handleDatabaseCreation();
@@ -271,20 +278,20 @@ async function createOrUpdateInstitution(institution: InstitutionEntity): Promis
         await handleLanguagesCreation();
 
         await handleCountriesCreation();
-
+        
         await handleCriteriasCreation();
 
         await createOrUpdateSocialMedia();
 
-        await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
         await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
+        await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
+
+        await createOrUpdateInstitution(institutions[0]);
 
         for (const user of users) {
             await createOrUpdateUser(user);
         }
-
-        await createOrUpdateInstitution(institutions[0]);
 
     } catch (error) {
         console.error(error);
