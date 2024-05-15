@@ -25,8 +25,7 @@ describe("Testing Create Institution Presenter", () => {
             { id: social_medias[1].id, link: "https://www.google.com" },
         ],
         images: [
-            "https://www.google.com",
-            "https://www.google.com",
+            "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABjElEQVR42mNk",
         ],
         type_institution: 1,
     };
@@ -41,7 +40,7 @@ describe("Testing Create Institution Presenter", () => {
             body: JSON.stringify(institution)
         }, null);
 
-        // expect(response.statusCode).toBe(201);
+        expect(response.statusCode).toBe(201);
         expect(JSON.parse(response.body).message).toBe("Institution created successfully");
     });
 
