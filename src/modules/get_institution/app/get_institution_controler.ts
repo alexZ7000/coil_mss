@@ -32,7 +32,7 @@ export class GetInstitutionController {
             let response = await this.usecase.execute(request.headers, request.body.queryStringParameters);
             return new OK(response, "Institution found");
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof InvalidRequest) {
                 return new ParameterError(error.message);
             }

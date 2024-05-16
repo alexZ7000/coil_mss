@@ -10,14 +10,8 @@ export class InstitutionRepoMock implements IInstitutionRepo {
     }
 
     async check_institution_exists_by_name(name: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let institution = this.institutions_mock.institutions.find(institution => institution.name === name);
-            if (institution) {
-                resolve(true);
-            } else {
-                resolve(false);
-            }
-        });
+        const institution = this.institutions_mock.institutions.find(institution => institution.name === name);
+        return !!institution;
     }
 
     async create_institution(institution: Institution): Promise<boolean> {
@@ -26,27 +20,21 @@ export class InstitutionRepoMock implements IInstitutionRepo {
     }
 
     async update_institution(institution: Institution): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let index = this.institutions_mock.institutions.findIndex(institution => institution.id === institution.id);
-            if (index !== -1) {
-                this.institutions_mock.institutions[index] = institution;
-                resolve(true);
-            } else {
-                reject(false);
-            }
-        });
+        const index = this.institutions_mock.institutions.findIndex(institution => institution.id === institution.id);
+        if (index !== -1) {
+            this.institutions_mock.institutions[index] = institution;
+            return true;
+        }
+        return false;
     }
 
     async delete_institution(id: string): Promise<boolean> {
-        return new Promise((resolve, reject) => {
-            let index = this.institutions_mock.institutions.findIndex(institution => institution.id === id);
-            if (index !== -1) {
-                this.institutions_mock.institutions.splice(index, 1);
-                resolve(true);
-            } else {
-                reject(false);
-            }
-        });
+        const index = this.institutions_mock.institutions.findIndex(institution => institution.id === id);
+        if (index !== -1) {
+            this.institutions_mock.institutions.splice(index, 1);
+            return true;
+        }
+        return false;
     }
 
     async get_institution(id: string): Promise<Institution | null> {
@@ -59,5 +47,14 @@ export class InstitutionRepoMock implements IInstitutionRepo {
 
     async get_all_institutions(): Promise<Institution[]> {
         return this.institutions_mock.institutions
+    }
+
+    async get_all_institutions_names(): Promise<{ id: string; name: string; }[]> {
+        return this.institutions_mock.institutions.map(institution => {
+            return {
+                id: institution.id,
+                name: institution.name
+            };
+        });
     }
 }

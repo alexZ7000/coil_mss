@@ -1,11 +1,10 @@
 import { User } from "../entities/User";
 import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
-import { Course } from "../entities/Course";
 
 
 export class UserMock {
     public users: User[];
-
+    
     constructor() {
         this.users = [
             new User({
@@ -13,8 +12,6 @@ export class UserMock {
                 name: "Rodrigo Bossini",
                 email: "rodrigo.moreira@maua.br",
                 user_type: UserTypeEnum.ADMIN,
-                course: null,
-                semester_course: null,
                 created_at: new Date(),
                 updated_at: new Date()
             }),
@@ -24,11 +21,6 @@ export class UserMock {
                     name: "Felipe Carillo",
                     email: "23.00765-6@maua.br",
                     user_type: UserTypeEnum.STUDENT,
-                    course: new Course({
-                        id: 1,
-                        name: "Engenharia de Computação"
-                    }),
-                    semester_course: 4,
                     created_at: new Date(),
                     updated_at: new Date()
                 }
@@ -39,12 +31,10 @@ export class UserMock {
                     name: "Felipe Carillo",
                     email: "felipecarillo@maua.br",
                     user_type: UserTypeEnum.MODERATOR,
-                    course: null,
-                    semester_course: null,
                     created_at: new Date(),
                     updated_at: new Date()
                 }
             )
-        ];                
+        ];
     }
 }

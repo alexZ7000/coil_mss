@@ -1,5 +1,3 @@
-import { Course } from "./Course";
-
 import { EntityError } from "../../helpers/errors/EntityError";
 import { UserTypeEnum } from "../../helpers/enums/UserTypeEnum";
 
@@ -9,8 +7,6 @@ class UserProps {
   name: string | null;
   email: string;
   user_type: UserTypeEnum;
-  course: Course | null;
-  semester_course: number | null;
   created_at: Date;
   updated_at: Date;
 }
@@ -20,8 +16,6 @@ export class User {
   name: string | null;
   email: string;
   user_type: UserTypeEnum;
-  course: Course | null;
-  semester_course: number | null;
   created_at: Date;
   updated_at: Date;
 
@@ -30,8 +24,6 @@ export class User {
     this.name = this.validate_set_name(props.name, props.user_type);
     this.email = this.validate_set_email(props.email);
     this.user_type = this.validate_set_user_type(props.user_type);
-    this.course = this.validate_set_course(props.course);
-    this.semester_course = this.validate_set_semester_course(props.semester_course);
     this.created_at = this.validate_set_created_at(props.created_at);
     this.updated_at = this.validate_set_updated_at(props.updated_at);
   }
@@ -42,8 +34,6 @@ export class User {
       name: this.name,
       email: this.email,
       user_type: this.user_type,
-      course: this.course,
-      semester_course: this.semester_course,
       created_at: this.created_at,
       updated_at: this.updated_at,
     };
@@ -99,26 +89,6 @@ export class User {
       throw new EntityError("Parameter user_type is not a UserTypeEnum");
     }
     return user_type;
-  }
-
-  private validate_set_course(course: Course | null) {
-    if (course == null) {
-      return null;
-    }
-    if (typeof course !== "object") {
-      throw new EntityError("Parameter course is not a Course");
-    }
-    return course;
-  }
-
-  private validate_set_semester_course(semester_course: number | null) {
-    if (semester_course == null) {
-      return null;
-    }
-    if (typeof semester_course !== "number") {
-      throw new EntityError("Parameter semester_course is not a number");
-    }
-    return semester_course;
   }
 
   private validate_set_created_at(created_at: Date) {

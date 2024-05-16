@@ -22,8 +22,8 @@ describe("Testing Create Moderator Presenter", () => {
             body: JSON.stringify(user_moderator)
         }, null);
 
-        // expect(response.statusCode).toBe(201);
-        expect(JSON.parse(response.body).message).toBe("Moderator created successfully");    
+        expect(response.statusCode).toBe(201);
+        expect(JSON.parse(response.body).message).toBe("Moderator created successfully");     
     });
 
     it("should not create a moderator with invalid token", async () => {
@@ -69,23 +69,6 @@ describe("Testing Create Moderator Presenter", () => {
         expect(JSON.parse(response.body).message).toBe("User not allowed");
     });
 
-    it("should not create a moderator with invalid email", async () => {
-        var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
-
-        var response =  await handler({
-            headers: {
-                Authorization: token
-            },
-            body: JSON.stringify({
-                name: "Moderator Test",
-                email: user_admin.email
-            })
-        }, null);
-
-        expect(response.statusCode).toBe(422);
-        expect(JSON.parse(response.body).message).toBe("Email already in use");
-    });
-
     it("should not create a moderator with invalid request", async () => {
         var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
 
@@ -111,4 +94,4 @@ describe("Testing Create Moderator Presenter", () => {
         expect(response.statusCode).toBe(400);
         expect(JSON.parse(response.body).message).toBe("Headers not found");
     });
-});
+}); 

@@ -28,7 +28,7 @@ export class AuthUserController {
             }
             return new OK({token: response.token}, "User authenticated successfully");     
 
-        } catch (error) {
+        } catch (error: any) {
             if (error instanceof EntityError) {
                 return new BadRequest(error.message);
             }

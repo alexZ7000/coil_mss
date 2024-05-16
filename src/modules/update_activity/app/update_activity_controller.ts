@@ -44,7 +44,7 @@ export class UpdateActivityController {
 
       const updatedUser = await this.usecase.execute(request.headers, request.body.body);
       return new OK({}, "Activity updated successfully");
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }

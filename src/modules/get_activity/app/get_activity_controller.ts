@@ -35,7 +35,7 @@ import {
   
         const response = await this.usecase.execute(request.headers, queryParams);
         return new OK(response, "Activity found successfully");
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof InvalidRequest) {
           return new BadRequest(error.message);
         }

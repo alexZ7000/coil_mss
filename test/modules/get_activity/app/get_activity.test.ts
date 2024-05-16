@@ -1,8 +1,8 @@
 import { it, describe, expect } from "vitest";
 import { UserMock } from "../../../../src/core/structure/mocks/UserMock";
 import { TokenAuth } from "../../../../src/core/helpers/functions/token_auth";
-import { handler } from "../../../../src/modules/get_activity/app/get_activity_presenter";
 import { ActivityMock } from "../../../../src/core/structure/mocks/ActivityMock";
+import { handler } from "../../../../src/modules/get_activity/app/get_activity_presenter";
 
 describe("Testing Get Activity Presenter", () => {
   const user_admin = new UserMock().users[0];
@@ -46,7 +46,7 @@ describe("Testing Get Activity Presenter", () => {
         },
         queryStringParameters: {
           activity_id: activity.id,
-        },
+        }, 
       },
       null
     );

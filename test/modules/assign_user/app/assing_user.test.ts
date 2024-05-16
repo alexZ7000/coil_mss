@@ -9,6 +9,7 @@ import { TokenAuth } from "../../../../src/core/helpers/functions/token_auth";
 describe("Assign User Presenter", () => {
   const user_admin = new UserMock().users[0];
   const user_student = new UserMock().users[1];
+
   it("Should unassigned user", async () => {
     const activity = new ActivityMock().activities[0];
     const event = {

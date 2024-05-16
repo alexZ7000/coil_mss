@@ -9,7 +9,7 @@ const repository = new Repository({ user_repo: true, institution_repo: true });
 const usecase = new CreateInstitutionUsecase(repository.InstitutionRepo, repository.UserRepo);
 const controller = new CreateInstitutionController(usecase);
 
-export const handler = async (event: any) => {
+export const handler = async (event: any, context: any) => {
     let request = new HttpRequest(event);
     let response  = await controller.execute(request);
     return response.to_json();

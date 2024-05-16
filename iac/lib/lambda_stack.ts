@@ -5,7 +5,6 @@ export class LambdaStack extends Construct {
 
     private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
-    private update_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
     
     private get_institution: lambda_js.NodejsFunction;
@@ -20,9 +19,8 @@ export class LambdaStack extends Construct {
     private get_all_activities: lambda_js.NodejsFunction;
     private update_user_activity: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
+    private get_activity_requirements: lambda_js.NodejsFunction;
     private get_all_activities_enrolled: lambda_js.NodejsFunction;
-
-    private get_all_courses: lambda_js.NodejsFunction;
 
     public functions_need_s3_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
@@ -105,14 +103,6 @@ export class LambdaStack extends Construct {
             origins
         );
 
-        this.update_user = this.create_lambda(
-            "update_user",
-            environment_variables,
-            "POST",
-            restapi_resource,
-            origins
-        );
-
         this.create_activity = this.create_lambda(
             "create_activity",
             environment_variables,
@@ -183,14 +173,6 @@ export class LambdaStack extends Construct {
             origins
         );
 
-        this.get_all_courses = this.create_lambda(
-            "get_all_courses",
-            environment_variables,
-            "GET",
-            restapi_resource,
-            origins
-        );
-
         this.get_all_activities_enrolled = this.create_lambda(
             "get_all_activities_enrolled",
             environment_variables,
@@ -217,6 +199,14 @@ export class LambdaStack extends Construct {
 
         this.get_institution = this.create_lambda(
             "get_institution",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        )
+
+        this.get_activity_requirements = this.create_lambda(
+            "get_activity_requirements",
             environment_variables,
             "GET",
             restapi_resource,

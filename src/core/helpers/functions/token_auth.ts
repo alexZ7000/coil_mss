@@ -30,7 +30,7 @@ export class TokenAuth {
         return decode_token.user_id;
     }
 
-    async verify_azure_token(token): Promise<AzureProps> {
+    async verify_azure_token(token: string): Promise<AzureProps> {
         const url = process.env.AZURE_URL || "";
         const options = {
             headers: {
@@ -45,13 +45,16 @@ export class TokenAuth {
                     data += chunk;
                 });
                 res.on('end', () => {
-                    data = JSON.parse(data);
-                    if (!data["displayName"] || !data["mail"]) {
+                    let response: {
+                        displayName: string;
+                        mail: string;
+                    } = JSON.parse(data);
+                    if (!response["displayName"] || !response["mail"]) {
                         reject(new UserNotAuthenticated('Invalid or expired token.'));
                     }
                     resolve({
-                        displayName: data["displayName"],
-                        mail: data["mail"] 
+                        displayName: response["displayName"],
+                        mail: response["mail"]
                     });
                 });
             }).on("error", (err) => {

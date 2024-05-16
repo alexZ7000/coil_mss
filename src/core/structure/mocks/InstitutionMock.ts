@@ -1,20 +1,27 @@
+import { CountryMock } from "./CountryMock";
 import { Institution } from "../entities/Institution";
+import { SocialMediaMock } from "./SocialMediaMock";
 
 
 export class InstitutionMock {
     public institutions: Institution[];
+    private country_mock: CountryMock = new CountryMock();
 
     constructor() {
+
         this.institutions = [
             new Institution({
                 id: "1c92b625-eb2a-4e56-8d9b-99e3c4a93b58",
                 name: "Example University",
                 description: "This is an example university",
                 email: "example@example.com",
-                description: "Example University is a great university",
-                country: "CountryName",
+                countries: [
+                    { id: this.country_mock.countries[0].id, country: this.country_mock.countries[0] },
+                    { id: this.country_mock.countries[1].id, country: this.country_mock.countries[1] }
+                ],
                 social_medias: [{
-                    media: "Twitter",
+                    id: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!.id,
+                    media: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Twitter")!,
                     link: "https://twitter.com/example"
                 }],
                 images: [
@@ -27,10 +34,13 @@ export class InstitutionMock {
                 name: "Another University",
                 description: "This is another university",
                 email: "another@example.com",
-                description: "Another University is a great university in another country",
-                country: "AnotherCountry",
+                countries: [
+                    { id: this.country_mock.countries[0].id, country: this.country_mock.countries[0] },
+                    { id: this.country_mock.countries[1].id, country: this.country_mock.countries[1] }
+                ],
                 social_medias: [{
-                    media: "Facebook",
+                    id: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!.id,
+                    media: new SocialMediaMock().social_medias.find(social_media => social_media.social_media == "Facebook")!,
                     link: "https://facebook.com/another"
                 }],
                 images: [

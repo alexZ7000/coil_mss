@@ -8,7 +8,7 @@ describe("Testing Course entity", () => {
         await expect(async () => {
             new Course({
                 id: 1,
-                name: "CS"
+                course: "CS"
             })
         }).rejects.toThrow("Parameter name must be between 3 and 255 characters");
     });
@@ -17,7 +17,7 @@ describe("Testing Course entity", () => {
         await expect(async () => {
             new Course({
                 id: 1,
-                name: "CSE"
+                course: "CSE"
             })
         }).not.toThrow();
     });
@@ -25,18 +25,18 @@ describe("Testing Course entity", () => {
     it("should set the name property", async () => {
         const course = new Course({
             id: 1,
-            name: "CSE"
+            course: "CSE"
         });
 
-        expect(course.name).toBe("CSE");
+        expect(course.course).toBe("CSE");
     });
 
     it("should set the id property", async () => {
         const course = new Course({
             id: 1,
-            name: "CSE"
+            course: "CSE"
         });
 
         expect(course.id).toBe(1);
     });
-});
+});  

@@ -1,7 +1,6 @@
 import { randomUUID } from 'crypto';
 
 import { User } from '../../../core/structure/entities/User';
-import { Course } from '../../../core/structure/entities/Course';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
@@ -50,11 +49,6 @@ export class AuthUserUsecase {
                 id: get_user.id,
                 name: get_user.name,
                 email: get_user.email,
-                course: get_user.course ? new Course({
-                    id: get_user.course.id,
-                    name: get_user.course.name
-                }) : null,
-                semester_course: get_user.semester_course,
                 user_type: get_user.user_type,
                 created_at: get_user.created_at,
                 updated_at: get_user.updated_at
@@ -64,8 +58,6 @@ export class AuthUserUsecase {
                 id: randomUUID(),
                 name: token_response.displayName.toLowerCase().split(" ").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(" "), // title case
                 email: token_response.mail,
-                course: null,
-                semester_course: null,
                 user_type: UserTypeEnum.STUDENT,
                 created_at: new Date(),
                 updated_at: new Date()

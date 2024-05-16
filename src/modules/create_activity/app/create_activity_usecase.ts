@@ -7,9 +7,8 @@ import {
   UserNotAuthenticated,
   InvalidParameter,
 } from "../../../core/helpers/errors/ModuleError";
-import { Course } from "../../../core/structure/entities/Course";
-import { Activity } from "../../../core/structure/entities/Activity";
 import { Criteria } from "../../../core/structure/entities/Criteria";
+import { Activity } from "../../../core/structure/entities/Activity";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
@@ -105,26 +104,87 @@ export class CreateActivityUsecase {
       });
     }
 
-    const courses = body.courses.map((course: { [key: string]: any }) => {
-      return new Course({
-        id: course.id,
-        name: course.name
-      });
-    });
-
-    const criterias = body.criterias.map((criteria: string) => {
-      return new Criteria({
-        id: 0,
-        criteria: criteria
-      });
-    });
-
-    const partner_institutions = body.partner_institutions.map(
-      (institution: string) => {
-        return {
-          id: institution
-        };
+    if (!Array.isArray(body.languages)) {
+      throw new InvalidParameter("Languages", "must be an array of ids");
+    }
+    body.languages.forEach((language_id: number) => {
+      if (!language_id) {
+        throw new MissingParameter("Language ID");
       }
+      if (typeof language_id !== 'number') {
+        throw new InvalidParameter("Language ID", "must be a number");
+      }
+    });
+
+    if (!Array.isArray(body.courses)) {
+      throw new InvalidParameter("Courses", "must be an array of ids");
+    }
+    body.courses.forEach((course_id: number) => {
+      if (!course_id) {
+        throw new MissingParameter("Course ID");
+      }
+      if (typeof course_id !== 'number') {
+        throw new InvalidParameter("Course ID", "must be a number");
+      }
+    });
+
+    if (!Array.isArray(body.criterias)) {
+      throw new InvalidParameter("Criterias", "must be an array of criterias");
+    }
+    body.criterias.forEach((criteria: { id?: number, criteria?: string }) => {
+      if (criteria.criteria && criteria.id) {
+        throw new InvalidParameter("Criteria or Criteria ID", "You must provide only the criteria or the criteria id");
+      }
+      if (!criteria.criteria && !criteria.id) {
+        throw new MissingParameter("Criteria or Criteria ID");
+      }
+      if (criteria.id && typeof criteria.id !== 'number') {
+        throw new InvalidParameter("Criteria ID", "must be a number");
+      }
+      if (criteria.criteria && typeof criteria.criteria !== 'string') {
+        throw new InvalidParameter("Criteria", "must be a string");
+      }
+    });
+
+    if (!Array.isArray(body.partner_institutions)) {
+      throw new InvalidParameter("Partner Institutions", "must be an array of ids");
+    }
+    body.partner_institutions.forEach((institution: string) => {
+      if (!institution) {
+        throw new MissingParameter("Partner Institution");
+      }
+      if (typeof institution !== 'string') {
+        throw new InvalidParameter("Partner Institution", "must be a string");
+      }
+    });
+
+    const languages = body.languages.map((language_id: number) => {
+      return {
+        id: language_id
+      }
+    });
+
+    const courses = body.courses.map((course_id: number) => {
+      return {
+        id: course_id
+      }
+    });
+
+    const criterias = body.criterias.map((criteria: { id?: number, criteria?: string }) => {
+      return {
+        id: criteria.id || -1,
+        criteria: criteria.criteria ? new Criteria({
+          id: 1,
+          criteria: criteria.criteria
+        }) : undefined
+      }
+    });
+
+    const partner_institutions = body.partner_institutions.map((institution: string) => {
+      return {
+        id: institution
+      };
+    }
     );
 
     const activity = new Activity({
@@ -133,7 +193,7 @@ export class CreateActivityUsecase {
       description: body.description,
       start_date: new Date(body.start_date),
       end_date: new Date(body.end_date),
-      languages: body.languages,
+      languages: languages,
       partner_institutions: partner_institutions,
       courses: courses,
       criterias: criterias,
@@ -145,7 +205,7 @@ export class CreateActivityUsecase {
     });
 
     await this.activity_repo.create_activity(activity).then(async (response) => {
-      if (response && process.env.STAGE !== "test") {
+      if (response && process.env.STAGE !== 'test') {
         await this.event_bridge.create_trigger(
           "START_ACTIVITY_" + activity.id,
           "Update_Activity_Event",
@@ -171,5 +231,7 @@ export class CreateActivityUsecase {
         );
       }
     });
+
+    return { id: activity.id };
   }
 }

@@ -8,7 +8,7 @@ class CriteriaProps{
 
 export class Criteria{
     id: number;
-    criteria: string;
+    criteria: string | null;
 
     constructor(props: CriteriaProps) {
         this.id = this.validate_set_id(props.id);
@@ -34,7 +34,7 @@ export class Criteria{
 
     private validate_set_criteria(criteria: string) {
         if (criteria == null || criteria == "") {
-            throw new EntityError("Parameter criteria is required");
+            return null;
         }
         if (typeof criteria !== "string") {
             throw new EntityError("Parameter criteria is not a string");

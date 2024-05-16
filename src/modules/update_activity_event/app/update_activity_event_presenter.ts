@@ -1,8 +1,6 @@
-
 import { Repository } from "../../../core/repositories/Repository";
 
 const repository = new Repository({ activity_repo: true });
-
 
 export const handler = async (event: any, context: any) => {
     const body = event.body;

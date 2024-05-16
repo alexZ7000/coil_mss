@@ -3,6 +3,7 @@ import { UserTypeEnum } from "../../../core/helpers/enums/UserTypeEnum";
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import {
+  InvalidParameter,
   InvalidRequest,
   MissingParameter,
   UserNotAllowed,
@@ -58,10 +59,14 @@ export class GetAllActivitiesEnrolledUsecase {
       throw new UserNotAllowed("User is not a student");
     }
 
+    if (!(queryStringParameters.type_activity in ActivityStatusEnum)) {
+      throw new InvalidParameter("type_activity", queryStringParameters.type_activity);
+    }
+
     const activities = await this.activity_repo.get_activities_by_user_id(
       user_id,
       queryStringParameters.type_activity
     );
-    return activities ? activities : [];
+    return activities ? activities.map((activity) => activity.to_json()) : [];
   }
 }

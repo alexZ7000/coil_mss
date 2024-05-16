@@ -1,4 +1,3 @@
-import { User } from "../../../core/structure/entities/User";
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { InvalidRequest, MissingParameter, UserNotAuthenticated } from "../../../core/helpers/errors/ModuleError";
@@ -28,7 +27,7 @@ export class GetUserUsecase {
       })
       .catch((error) => {
         throw new UserNotAuthenticated("Invalid or expired token");
-      });
+      }); 
 
     const user = await this.database_repo.get_user(user_id);
     if (!user) {

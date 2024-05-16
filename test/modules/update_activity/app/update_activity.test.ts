@@ -5,11 +5,11 @@ import { TokenAuth } from '../../../../src/core/helpers/functions/token_auth';
 import { ActivityRepoMock } from "../../../../src/core/repositories/mocks/ActivityRepoMock";
 import { handler } from "../../../../src/modules/update_activity/app/update_activity_presenter";
 import { ActivityMock } from '../../../../src/core/structure/mocks/ActivityMock';
+import { a } from 'vitest/dist/suite-ynYMzeLu';
 
 describe("Update Activity Presenter", () => {
   const user_admin = new UserMock().users[0];
   const user_student = new UserMock().users[1];
-  const user_moderator = new UserMock().users[2];
 
   it("Should return a success message", async () => {
     let activities = new ActivityMock().activities;
@@ -23,10 +23,10 @@ describe("Update Activity Presenter", () => {
         activity_id: activity.id,
         title: "New Title",
         description: "New Description",
-        languages: ["English", "Portuguese"],
+        languages: [activity.languages[0].id, activity.languages[1].id],
         partner_institutions: [activity.partner_institutions[0].id],
-        criterias: [activity.criterias[0].criteria],
-        courses: [{ id: activity.courses[0].id, name: activity.courses[0].name }],
+        criterias: [{ id: activity.criterias[0].id }],
+        courses: [activity.courses[0].course?.id],
         status_activity: activity.status_activity,
         type_activity: activity.type_activity,
         start_date: activity.start_date,
@@ -48,7 +48,7 @@ describe("Update Activity Presenter", () => {
         activity_id: "invalid_id",
         title: "Title",
         description: "New Description",
-        languages: ["English", "Portuguese"],
+        languages: [],
         partner_institutions: [],
         criterias: [],
         courses: [],
@@ -59,7 +59,7 @@ describe("Update Activity Presenter", () => {
       }),
     };
     const response = await handler(event, null);
-    // expect(response.statusCode).toBe(404);
+    expect(response.statusCode).toBe(404);
     expect(JSON.parse(response.body).message).toBe("Activity not found");
   });
 
@@ -75,10 +75,10 @@ describe("Update Activity Presenter", () => {
         activity_id: activity.id,
         title: "Title",
         description: "New Description",
-        languages: ["English", "Portuguese"],
+        languages: [activity.languages[0].id, activity.languages[1].id],
         partner_institutions: [activity.partner_institutions[0].id],
-        criterias: [activity.criterias[0].criteria],
-        courses: [{ id: activity.courses[0].id, name: activity.courses[0].name }],
+        criterias: [{ id: activity.criterias[0].id }],
+        courses: [activity.courses[0].course?.id],
         status_activity: activity.status_activity,
         type_activity: activity.type_activity,
         start_date: new Date().getTime() - 1000 * 60 * 60 * 24 * 7,
@@ -113,11 +113,11 @@ describe("Update Activity Presenter", () => {
       }),
     };
     const response = await handler(event, null);
-    // expect(response.statusCode).toBe(403);
+    expect(response.statusCode).toBe(403);
     expect(JSON.parse(response.body).message).toBe("User not allowed");
   });
 
-  it ("Shouldn't update activity with the title already in use", async () => {
+  it("Shouldn't update activity with the title already in use", async () => {
     let activities = new ActivityMock().activities;
     let activity = activities[0];
     let token = (await new TokenAuth().generate_token(user_admin.id)).toString();

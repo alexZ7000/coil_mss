@@ -13,8 +13,6 @@ describe("Testing User Entity", () => {
         expect(user.id).toBe(user_mock[1].id);
         expect(user.name).toBe(user_mock[1].name);
         expect(user.email).toBe(user_mock[1].email);
-        expect(user.course).toBe(user_mock[1].course);
-        expect(user.semester_course).toBe(user_mock[1].semester_course);
         expect(user.user_type).toBe(UserTypeEnum.STUDENT);
         expect(user.created_at).toBe(user_mock[1].created_at);
         expect(user.updated_at).toBe(user_mock[1].updated_at);

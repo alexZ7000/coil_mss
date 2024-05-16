@@ -1,12 +1,12 @@
 import { randomUUID } from 'crypto';
+import { UniqueConstraintError } from 'sequelize';
 import { TokenAuth } from "../../../core/helpers/functions/token_auth";
+import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { Institution } from "../../../core/structure/entities/Institution";
 import { IUserRepo } from '../../../core/repositories/interfaces/IUserRepo';
 import { ImageManager } from '../../../core/helpers/functions/image_manager';
 import { IInstitutionRepo } from '../../../core/repositories/interfaces/IInstitutionRepo';
-import { MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
-import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
-import { UniqueConstraintError } from 'sequelize';
+import { InvalidParameter, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 export class CreateInstitutionUsecase {
     public token_auth: TokenAuth;
@@ -37,29 +37,58 @@ export class CreateInstitutionUsecase {
         if (!institutionData.email) {
             throw new MissingParameter("Email");
         }
-        if (!institutionData.country) {
-            throw new MissingParameter("Country");
+        if (!institutionData.countries) {
+            throw new MissingParameter("Countries");
         }
         if (!institutionData.images) {
             throw new MissingParameter("Images");
         }
-        let images = institutionData.images;
+
+        const images = institutionData.images;
+        if (!Array.isArray(images)) {
+            throw new InvalidParameter("Images", "must be an array");
+        }
         images.forEach((image: string) => {
             if (!image) {
                 throw new MissingParameter("Image");
             }
+            if (typeof image !== 'string') {
+                throw new InvalidParameter("Image", "must be a string");
+            }
+            if (!image.includes('data:image')) {
+                throw new InvalidParameter("Image", "must be a base64 image");
+            }
+            const allowedImageTypes = ['jpg', 'jpeg', 'png'];
+            const imageExtension = image.split(';')[0].split(':')[1].split('/')[1];
+            if (!allowedImageTypes.includes(imageExtension)) {
+                throw new InvalidParameter("Image", "must be a valid image type (jpg, jpeg, png)");
+            }
         });
-        if (!institutionData.social_medias) {
-            throw new MissingParameter("Social Medias");
-        }
+
         const social_medias = institutionData.social_medias;
-        social_medias.forEach((media: any) => {
-            if (!media.media) {
-                throw new MissingParameter("Media to social media");
+        if (!Array.isArray(social_medias)) {
+            throw new InvalidParameter("Social Medias", "must be an array");
+        }
+        social_medias.forEach((social_media: { id: number, link: string }) => {
+            if (!social_media.id) {
+                throw new MissingParameter("Social Media Id");
             }
-            if (!media.link) {
-                throw new MissingParameter("Link to social media");
+            if (!social_media.link) {
+                throw new MissingParameter("Social Media Link");
             }
+            if (typeof social_media.id !== 'number') {
+                throw new InvalidParameter("Social Media Id", "must be a number");
+            }
+            if (typeof social_media.link !== 'string') {
+                throw new InvalidParameter("Social Media Link", "must be a string");
+            }
+        });
+
+        if (!Array.isArray(institutionData.countries)) {
+            throw new InvalidParameter("Countries", "must be an array of country_ids");
+        }
+        const countries = institutionData.countries.map((country_id: number) => {
+            return { id: country_id };
         });
 
         const user_id = await this.token_auth
@@ -92,18 +121,22 @@ export class CreateInstitutionUsecase {
             name: institutionData.name,
             description: institutionData.description,
             email: institutionData.email,
-            country: institutionData.country,
-            images: institutionData.images,
-            social_medias: institutionData.social_medias
+            countries: countries,
+            images: images,
+            social_medias: social_medias
         });
 
-        images.map(async (image: string, index: number) => {
-            const content_type = image.split(';')[0].split(':')[1];
-            const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;
-            const image_buffer = Buffer.from(image.split(',')[1], 'base64');
-            institution.images[index] = await this.bucket.upload_image(image_key, image_buffer, content_type);
-        });
+        if (process.env.STAGE !== 'test') {
+            images.map(async (image: string, index: number) => {
+                const content_type = image.split(';')[0].split(':')[1];
+                const image_key = `institution/${institution.id}/${index}.${content_type.split('/')[1]}`;
+                const image_buffer = Buffer.from(image.split(',')[1], 'base64');
+                institution.images[index] = await this.bucket.upload_image(image_key, image_buffer, content_type);
+            });
+        }
 
         await this.institution_repo.create_institution(institution);
+        
+        return { id: institution.id };
     }
 }

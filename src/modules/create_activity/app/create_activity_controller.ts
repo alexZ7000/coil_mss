@@ -3,7 +3,6 @@ import { UniqueConstraintError } from "sequelize";
 import { CreateActivityUsecase } from "./create_activity_usecase";
 import { EntityError } from "../../../core/helpers/errors/EntityError";
 import {
-  ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
@@ -45,9 +44,9 @@ export class CreateActivityController {
       }
 
       const usecase = await this.usecase.execute(request.headers, request.body.body);
-      return new Created({}, "Activity created successfully");
+      return new Created(usecase, "Activity created successfully");
 
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }
@@ -57,8 +56,8 @@ export class CreateActivityController {
       if (error instanceof UserNotAllowed) {
         return new Forbidden(error.message);
       }
-      if (error instanceof ConflictError) {
-        return new Forbidden(error.message);
+      if (error instanceof UniqueConstraintError) {
+        return new Conflict(error.message);
       }
       if (error instanceof EntityError) {
         return new ParameterError(error.message);

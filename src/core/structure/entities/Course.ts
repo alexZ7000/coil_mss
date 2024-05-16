@@ -1,21 +1,22 @@
+
 class CourseProps {
     id: number;
-    name: string;
+    course: string;
 }
 
 export class Course {
     id: number;
-    name: string;
+    course: string;
 
     constructor(props: CourseProps) {
-        this.id = props.id;
-        this.name = this.validate_set_name(props.name);
+        this.id = 1;
+        this.course = this.validate_set_name(props.course);
     }
 
     public to_json(): CourseProps {
         return {
             id: this.id,
-            name: this.name,
+            course: this.course
         };
     }
 

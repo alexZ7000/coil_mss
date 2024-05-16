@@ -47,6 +47,6 @@ export class GetInstitutionUsecase {
             throw new NotfoundError("Institution not found")
         }
 
-        return institution?.to_json();
+        return institution.to_json();
     }
 }

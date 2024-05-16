@@ -40,7 +40,7 @@ export class UpdateInstitutionController {
       await this.usecase.execute(request.headers, request.body.body);
       return new OK({}, "Institution updated successfully");
     }
-    catch (error) {
+    catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }

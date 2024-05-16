@@ -3,6 +3,87 @@ import { DatabaseMain } from '../DatabaseMain';
 
 const instance = new DatabaseMain().rd_client;
 
+const Language = instance.define('Languages', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    language: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    language_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
+}, {
+    tableName: 'languages',
+    timestamps: false,
+    modelName: 'Language'
+});
+
+const Country = instance.define('Countries', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    country: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    country_code: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
+}, {
+    tableName: 'countries',
+    timestamps: false,
+    modelName: 'Country'
+});
+
+const SocialMedia = instance.define('SocialMedias', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    name: {
+        type: DataTypes.STRING,
+        allowNull: false
+    }
+}, {
+    tableName: 'social_medias',
+    timestamps: false,
+    modelName: 'SocialMedias'
+});
+
+const Criteria = instance.define('Criterias', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    criteria: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    }
+}, {
+    tableName: 'criterias',
+    timestamps: false,
+    modelName: 'Criterias'
+});
+
 const User = instance.define('User', {
     id: {
         type: DataTypes.UUID,
@@ -21,14 +102,6 @@ const User = instance.define('User', {
     user_type_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-    },
-    course_id: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-    },
-    semester: {
-        type: DataTypes.INTEGER,
-        allowNull: true
     },
     created_at: {
         type: DataTypes.DATE,
@@ -90,8 +163,8 @@ const ActivityLanguage = instance.define('ActivityLanguage', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    language: {
-        type: DataTypes.STRING,
+    language_id: {
+        type: DataTypes.INTEGER,
         allowNull: false
     }
 }, {
@@ -132,8 +205,8 @@ const ActivityCriteria = instance.define('ActivityCriteria', {
         type: DataTypes.UUID,
         allowNull: false
     },
-    criteria: {
-        type: DataTypes.STRING,
+    criteria_id: {
+        type: DataTypes.INTEGER,
         allowNull: false
     }
 }, {
@@ -247,7 +320,7 @@ const Course = instance.define('Course', {
         allowNull: false,
         autoIncrement: true
     },
-    name: {
+    course: {
         type: DataTypes.STRING,
         allowNull: false,
         unique: true
@@ -297,10 +370,6 @@ const Institution = instance.define('Institution', {
     email: {
         type: DataTypes.STRING,
         allowNull: false
-    },
-    country: {
-        type: DataTypes.STRING,
-        allowNull: false
     }
 }, {
     tableName: 'institutions',
@@ -319,8 +388,8 @@ const InstitutionSocialMedia = instance.define('InstitutionSocialMedia', {
         type: DataTypes.UUID,
         allowNull: false,
     },
-    media: {
-        type: DataTypes.STRING,
+    social_media_id: {
+        type: DataTypes.INTEGER,
         allowNull: false
     },
     link: {
@@ -354,38 +423,69 @@ const InstitutionImage = instance.define('InstitutionImage', {
     modelName: 'InstitutionImage',
 });
 
+const InstitutionCountry = instance.define('InstitutionCountry', {
+    id: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true
+    },
+    institution_id: {
+        type: DataTypes.UUID,
+        allowNull: false,
+    },
+    country_id: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    }
+}, {
+    tableName: 'institution_countries',
+    timestamps: false,
+    modelName: 'InstitutionCountry',
+});
+
 // Relationships
 // User
-User.belongsTo(Course, { foreignKey: 'course_id', as: 'course', onDelete: 'SET NULL' });
 User.belongsTo(UserType, { foreignKey: 'user_type_id', as: 'user_type' });
 
 // Activity
-Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id', as: 'activity_status'});
+Activity.belongsTo(ActivityStatus, { foreignKey: 'status_id', as: 'activity_status' });
 Activity.belongsTo(ActivityType, { foreignKey: 'type_id', as: 'activity_type' });
 
 // ActivityApplication
-Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'applications'});
-ActivityApplication.belongsTo(User, { foreignKey: 'user_id', as: 'user'});
+Activity.hasMany(ActivityApplication, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'applications' });
+ActivityApplication.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
 
 // Activity Language
-Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'languages'});
+Activity.hasMany(ActivityLanguage, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'languages' });
+ActivityLanguage.belongsTo(Language, { foreignKey: 'language_id', as: 'language' });
 
 // Activity Partner Institution
-Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'partner_institutions'});
-ActivityPartnerInstitution.belongsTo(Institution, { foreignKey: 'institution_id', as: 'institution'});
+Activity.hasMany(ActivityPartnerInstitution, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'partner_institutions' });
+ActivityPartnerInstitution.belongsTo(Institution, { foreignKey: 'institution_id', as: 'institution' });
 
 // Activity Criteria
-Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'criterias'});
+Activity.hasMany(ActivityCriteria, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'criterias' });
+ActivityCriteria.belongsTo(Criteria, { foreignKey: 'criteria_id', as: 'criteria' });
 
 // Activity Course
-Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'courses'});
+Activity.hasMany(ActivityCourse, { foreignKey: 'activity_id', onDelete: 'CASCADE', as: 'courses' });
 ActivityCourse.belongsTo(Course, { foreignKey: 'course_id', as: 'course' });
 
 // Institution
-Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'social_medias'});
-Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'images'});
+Institution.hasMany(InstitutionSocialMedia, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'social_medias' });
+Institution.hasMany(InstitutionImage, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'images' });
+Institution.hasMany(InstitutionCountry, { foreignKey: 'institution_id', onDelete: 'CASCADE', as: 'countries' });
+
+// Institution Social Media
+InstitutionSocialMedia.belongsTo(SocialMedia, { foreignKey: 'social_media_id', as: 'media' });
+
+// Institution Country
+InstitutionCountry.belongsTo(Country, { foreignKey: 'country_id', as: 'country' });
 
 export {
     User, UserType, Course, ActivityCourse, Institution, InstitutionSocialMedia, InstitutionImage,
-    Activity, ActivityStatus, ActivityType, ActivityLanguage, ActivityPartnerInstitution, ActivityCriteria, ActivityApplication
+    Activity, ActivityStatus, ActivityType, ActivityLanguage, ActivityPartnerInstitution,
+    ActivityCriteria, ActivityApplication, Language, SocialMedia, Criteria,
+    Country, InstitutionCountry
 };

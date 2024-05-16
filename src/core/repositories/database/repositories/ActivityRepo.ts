@@ -19,7 +19,12 @@ import {
     ActivityPartnerInstitution,
     InstitutionImage as InstitutionImageDB,
     InstitutionSocialMedia as InstitutionSocialMediaDB,
-    UserType
+    InstitutionCountry,
+    UserType,
+    Language,
+    Criteria,
+    Country,
+    SocialMedia
 } from "../models/Models";
 
 
@@ -33,9 +38,14 @@ export class ActivityRepo implements IActivityRepo {
 
     async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
         let include: Includeable | Includeable[] = [
-            { model: ActivityCourse, as: 'courses', include: [{ model: Course, as: 'course' }] },
-            { model: ActivityLanguage, as: 'languages' },
-            { model: ActivityCriteria, as: 'criterias' },
+            {
+                model: ActivityCourse,
+                as: 'courses',
+                include: [{ model: Course, as: 'course' }],
+                attributes: ['course_id']
+            },
+            { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language' }] },
+            { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria' }] },
             {
                 model: ActivityPartnerInstitution,
                 as: 'partner_institutions',
@@ -44,12 +54,21 @@ export class ActivityRepo implements IActivityRepo {
                     as: 'institution',
                     include: [{
                         model: InstitutionImageDB,
-                        as: 'images'
+                        as: 'images',
+                        limit: 1,
+                        order: [['id', 'ASC']],
+                        attributes: ['image']
                     }, {
                         model: InstitutionSocialMediaDB,
-                        as: 'social_medias'
+                        as: 'social_medias',
+                        include: [{ model: SocialMedia, as: 'media' }]
+                    }, {
+                        model: InstitutionCountry,
+                        as: 'countries',
+                        include: [{ model: Country, as: 'country' }]
                     }]
-                }]
+                }],
+                attributes: ['institution_id'],
             },
             { model: ActivityStatus, as: 'activity_status' },
             { model: ActivityType, as: 'activity_type' }
@@ -57,14 +76,11 @@ export class ActivityRepo implements IActivityRepo {
 
         if (applicants) {
             include.push({
-                model: ActivityApplication, as: 'applications', include: [
-                    {
-                        model: UserDB, as: 'user', include: [
-                            { model: Course, as: 'course' },
-                            { model: UserType, as: 'user_type' }
-                        ]
-                    }
-                ]
+                model: ActivityApplication, as: 'applications', include: [{
+                    model: UserDB, as: 'user', include: [{ model: UserType, as: 'user_type' }]
+                }],
+                attributes: ['id', 'user_id', 'status'],
+                order: [['created_at', 'ASC']]
             });
         }
 
@@ -102,10 +118,11 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: "course", attributes: ['name'] }],
+                    include: [{ model: Course, as: "course" }],
                     attributes: ['course_id']
                 },
-                { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language' }] },
+                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria' }] },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -118,8 +135,12 @@ export class ActivityRepo implements IActivityRepo {
                             limit: 1,
                             order: [['id', 'ASC']],
                             attributes: ['image']
-                        }],
-                        attributes: ['id', 'name', 'country']
+                        },
+                        {
+                            model: InstitutionCountry,
+                            as: 'countries',
+                            include: [{ model: Country, as: 'country' }]
+                        }]
                     }],
                     attributes: ['institution_id'],
                 },
@@ -129,7 +150,7 @@ export class ActivityRepo implements IActivityRepo {
                     where: { id: { [Op.notLike]: ActivityStatusEnum.CANCELED } },
                 },
                 { model: ActivityType, as: 'activity_type', where: { id: type } },
-                { model: ActivityApplication, as: 'applications', where: { user_id: user_id } },
+                { model: ActivityApplication, as: 'applications', where: { user_id: user_id }, attributes: ['id', 'status'] },
             ],
             order: [['start_date', 'ASC']],
         });
@@ -138,9 +159,9 @@ export class ActivityRepo implements IActivityRepo {
             return null;
         }
 
-        return activities.map((activity) =>
-            activity.toJSON()
-        );
+        console.log(activities.map((activity) => activity.toJSON()));
+
+        return activities.map((activity) => this.ActivityDTO.to_entity(activity.toJSON()));
     }
 
     async get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null> {
@@ -187,13 +208,23 @@ export class ActivityRepo implements IActivityRepo {
 
         await ActivityLanguage.bulkCreate(activity.languages.map(language => ({
             activity_id: activity.id,
-            language: language
+            language_id: language.id
         })));
 
-        await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+        let new_criterias = await Criteria.bulkCreate(activity.criterias.filter(criteria => criteria.id == -1).map(criteria => ({
+            criteria: criteria.criteria?.criteria
+        }), { returning: true, ignoreDuplicates: true }));
+
+        await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
-            criteria: criteria.criteria
+            criteria_id: criteria.toJSON().id
         })));
+
+        await ActivityCriteria.bulkCreate(activity.criterias.filter(criteria => criteria.id != -1).map(criteria => ({
+            activity_id: activity.id,
+            criteria_id: criteria.id
+        })));
+
         return true;
     }
 
@@ -227,7 +258,7 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
-    async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[]): Promise<Activity[]> {
+    async get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[], type: ActivityTypeEnum): Promise<Activity[]> {
         const statuses = Array.isArray(status) ? status : [status];
         const activities = await ActivityDB.findAll({
             where: {
@@ -238,10 +269,11 @@ export class ActivityRepo implements IActivityRepo {
                 {
                     model: ActivityCourse,
                     as: 'courses',
-                    include: [{ model: Course, as: 'course', attributes: ['name'] }],
+                    include: [{ model: Course, as: 'course' }],
                     attributes: ['course_id']
                 },
-                { model: ActivityLanguage, as: 'languages', attributes: ['language'] },
+                { model: ActivityLanguage, as: 'languages', attributes: ['language_id'], include: [{ model: Language, as: 'language' }] },
+                { model: ActivityCriteria, as: 'criterias', attributes: ['criteria_id'], include: [{ model: Criteria, as: 'criteria' }] },
                 {
                     model: ActivityPartnerInstitution,
                     as: 'partner_institutions',
@@ -254,13 +286,20 @@ export class ActivityRepo implements IActivityRepo {
                             limit: 1,
                             order: [['id', 'ASC']],
                             attributes: ['image']
+                        }, {
+                            model: InstitutionSocialMediaDB,
+                            as: 'social_medias',
+                            include: [{ model: SocialMedia, as: 'media' }]
+                        }, {
+                            model: InstitutionCountry,
+                            as: 'countries',
+                            include: [{ model: Country, as: 'country' }]
                         }],
-                        attributes: ['id', 'name', 'country']
                     }],
                     attributes: ['institution_id'],
                 },
                 { model: ActivityStatus, as: 'activity_status' },
-                { model: ActivityType, as: 'activity_type' }
+                { model: ActivityType, as: 'activity_type', where: { id: type } }
             ],
             order: [
                 ['start_date', 'ASC']
@@ -268,14 +307,6 @@ export class ActivityRepo implements IActivityRepo {
         });
 
         return activities.map(activity => activity.toJSON());
-    }
-
-    async get_all_activities(): Promise<Activity[]> {
-        throw new Error("Method not implemented.");
-    }
-
-    async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {
-        throw new Error("Method not implemented.");
     }
 
     async assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }> {
@@ -324,7 +355,7 @@ export class ActivityRepo implements IActivityRepo {
                 id: activity.id
             }
         });
-
+        
         await ActivityPartnerInstitution.destroy({
             where: {
                 activity_id: activity.id
@@ -364,10 +395,20 @@ export class ActivityRepo implements IActivityRepo {
             language: language
         })));
 
-        await ActivityCriteria.bulkCreate(activity.criterias.map(criteria => ({
+        let new_criterias = await Criteria.bulkCreate(activity.criterias.filter(criteria => criteria.id == -1).map(criteria => ({
+            name: criteria.criteria?.criteria
+        }), { returning: true, ignoreDuplicates: true }));
+
+        await ActivityCriteria.bulkCreate(new_criterias.map(criteria => ({
             activity_id: activity.id,
-            criteria: criteria.criteria
+            criteria_id: criteria.toJSON().id
         })));
+
+        await ActivityCriteria.bulkCreate(activity.criterias.filter(criteria => criteria.id != -1).map(criteria => ({
+            activity_id: activity.id,
+            criteria_id: criteria.id
+        })));
+
         return true;
     }
 
