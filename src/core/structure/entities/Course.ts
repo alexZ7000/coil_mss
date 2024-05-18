@@ -9,7 +9,7 @@ export class Course {
     course: string;
 
     constructor(props: CourseProps) {
-        this.id = 1;
+        this.id = props.id;
         this.course = this.validate_set_name(props.course);
     }
 
