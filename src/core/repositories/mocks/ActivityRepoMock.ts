@@ -13,6 +13,15 @@ export class ActivityRepoMock implements IActivityRepo {
         this.activity_mock = new ActivityMock();
     }
 
+    async get_activity_applicants(activity_id: string, applicants: string[]): Promise<{ user_id: string; status: boolean; }[]> {
+        const activity = this.activity_mock.activities.find(activity => activity.id === activity_id);
+        if (activity) {
+            const applicants_list = activity.applicants.filter(applicant => applicants.includes(applicant.id));
+            return applicants_list.map(applicant => ({ user_id: applicant.id, status: applicant.status }));
+        }
+        return [];
+    }
+
     async get_activity(id: string, applicants?: boolean): Promise<Activity | null> {
         const activity = this.activity_mock.activities.find(activity => activity.id === id);
         if (activity && applicants) {
@@ -84,16 +93,18 @@ export class ActivityRepoMock implements IActivityRepo {
         throw new Error("Method not implemented.");
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
+    update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean> {
         const activity = this.activity_mock.activities.find(activity => activity.id === activity_id);
         if (activity) {
-            const applicant = activity.applicants.find(applicant => applicant.id === user_id);
-            if (applicant) {
-                applicant.status = status;
-                return true;
-            }
+            users.forEach(user => {
+                let index = activity.applicants.findIndex(applicant => applicant.id === user.user_id);
+                if (index !== -1) {
+                    activity.applicants[index].status = user.status;
+                }
+            });
+            return Promise.resolve(true);
         }
-        return false;
+        return Promise.resolve(false);
     }
 
     async get_users_assigned_to_activity(activity_id: string): Promise<User[]> {

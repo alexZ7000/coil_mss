@@ -1,6 +1,5 @@
 import { Includeable, Op } from "sequelize";
 import { ActivityDTO } from "../dtos/ActivityDTO";
-import { User } from "../../../structure/entities/User";
 import { IActivityRepo } from "../../interfaces/IActivityRepo";
 import { Activity } from "../../../structure/entities/Activity";
 import { ActivityTypeEnum } from "../../../helpers/enums/ActivityTypeEnum";
@@ -412,6 +411,18 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
+    async get_activity_applicants(activity_id: string, applicants: string[]): Promise<{ user_id: string, status: boolean }[]> {
+        const activity_applicants = await ActivityApplication.findAll({
+            where: {
+                activity_id: activity_id,
+                user_id: applicants
+            },
+            attributes: ['user_id', 'status']
+        });
+
+        return activity_applicants.map(applicant => applicant.toJSON());
+    }
+
     async update_activity_status(activity_id: string, status: ActivityStatusEnum): Promise<boolean> {
         const response = await ActivityDB.update({
             status_id: status
@@ -426,17 +437,19 @@ export class ActivityRepo implements IActivityRepo {
         return true;
     }
 
-    async update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean> {
-        const response = await ActivityApplication.update({
-            status: status
-        }, {
-            where: {
-                activity_id: activity_id,
-                user_id: user_id
+    async update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean> {
+        for (let user of users) {
+            const response = await ActivityApplication.update({
+                status: user.status
+            }, {
+                where: {
+                    activity_id: activity_id,
+                    user_id: user.user_id
+                }
+            });
+            if (response[0] === 0) {
+                return false;
             }
-        });
-        if (response[0] === 0) {
-            return false;
         }
         return true;
     }

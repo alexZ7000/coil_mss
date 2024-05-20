@@ -13,9 +13,10 @@ export interface IActivityRepo {
 
     get_activity(id: string, applicants?: boolean): Promise<Activity | null>
     get_activity_applicant(activity_id: string, user_id: string): Promise<{ user_id: string, status: boolean } | null>
+    get_activity_applicants(activity_id: string, applicants: string[]): Promise<{ user_id: string, status: boolean }[]>
     get_activities_by_user_id(user_id: string, type: ActivityTypeEnum): Promise<Activity[] | null>
     get_all_activities_by_status(status: ActivityStatusEnum | ActivityStatusEnum[], type: ActivityTypeEnum): Promise<Activity[] | null>
 
     assign_user_to_activity(activity_id: string, user_id: string): Promise<{ assign: boolean }>
-    update_user_activity_status(activity_id: string, user_id: string, status: boolean): Promise<boolean>
+    update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean>
 }
