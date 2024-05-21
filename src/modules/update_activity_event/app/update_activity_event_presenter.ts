@@ -6,7 +6,8 @@ const repository = new Repository({ activity_repo: true });
 
 export const handler = async (event: any, context: any) => {
     const event_bridge = new EventBridgeManager();
-    const body: { activity_id: string; status: ActivityStatusEnum } = JSON.parse(event.body);
+    console.log("Event: ", event);
+    const body: { activity_id: string; status: ActivityStatusEnum } = event.body;
     console.log("Activity ID: ", body.activity_id + " Status: " + body.status);
     const resp = await repository.ActivityRepo.update_activity_status(body.activity_id, body.status);
     if (resp) {
