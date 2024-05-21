@@ -132,7 +132,7 @@ describe("Update Activity Presenter", () => {
         partner_institutions: [activity.partner_institutions[0].id],
         criterias: [activity.criterias[0].criteria],
         courses: [{ id: activity.courses[0].id, name: activity.courses[0].name }],
-        status_activity: activity.status_activity,
+        status_activity: null,
         type_activity: activity.type_activity,
         start_date: new Date(),
         end_date: new Date(),
