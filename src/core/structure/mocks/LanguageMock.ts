@@ -13,7 +13,7 @@ export class LanguageMock {
             new Language({
                 id: 2,
                 language: "English",
-                language_code: "en"
+                language_code: "gb"
             }),
             new Language({
                 id: 3,
@@ -38,22 +38,22 @@ export class LanguageMock {
             new Language({
                 id: 7,
                 language: "Mandarin",
-                language_code: "zh"
+                language_code: "cn"
             }),
             new Language({
                 id: 8,
                 language: "Japanese",
-                language_code: "ja"
+                language_code: "jp"
             }),
             new Language({
                 id: 9,
                 language: "Korean",
-                language_code: "ko"
+                language_code: "kr"
             }),
             new Language({
                 id: 10,
                 language: "Arabic",
-                language_code: "ar"
+                language_code: "sa" 
             }),
             new Language({
                 id: 11,
@@ -68,12 +68,12 @@ export class LanguageMock {
             new Language({
                 id: 13,
                 language: "Swedish",
-                language_code: "sv"
+                language_code: "se" 
             }),
             new Language({
                 id: 14,
                 language: "Danish",
-                language_code: "da"
+                language_code: "dk"
             }),
             new Language({
                 id: 15,
