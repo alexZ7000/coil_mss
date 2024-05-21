@@ -53,7 +53,7 @@ export class EventBridgeManager {
         await this.event.putRule({
             Name: rule_name,
             ScheduleExpression: "cron(" + date.getMinutes() + " " + date.getHours() + " " + date.getDate() + " " + (date.getMonth() + 1) + " ? " + date.getFullYear() + ")",
-            State: "ENABLED",
+            State: "ENABLED"
         }).promise();
 
         // Add target to the rule
