@@ -175,6 +175,11 @@ export class UpdateActivityUsecase {
       });
     }
 
+    let status_activity: ActivityStatusEnum = body.status_activity;
+    if (status_activity && !Object.values(ActivityStatusEnum).includes(body.status_activity)) {
+      throw new InvalidParameter("Status Activity", "Invalid status activity");
+    }
+
     const activity = await this.activity_repo.get_activity(body.activity_id);
     if (!activity) {
       throw new NotfoundError("Activity not found");
@@ -207,8 +212,8 @@ export class UpdateActivityUsecase {
       courses: courses.length > 0 ? courses : activity.courses,
       partner_institutions: partner_institutions.length > 0 ? partner_institutions : activity.partner_institutions,
       criterias: criterias.length > 0 ? criterias : activity.criterias,
-      status_activity: body.status_activity ? body.status_activity : activity.status_activity,
-      type_activity: body.type_activity ? body.type_activity : activity.type_activity,
+      status_activity: status_activity ? status_activity : activity.status_activity,
+      type_activity: activity.type_activity,
       created_at: activity.created_at,
       updated_at: new Date(),
       applicants: activity.applicants
