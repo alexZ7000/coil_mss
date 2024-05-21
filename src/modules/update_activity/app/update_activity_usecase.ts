@@ -177,9 +177,15 @@ export class UpdateActivityUsecase {
     }
 
     let status_activity: ActivityStatusEnum = body.status_activity;
-    if (status_activity && !Object.values(ActivityStatusEnum).includes(body.status_activity)) {
-      throw new InvalidParameter("Status Activity", "Invalid status activity");
+    if (status_activity) {
+      if (!Object.values(ActivityStatusEnum).includes(body.status_activity)) {
+        throw new InvalidParameter("Status Activity", "Invalid status activity");
+      }
+      if (![ActivityStatusEnum.ENDED, ActivityStatusEnum.CANCELED].includes(body.status_activity)) {
+        throw new InvalidParameter("Status Activity", "Invalid status activity");
+      }
     }
+
 
     const activity = await this.activity_repo.get_activity(body.activity_id);
     if (!activity) {

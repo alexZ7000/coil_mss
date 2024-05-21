@@ -2,10 +2,9 @@ import { it, describe, expect } from 'vitest';
 
 import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
 import { TokenAuth } from '../../../../src/core/helpers/functions/token_auth';
-import { ActivityRepoMock } from "../../../../src/core/repositories/mocks/ActivityRepoMock";
-import { handler } from "../../../../src/modules/update_activity/app/update_activity_presenter";
 import { ActivityMock } from '../../../../src/core/structure/mocks/ActivityMock';
-import { a } from 'vitest/dist/suite-ynYMzeLu';
+import { ActivityStatusEnum } from '../../../../src/core/helpers/enums/ActivityStatusEnum';
+import { handler } from "../../../../src/modules/update_activity/app/update_activity_presenter";
 
 describe("Update Activity Presenter", () => {
   const user_admin = new UserMock().users[0];
@@ -27,7 +26,7 @@ describe("Update Activity Presenter", () => {
         partner_institutions: [activity.partner_institutions[0].id],
         criterias: [{ id: activity.criterias[0].id }],
         courses: [activity.courses[0].course?.id],
-        status_activity: activity.status_activity,
+        status_activity: ActivityStatusEnum.ENDED,
         type_activity: activity.type_activity,
         start_date: activity.start_date,
         end_date: activity.end_date,
@@ -52,7 +51,7 @@ describe("Update Activity Presenter", () => {
         partner_institutions: [],
         criterias: [],
         courses: [],
-        status_activity: "ACTIVE",
+        status_activity: null,
         type_activity: "PROJECT",
         start_date: new Date(),
         end_date: new Date(),
@@ -79,7 +78,7 @@ describe("Update Activity Presenter", () => {
         partner_institutions: [activity.partner_institutions[0].id],
         criterias: [{ id: activity.criterias[0].id }],
         courses: [activity.courses[0].course?.id],
-        status_activity: activity.status_activity,
+        status_activity: null,
         type_activity: activity.type_activity,
         start_date: new Date().getTime() - 1000 * 60 * 60 * 24 * 7,
         end_date: new Date(),
