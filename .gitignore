@@ -1,0 +1,7 @@
+node_modules
+package-lock.json
+# Keep environment variables out of version control
+.env
+
+# Ignore the Prisma schema file that is not checked in
+prisma/migrations

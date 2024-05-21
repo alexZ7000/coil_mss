@@ -1,0 +1,53 @@
+import { AuthUserUsecase } from './auth_user_usecase';
+
+import { EntityError } from '../../../core/helpers/errors/EntityError';
+import { BadRequest, ParameterError, InternalServerError, Forbidden } from '../../../core/helpers/http/http_codes';
+import { Created, HttpRequest, HttpResponse, OK, Unauthorized } from '../../../core/helpers/http/http_codes';
+import { InvalidParameter, InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+
+
+export class AuthUserController {
+    usecase: AuthUserUsecase;
+
+    constructor(usecase: AuthUserUsecase) {
+        this.usecase = usecase;
+    }
+    async execute(request: HttpRequest): Promise<HttpResponse>  {
+        try {
+            if (!request) {
+                throw new InvalidRequest();
+            }
+            if (!request.headers) {
+                throw new InvalidRequest("Headers");
+            }
+
+            let response = await this.usecase.execute(request.headers)
+
+            if (response.created_user) {
+                return new Created({token: response.token}, "User created successfully");
+            }
+            return new OK({token: response.token}, "User authenticated successfully");     
+
+        } catch (error: any) {
+            if (error instanceof EntityError) {
+                return new BadRequest(error.message);
+            }
+            if (error instanceof UserNotAuthenticated) {
+                return new Unauthorized(error.message);
+            }
+            if (error instanceof UserNotAllowed) {
+                return new Forbidden(error.message);
+            }
+            if (error instanceof InvalidRequest) {
+                return new BadRequest(error.message);
+            }
+            if (error instanceof InvalidParameter) {
+                return new ParameterError(error.message);
+            }
+            if (error instanceof MissingParameter) {
+                return new ParameterError(error.message);
+            }
+            return new InternalServerError(error.message);
+        }
+    }
+}
