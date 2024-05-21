@@ -17,6 +17,7 @@ import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
 import { EventBridgeManager } from "../../../core/helpers/functions/event_bridge";
 import { ActivityStatusEnum } from "../../../core/helpers/enums/ActivityStatusEnum";
 import { IActivityRepo } from "../../../core/repositories/interfaces/IActivityRepo";
+import { time } from "console";
 
 export class UpdateActivityUsecase {
   public token_auth: TokenAuth;
@@ -74,64 +75,64 @@ export class UpdateActivityUsecase {
 
     if (body.languages) {
       if (!Array.isArray(body.languages)) {
-      throw new InvalidParameter("Languages", "must be an array of ids");
+        throw new InvalidParameter("Languages", "must be an array of ids");
       }
       body.languages.forEach((language_id: number) => {
-      if (!language_id) {
-        throw new MissingParameter("Language ID");
-      }
-      if (typeof language_id !== 'number') {
-        throw new InvalidParameter("Language ID", "must be a number");
-      }
+        if (!language_id) {
+          throw new MissingParameter("Language ID");
+        }
+        if (typeof language_id !== 'number') {
+          throw new InvalidParameter("Language ID", "must be a number");
+        }
       })
     }
 
     if (body.courses) {
       if (!Array.isArray(body.courses)) {
-      throw new InvalidParameter("Courses", "must be an array of ids");
+        throw new InvalidParameter("Courses", "must be an array of ids");
       }
       body.courses.forEach((course_id: number) => {
-      if (!course_id) {
-        throw new MissingParameter("Course ID");
-      }
-      if (typeof course_id !== 'number') {
-        throw new InvalidParameter("Course ID", "must be a number");
-      }
+        if (!course_id) {
+          throw new MissingParameter("Course ID");
+        }
+        if (typeof course_id !== 'number') {
+          throw new InvalidParameter("Course ID", "must be a number");
+        }
       })
     }
 
     if (body.criterias) {
       if (!Array.isArray(body.criterias)) {
-      throw new InvalidParameter("Criterias", "must be an array of criterias");
+        throw new InvalidParameter("Criterias", "must be an array of criterias");
       }
       body.criterias.forEach((criteria: { id?: number, criteria?: string }) => {
-      if (criteria.criteria && criteria.id) {
-        throw new InvalidParameter("Criteria or Criteria ID", "You must provide only the criteria or the criteria id");
-      }
-      if (!criteria.criteria && !criteria.id) {
-        throw new MissingParameter("Criteria or Criteria ID");
-      }
-      if (criteria.id && typeof criteria.id !== 'number') {
-        throw new InvalidParameter("Criteria ID", "must be a number");
-      }
-      if (criteria.criteria && typeof criteria.criteria !== 'string') {
-        throw new InvalidParameter("Criteria", "must be a string");
-      }
+        if (criteria.criteria && criteria.id) {
+          throw new InvalidParameter("Criteria or Criteria ID", "You must provide only the criteria or the criteria id");
+        }
+        if (!criteria.criteria && !criteria.id) {
+          throw new MissingParameter("Criteria or Criteria ID");
+        }
+        if (criteria.id && typeof criteria.id !== 'number') {
+          throw new InvalidParameter("Criteria ID", "must be a number");
+        }
+        if (criteria.criteria && typeof criteria.criteria !== 'string') {
+          throw new InvalidParameter("Criteria", "must be a string");
+        }
       })
     }
 
     if (body.partner_institutions) {
       if (!Array.isArray(body.partner_institutions)) {
-      throw new InvalidParameter("Partner Institutions", "must be an array of ids");
+        throw new InvalidParameter("Partner Institutions", "must be an array of ids");
       }
 
       body.partner_institutions.forEach((institution: string) => {
-      if (!institution) {
-        throw new MissingParameter("Partner Institution");
-      }
-      if (typeof institution !== 'string') {
-        throw new InvalidParameter("Partner Institution", "must be a string");
-      }
+        if (!institution) {
+          throw new MissingParameter("Partner Institution");
+        }
+        if (typeof institution !== 'string') {
+          throw new InvalidParameter("Partner Institution", "must be a string");
+        }
       })
     }
 
@@ -185,8 +186,10 @@ export class UpdateActivityUsecase {
       throw new NotfoundError("Activity not found");
     }
 
-    if (body.start_date && body.end_date) {
-      if (new Date(body.start_date) < new Date()) {
+    if (body.start_date || body.end_date) {
+      let time_now: Date = new Date();
+      time_now.setHours(time_now.getHours() - 3);
+      if (new Date(body.start_date) < time_now) {
         throw new InvalidParameter("StartDate", "Start Date must be in the future");
       }
       if (new Date(body.start_date) >= new Date(body.end_date)) {
@@ -222,6 +225,8 @@ export class UpdateActivityUsecase {
     await this.activity_repo.update_activity(activity_update).then(async (response) => {
       if (response && process.env.STAGE === "prod") {
         if (activity_update.start_date !== activity.start_date) {
+          let start_date = activity_update.start_date;
+          start_date.setHours(start_date.getHours() + 3);
           // Delete the previous trigger and create a new one
           await this.event_bridge.delete_trigger(
             "START_ACTIVITY_" + activity.id,
@@ -230,7 +235,7 @@ export class UpdateActivityUsecase {
           await this.event_bridge.create_trigger(
             "START_ACTIVITY_" + activity.id,
             "Update_Activity_Event",
-            activity_update.start_date,
+            start_date,
             {
               "body": {
                 activity_id: activity.id,
@@ -240,6 +245,8 @@ export class UpdateActivityUsecase {
           );
         }
         if (activity_update.end_date !== activity.end_date) {
+          let end_date = activity_update.end_date;
+          end_date.setHours(end_date.getHours() + 3);
           // Delete the previous trigger and create a new one
           await this.event_bridge.delete_trigger(
             "END_ACTIVITY_" + activity.id,
@@ -248,7 +255,7 @@ export class UpdateActivityUsecase {
           await this.event_bridge.create_trigger(
             "END_ACTIVITY_" + activity.id,
             "Update_Activity_Event",
-            activity_update.end_date,
+            end_date,
             {
               "body": {
                 activity_id: activity.id,
