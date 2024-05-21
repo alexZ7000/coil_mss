@@ -230,6 +230,7 @@ export class LambdaStack extends Construct {
         this.functions_need_event_bridge_access = [
             this.create_activity,
             this.update_activity,
+            this.update_activity_event,
         ]
     }
 }
