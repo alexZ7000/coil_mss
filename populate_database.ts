@@ -314,9 +314,14 @@ async function createOrUpdateStatusActivity(status: ActivityStatusEnum) {
 
         await handleCriteriasCreation();
 
-        await createOrUpdateSocialMedia();
+        await createOrUpdateSocialMedia();  
 
-        await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ACTIVE);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.CANCELED);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ENDED);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ON_HOLD);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.TO_START);
+
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
         await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
 
