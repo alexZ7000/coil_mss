@@ -14,9 +14,8 @@ export class GetAllActivitiesCatalogUsecase {
   }
 
   async execute() {
-
     const activities = await this.activity_repo.get_all_activities_catalog();
-
+    
     const projects = activities ? activities.filter((activity) => activity.type_activity === ActivityTypeEnum.PROJECT) : null;
     const mobilities = activities ? activities.filter((activity) => activity.type_activity === ActivityTypeEnum.ACADEMIC_MOBILITY) : null;
 
@@ -24,7 +23,7 @@ export class GetAllActivitiesCatalogUsecase {
       projects: projects,
       mobilities: mobilities
     }
-
+    
     return response;
   }
 }

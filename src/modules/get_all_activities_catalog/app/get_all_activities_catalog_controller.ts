@@ -27,18 +27,11 @@ export class GetAllActivitiesCatalogController {
       if (!request) {
         throw new InvalidRequest();
       }
+      
       const response = await this.usecase.execute();
       return new OK(response, "Activities found successfully");
+
     } catch (error: any) {
-      if (error instanceof InvalidRequest) {
-        return new BadRequest(error.message);
-      }
-      if (error instanceof UserNotAuthenticated) {
-        return new Unauthorized(error.message);
-      }
-      if (error instanceof MissingParameter) {
-        return new ParameterError(error.message);
-      }
       return new InternalServerError(error.message);
     }
   }
