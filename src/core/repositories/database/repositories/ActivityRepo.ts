@@ -465,8 +465,7 @@ export class ActivityRepo implements IActivityRepo {
                         limit: 1,
                         order: [['id', 'ASC']]
                     }]
-                }],
-                limit: 5
+                }]
             }],
             where: {
                 status_id: {
@@ -476,7 +475,8 @@ export class ActivityRepo implements IActivityRepo {
             },
             order: [
                 ['start_date', 'ASC']
-            ]
+            ],
+            limit: 5
         });
 
         const response_mobility = await ActivityDB.findAll({
@@ -490,8 +490,7 @@ export class ActivityRepo implements IActivityRepo {
                         limit: 1,
                         order: [['id', 'ASC']]
                     }]
-                }],
-                limit: 5
+                }]
             }],
             where: {
                 status_id: {
@@ -501,7 +500,8 @@ export class ActivityRepo implements IActivityRepo {
             },
             order: [
                 ['start_date', 'ASC']
-            ]
+            ],
+            limit: 5
         });
 
         let activities = response_project.concat(response_mobility);
