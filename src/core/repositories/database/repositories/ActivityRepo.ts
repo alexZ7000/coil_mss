@@ -456,7 +456,9 @@ export class ActivityRepo implements IActivityRepo {
 
     async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
         const response = await ActivityDB.findAll({
-            attributes: ["title", "type_id", "partner_institutions"],
+            attributes: {
+                exclude: ['description', 'start_date', 'end_date', 'created_at', 'updated_at']
+            },
             include: [{
                 model: ActivityPartnerInstitution, as: 'partner_institutions', include:
                     [{
