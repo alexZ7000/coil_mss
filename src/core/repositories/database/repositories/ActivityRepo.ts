@@ -454,7 +454,7 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
-        const response = await ActivityDB.findAll({
+        const response_project = await ActivityDB.findAll({
             include: [{
                 model: ActivityPartnerInstitution, as: 'partner_institutions',
                 include: [{
@@ -465,19 +465,48 @@ export class ActivityRepo implements IActivityRepo {
                         limit: 1,
                         order: [['id', 'ASC']]
                     }]
-                }]
+                }],
+                limit: 5
             }],
             where: {
                 status_id: {
                     [Op.or]: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
-                }
+                },
+                type_id: ActivityTypeEnum.PROJECT
             },
             order: [
                 ['start_date', 'ASC']
             ]
         });
 
-        let activities: {
+        const response_mobility = await ActivityDB.findAll({
+            include: [{
+                model: ActivityPartnerInstitution, as: 'partner_institutions',
+                include: [{
+                    model: Institution,
+                    as: 'institution',
+                    include: [{
+                        model: InstitutionImageDB, as: 'images',
+                        limit: 1,
+                        order: [['id', 'ASC']]
+                    }]
+                }],
+                limit: 5
+            }],
+            where: {
+                status_id: {
+                    [Op.or]: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+                },
+                type_id: ActivityTypeEnum.ACADEMIC_MOBILITY
+            },
+            order: [
+                ['start_date', 'ASC']
+            ]
+        });
+
+        let activities = response_project.concat(response_mobility);
+
+        let activities_json: {
             title: string;
             partner_institutions: {
                 institution: {
@@ -485,13 +514,13 @@ export class ActivityRepo implements IActivityRepo {
                 };
             }[];
             type_id: ActivityTypeEnum;
-        }[] = response.map(activity => activity.toJSON());
+        }[] = activities.map(activity => activity.toJSON());
 
-        activities = activities.map(activity => (
+        activities_json = activities_json.map(activity => (
             activity = activity.partner_institutions.length > 0 ? activity : { ...activity, partner_institutions: [{ institution: { images: [{ image: "" }] } }] }
         ));
 
-        return activities.map(activity => ({
+        return activities_json.map(activity => ({
             title: activity.title,
             logo: activity.partner_institutions[0].institution.images[0].image,
             type_activity: activity.type_id
