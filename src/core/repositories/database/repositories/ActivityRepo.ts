@@ -487,9 +487,13 @@ export class ActivityRepo implements IActivityRepo {
             type_id: ActivityTypeEnum;
         }[] = response.map(activity => activity.toJSON());
 
+        activities = activities.map(activity => (
+            activity = activity.partner_institutions.length > 0 ? activity : { ...activity, partner_institutions: [{ institution: { images: [{ image: "" }] } }] }
+        ));
+
         return activities.map(activity => ({
             title: activity.title,
-            logo: activity.partner_institutions.length > 0 ? activity.partner_institutions[0].institution.images[0].image : "",
+            logo: activity.partner_institutions[0].institution.images[0].image,
             type_activity: activity.type_id
         }));
     }
