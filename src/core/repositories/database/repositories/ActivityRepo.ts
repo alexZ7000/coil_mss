@@ -455,9 +455,6 @@ export class ActivityRepo implements IActivityRepo {
 
     async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
         const response = await ActivityDB.findAll({
-            attributes: {
-                exclude: ['description', 'start_date', 'end_date', 'created_at', 'updated_at']
-            },
             include: [{
                 model: ActivityPartnerInstitution, as: 'partner_institutions',
                 include: [{
@@ -466,13 +463,14 @@ export class ActivityRepo implements IActivityRepo {
                     include: [{
                         model: InstitutionImageDB, as: 'images',
                         limit: 1,
-                        order: [['id', 'ASC']],
-                        attributes: ['image']
+                        order: [['id', 'ASC']]
                     }]
                 }]
             }],
             where: {
-                status_id: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+                status_id: {
+                    [Op.or]: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+                }
             },
             order: [
                 ['start_date', 'ASC']
