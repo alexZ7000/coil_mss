@@ -25,6 +25,7 @@ import {
     Country,
     SocialMedia
 } from "../models/Models";
+import { a } from "vitest/dist/suite-IbNSsUWN";
 
 
 export class ActivityRepo implements IActivityRepo {
@@ -157,8 +158,6 @@ export class ActivityRepo implements IActivityRepo {
         if (!activities) {
             return null;
         }
-
-        console.log(activities.map((activity) => activity.toJSON()));
 
         return activities.map((activity) => this.ActivityDTO.to_entity(activity.toJSON()));
     }
@@ -460,13 +459,15 @@ export class ActivityRepo implements IActivityRepo {
                 exclude: ['description', 'start_date', 'end_date', 'created_at', 'updated_at']
             },
             include: [{
-                model: ActivityPartnerInstitution, as: 'partner_institutions', include:
-                    [{
-                        model: Institution, as: 'institution', include:
-                            [{
-                                model: InstitutionImageDB, as: 'images', limit: 1, order: [['id', 'ASC']], attributes: ['image']
-                            }]
-                    }]
+                model: ActivityPartnerInstitution, as: 'partner_institutions',
+                include: [{
+                    model: Institution,
+                    as: 'institution',
+                    include: [{
+                        model: InstitutionImageDB, as: 'images', limit: 1, order: [['id', 'ASC']], attributes: ['image']
+                    }],
+                    limit: 1
+                }]
             }],
             where: {
                 status_id: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
@@ -476,11 +477,19 @@ export class ActivityRepo implements IActivityRepo {
             ]
         });
 
-        let activities = response.map(activity => activity.toJSON());
+        let activities: {
+            title: string;
+            partner_institutions: {
+                institution: {
+                    images: { image: string }[];
+                };
+            }[];
+            type_id: ActivityTypeEnum;
+        }[] = response.map(activity => activity.toJSON());
 
         return activities.map(activity => ({
             title: activity.title,
-            logo: activity.partner_institutions[0].institution.images[0].image,
+            logo: activity.partner_institutions.length > 0 ? activity.partner_institutions[0].institution.images[0].image : "",
             type_activity: activity.type_id
         }));
     }
