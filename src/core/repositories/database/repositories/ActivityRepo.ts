@@ -354,7 +354,7 @@ export class ActivityRepo implements IActivityRepo {
                 id: activity.id
             }
         });
-        
+
         await ActivityPartnerInstitution.destroy({
             where: {
                 activity_id: activity.id
@@ -452,5 +452,34 @@ export class ActivityRepo implements IActivityRepo {
             }
         }
         return true;
+    }
+
+    async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
+        const response = await ActivityDB.findAll({
+            attributes: ["title", "type_id"],
+            include: [{
+                model: ActivityPartnerInstitution, as: 'partner_institutions', include:
+                    [{
+                        model: Institution, as: 'institution', include:
+                            [{
+                                model: InstitutionImageDB, as: 'images', limit: 1, order: [['id', 'ASC']], attributes: ['image']
+                            }]
+                    }]
+            }],
+            where: {
+                status_id: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+            },
+            order: [
+                ['start_date', 'ASC']
+            ]
+        });
+
+        let activities = response.map(activity => activity.toJSON());
+
+        return activities.map(activity => ({
+            title: activity.title,
+            logo: activity.partner_institutions[0].institution.images[0].image,
+            type_activity: activity.type_id
+        }));
     }
 }
