@@ -464,9 +464,11 @@ export class ActivityRepo implements IActivityRepo {
                     model: Institution,
                     as: 'institution',
                     include: [{
-                        model: InstitutionImageDB, as: 'images', limit: 1, order: [['id', 'ASC']], attributes: ['image']
-                    }],
-                    limit: 1
+                        model: InstitutionImageDB, as: 'images',
+                        limit: 1,
+                        order: [['id', 'ASC']],
+                        attributes: ['image']
+                    }]
                 }]
             }],
             where: {
