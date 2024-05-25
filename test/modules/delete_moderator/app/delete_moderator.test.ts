@@ -45,6 +45,6 @@ describe("Testing Delete Moderator Presenter", () => {
         }, null);
 
         expect(response.statusCode).toBe(400);
-        expect(JSON.parse(response.body).message).toBe("Missing parameter id");
+        expect(JSON.parse(response.body).message).toBe("Body not found");
     });
 });
