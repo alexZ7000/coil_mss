@@ -6,6 +6,7 @@ export class LambdaStack extends Construct {
     private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
+    private get_all_moderators: lambda_js.NodejsFunction;
     
     private get_institution: lambda_js.NodejsFunction;
     private create_institution: lambda_js.NodejsFunction;
@@ -225,6 +226,14 @@ export class LambdaStack extends Construct {
 
         this.get_all_activities_catalog = this.create_lambda(
             "get_all_activities_catalog",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        )
+
+        this.get_all_moderators = this.create_lambda(
+            "get_all_moderators",
             environment_variables,
             "GET",
             restapi_resource,
