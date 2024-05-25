@@ -110,7 +110,7 @@ export class LambdaStack extends Construct {
         this.delete_moderator = this.create_lambda(
             "delete_moderator",
             environment_variables,
-            "DELETE",
+            "GET",
             restapi_resource,
             origins
         );
