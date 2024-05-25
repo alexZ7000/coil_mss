@@ -7,6 +7,7 @@ export class LambdaStack extends Construct {
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
     private get_all_moderators: lambda_js.NodejsFunction;
+    private delete_moderator: lambda_js.NodejsFunction;
     
     private get_institution: lambda_js.NodejsFunction;
     private create_institution: lambda_js.NodejsFunction;
@@ -102,6 +103,14 @@ export class LambdaStack extends Construct {
             "get_user",
             environment_variables,
             "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.delete_moderator = this.create_lambda(
+            "delete_moderator",
+            environment_variables,
+            "DELETE",
             restapi_resource,
             origins
         );
