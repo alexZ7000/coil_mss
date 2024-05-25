@@ -2,6 +2,7 @@ import { UserDTO } from "../dtos/UserDTO";
 import { IUserRepo } from "../../interfaces/IUserRepo";
 import { User } from "../../../structure/entities/User";
 import { User as UserDB, UserType as UserTypeDB } from "../models/Models";
+import { UserTypeEnum } from "../../../helpers/enums/UserTypeEnum";
 
 export class UserRepo implements IUserRepo {
   private user_dto: UserDTO = new UserDTO();
@@ -67,5 +68,18 @@ export class UserRepo implements IUserRepo {
     });
 
     return user_updated ? true : false;
+  }
+
+  public async get_all_moderators(): Promise<User[]> {
+    let moderators_found = await UserDB.findAll({
+      where: {
+        user_type_id: UserTypeEnum.MODERATOR,
+      },
+      include: [
+        { model: UserTypeDB, as: 'user_type' }
+      ]
+    });
+
+    return moderators_found.map((moderator) => this.user_dto.to_entity(moderator.toJSON()));
   }
 }
