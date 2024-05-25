@@ -27,6 +27,9 @@ export class CreateModeratorUsecase {
         if (!headers.Authorization) {
             throw new MissingParameter("Authorization");
         }
+        if (!body.name) {
+            throw new MissingParameter("Name");
+        }
         if (!body.email) {
             throw new MissingParameter("Email");
         }
@@ -46,15 +49,22 @@ export class CreateModeratorUsecase {
             throw new UserNotAllowed();
         }
 
+        if (user_admin.email === body.email) {
+            throw new UserNotAllowed("Admin can't be a moderator");
+        }
+
         const user = await this.database_repo.get_user_by_email(body.email);
         if (user) {
+            if (user.user_type === UserTypeEnum.ADMIN) {
+                throw new UserNotAllowed("Admin can't be a moderator");
+            }
             user.user_type = UserTypeEnum.MODERATOR;
             this.database_repo.update_user(user);
         }
         else {
             const moderator = new User({
                 id: randomUUID(),
-                name: null,
+                name: body.name,
                 email: body.email,
                 user_type: UserTypeEnum.MODERATOR,
                 created_at: new Date(),

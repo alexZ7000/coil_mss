@@ -9,6 +9,7 @@ describe("Testing Create Moderator Presenter", () => {
     const user_admin = new UserMock().users[0];
     const user_student = new UserMock().users[1];
     const user_moderator = {
+        name: "Moderator Test",
         email: "moderador@maua.br"
     };
     
