@@ -12,6 +12,7 @@ import {
   InternalServerError,
   NotFound,
   OK,
+  ParameterError,
   Unauthorized,
 } from "../../../core/helpers/http/http_codes";
 import { DeleteModeratorUsecase } from "./delete_moderator_usecase";
@@ -44,7 +45,7 @@ export class DeleteModeratorController {
         return new Unauthorized(error.message);
       }
       if (error instanceof MissingParameter) {
-        return new NotFound(error.message);
+        return new ParameterError(error.message);
       }
       if (error instanceof NotFoundError) {
         return new NotFound(error.message);
