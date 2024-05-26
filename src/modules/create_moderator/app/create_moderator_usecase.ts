@@ -64,7 +64,7 @@ export class CreateModeratorUsecase {
                 throw new UserNotAllowed("Admin can't be a moderator");
             }
             user.user_type = UserTypeEnum.MODERATOR;
-            this.database_repo.update_user(user);
+            await this.database_repo.update_user(user);
         }
         else {
             const moderator = new User({
