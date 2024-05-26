@@ -2,8 +2,8 @@ import { GetAllModeratorsUsecase } from "./get_all_moderators_usecase";
 
 import { UniqueConstraintError } from "sequelize";
 import { EntityError } from '../../../core/helpers/errors/EntityError';
-import { BadRequest, ParameterError, InternalServerError } from '../../../core/helpers/http/http_codes';
-import { Conflict, Created, Forbidden, HttpRequest, HttpResponse, Unauthorized, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
+import { BadRequest, ParameterError, InternalServerError, OK } from '../../../core/helpers/http/http_codes';
+import { Conflict, Forbidden, HttpRequest, HttpResponse, Unauthorized, Unprocessable_Entity } from '../../../core/helpers/http/http_codes';
 import { ConflictError, InvalidParameter, InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
@@ -24,7 +24,7 @@ export class GetAllModeratorsController {
             }
 
             let response = await this.usecase.execute(request.headers);
-            return new Created(response, "Moderators found successfully");
+            return new OK(response, "Moderators found successfully");
 
         } catch (error: any) {
             if (error instanceof InvalidRequest) {
