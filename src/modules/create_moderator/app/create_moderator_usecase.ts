@@ -5,7 +5,7 @@ import { User } from '../../../core/structure/entities/User';
 import { TokenAuth } from '../../../core/helpers/functions/token_auth';
 import { UserTypeEnum } from '../../../core/helpers/enums/UserTypeEnum';
 import { IUserRepo } from "../../../core/repositories/interfaces/IUserRepo";
-import { InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
+import { InvalidParameter, InvalidRequest, MissingParameter, UserNotAllowed, UserNotAuthenticated } from '../../../core/helpers/errors/ModuleError';
 
 
 export class CreateModeratorUsecase {
@@ -51,6 +51,11 @@ export class CreateModeratorUsecase {
 
         if (user_admin.email === body.email) {
             throw new UserNotAllowed("Admin can't be a moderator");
+        }
+
+        const padrao: RegExp = /@maua\.br$/;
+        if (!padrao.test(body.email)) {
+            throw new InvalidParameter("Email", "must be a maua.br domain.");
         }
 
         const user = await this.database_repo.get_user_by_email(body.email);
