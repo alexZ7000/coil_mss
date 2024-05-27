@@ -28,7 +28,7 @@ export class DeleteModeratorUsecase {
       throw new MissingParameter("Authorization");
     }
     if (!body) {
-      throw new MissingParameter("Body");
+      throw new InvalidRequest("Body");
     }
 
     const user_id = await this.token_auth
@@ -49,9 +49,11 @@ export class DeleteModeratorUsecase {
       throw new UserNotAuthenticated();
     }
 
-    const moderator = await this.database_repo.get_user(
-      body.moderator_id
-    );
+    if (!body.moderator_id) {
+      throw new MissingParameter("moderator_id");
+    }
+
+    const moderator = await this.database_repo.get_user(body.moderator_id);
     if (!moderator) {
       throw new NotfoundError("Moderator");
     }
@@ -60,9 +62,7 @@ export class DeleteModeratorUsecase {
       throw new InvalidRequest("User is not a moderator");
     }
 
-    await this.database_repo.delete_moderator(
-      body.moderator_id
-    );
+    await this.database_repo.delete_moderator(body.moderator_id);
     return { message: "Moderator deleted successfully" };
   }
 }
