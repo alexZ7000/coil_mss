@@ -83,12 +83,6 @@ export class Created extends HttpResponse {
     }
 }
 
-export class Deleted extends HttpResponse {
-    constructor(body: { [key: string]: any }, message: string) {
-        super(204, body, message);
-    }
-}
-
 export class BadRequest extends HttpResponse {
     constructor(message: string) {
         super(400, null, message);
