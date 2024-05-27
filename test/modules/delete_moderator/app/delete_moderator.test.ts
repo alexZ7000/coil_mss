@@ -1,5 +1,4 @@
 import { it, describe, expect } from 'vitest';
-
 import { UserMock } from '../../../../src/core/structure/mocks/UserMock';
 import { TokenAuth } from '../../../../src/core/helpers/functions/token_auth';
 import { handler } from '../../../../src/modules/delete_moderator/app/delete_moderator_presenter';
@@ -15,7 +14,7 @@ describe("Testing Delete Moderator Presenter", () => {
             headers: {
                 Authorization: token
             },
-            body: JSON.stringify({ id: user_moderator.id })
+            body: JSON.stringify({ moderator_id: user_moderator.id })
         }, null);
 
         expect(response.statusCode).toBe(200);
@@ -27,24 +26,24 @@ describe("Testing Delete Moderator Presenter", () => {
             headers: {
                 Authorization: "invalid_token"
             },
-            body: JSON.stringify({ id: user_moderator.id })
+            body: JSON.stringify({ moderator_id: user_moderator.id })
         }, null);
 
-        // expect(response.statusCode).toBe(401);
+        expect(response.statusCode).toBe(401);
         expect(JSON.parse(response.body).message).toBe("Invalid or expired token");
     });
 
-    it("should not delete a moderator with missing parameter id", async () => {
+    it("should not delete a moderator with missing parameter moderator_id", async () => {
         var token = (await new TokenAuth().generate_token(user_admin.id)).toString();
 
         var response = await handler({
             headers: {
                 Authorization: token
             },
-            body: JSON.stringify({})
+            body: null
         }, null);
 
-        // expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(400);
         expect(JSON.parse(response.body).message).toBe("Body not found");
     });
 });
