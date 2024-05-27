@@ -36,7 +36,7 @@ export class DeleteModeratorController {
       const queryParams = request.body.queryStringParameters;
 
       let response = await this.usecase.execute(request.headers, queryParams);
-      return new Deleted(response, "Moderator deleted successfully");
+      return new OK(response, "Moderator deleted successfully");
     } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
