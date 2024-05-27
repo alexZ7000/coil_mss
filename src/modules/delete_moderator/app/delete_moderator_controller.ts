@@ -35,10 +35,13 @@ export class DeleteModeratorController {
       if (!request.headers) {
         throw new InvalidRequest("Headers");
       }
+      if (!request.body) {
+        throw new MissingParameter("Body");
+      }
 
-      const queryParams = request.body.queryStringParameters;
+      const body = request.body.body;
 
-      let response = await this.usecase.execute(request.headers, queryParams);
+      let response = await this.usecase.execute(request.headers, body);
       return new OK(response, "Moderator deleted successfully");
     } catch (error: any) {
       if (error instanceof InvalidRequest) {
