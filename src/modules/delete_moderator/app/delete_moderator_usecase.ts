@@ -19,7 +19,7 @@ export class DeleteModeratorUsecase {
 
   async execute(
     headers: { [key: string]: any },
-    queryStringParameters: { [key: string]: any }
+    body: { [key: string]: any }
   ) {
     if (!headers) {
       throw new InvalidRequest("Headers");
@@ -27,11 +27,8 @@ export class DeleteModeratorUsecase {
     if (!headers.Authorization) {
       throw new MissingParameter("Authorization");
     }
-    if (!queryStringParameters) {
-      throw new InvalidRequest("Body");
-    }
-    if (!queryStringParameters.moderator_id) {
-      throw new MissingParameter("moderator_id");
+    if (!body) {
+      throw new MissingParameter("Body");
     }
 
     const user_id = await this.token_auth
@@ -53,7 +50,7 @@ export class DeleteModeratorUsecase {
     }
 
     const moderator = await this.database_repo.get_user(
-      queryStringParameters.moderator_id
+      body.moderator_id
     );
     if (!moderator) {
       throw new NotfoundError("Moderator");
@@ -64,7 +61,7 @@ export class DeleteModeratorUsecase {
     }
 
     await this.database_repo.delete_moderator(
-      queryStringParameters.moderator_id
+      body.moderator_id
     );
     return { message: "Moderator deleted successfully" };
   }
