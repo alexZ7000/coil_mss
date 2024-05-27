@@ -1,12 +1,15 @@
 import {
+  InvalidParameter,
   InvalidRequest,
   MissingParameter,
+  NotfoundError,
+  UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
 import { NotFoundError } from "../../../core/helpers/errors/RepoError";
 import {
   BadRequest,
-  Deleted,
+  Forbidden,
   HttpRequest,
   HttpResponse,
   InternalServerError,
@@ -41,13 +44,19 @@ export class DeleteModeratorController {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
       }
+      if (error instanceof InvalidParameter) {
+        return new ParameterError(error.message);
+      }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
+      }
+      if( error instanceof UserNotAllowed) {
+        return new Forbidden(error.message);
       }
       if (error instanceof MissingParameter) {
         return new ParameterError(error.message);
       }
-      if (error instanceof NotFoundError) {
+      if (error instanceof NotfoundError) {
         return new NotFound(error.message);
       }
       return new InternalServerError(error.message);
