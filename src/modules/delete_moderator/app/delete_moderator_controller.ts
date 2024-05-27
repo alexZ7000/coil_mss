@@ -6,7 +6,6 @@ import {
   UserNotAllowed,
   UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
-import { NotFoundError } from "../../../core/helpers/errors/RepoError";
 import {
   BadRequest,
   Forbidden,
@@ -36,7 +35,7 @@ export class DeleteModeratorController {
         throw new InvalidRequest("Headers");
       }
       if (!request.body) {
-        throw new MissingParameter("Body");
+        throw new InvalidRequest("Body");
       }
 
       const body = request.body.body;
@@ -53,7 +52,7 @@ export class DeleteModeratorController {
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
       }
-      if( error instanceof UserNotAllowed) {
+      if (error instanceof UserNotAllowed) {
         return new Forbidden(error.message);
       }
       if (error instanceof MissingParameter) {
