@@ -43,4 +43,12 @@ export class UserRepoMock implements IUserRepo {
       resolve(moderators);
     });
   }
+
+  public delete_moderator(id: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      const userIndex = this.user_mock.users.findIndex((user) => user.id === id);
+      this.user_mock.users.splice(userIndex, 1);
+      resolve(true);
+    });
+  }
 }

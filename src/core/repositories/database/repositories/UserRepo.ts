@@ -82,4 +82,15 @@ export class UserRepo implements IUserRepo {
 
     return moderators_found.map((moderator) => this.user_dto.to_entity(moderator.toJSON()));
   }
+
+  public async delete_moderator(id: string): Promise<boolean> {
+    let moderator_deleted = await UserDB.destroy({
+      where: {
+        id: id,
+        user_type_id: UserTypeEnum.MODERATOR,
+      },
+    });
+
+    return moderator_deleted ? true : false;
+  }
 }
