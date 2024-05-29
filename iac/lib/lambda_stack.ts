@@ -8,14 +8,14 @@ export class LambdaStack extends Construct {
     private create_moderator: lambda_js.NodejsFunction;
     private get_all_moderators: lambda_js.NodejsFunction;
     private delete_moderator: lambda_js.NodejsFunction;
-    
+
     private get_institution: lambda_js.NodejsFunction;
     private create_institution: lambda_js.NodejsFunction;
     private update_institution: lambda_js.NodejsFunction;
     private get_all_institutions: lambda_js.NodejsFunction;
     private get_institution_requirements: lambda_js.NodejsFunction;
 
-    private assign_user: lambda_js.NodejsFunction; 
+    private assign_user: lambda_js.NodejsFunction;
     private get_activity: lambda_js.NodejsFunction;
     private create_activity: lambda_js.NodejsFunction;
     private update_activity: lambda_js.NodejsFunction;
@@ -27,6 +27,7 @@ export class LambdaStack extends Construct {
     private get_all_activities_enrolled: lambda_js.NodejsFunction;
 
     public functions_need_s3_access: lambda.Function[] = [];
+    public function_need_event_bridge_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
 
     private create_lambda(
@@ -60,9 +61,9 @@ export class LambdaStack extends Construct {
 
         restapi_resource.addResource(function_name.replace(/_/g, "-"), {
             defaultCorsPreflightOptions: {
-            allowOrigins: origins,
-            allowMethods: [method],
-            allowHeaders: ["*"],
+                allowOrigins: origins,
+                allowMethods: [method],
+                allowHeaders: ["*"],
             }
         }).addMethod(method, new apigw.LambdaIntegration(function_lambda));
 
@@ -253,6 +254,25 @@ export class LambdaStack extends Construct {
             this.create_institution,
             this.update_institution,
         ]
+
+        this.function_need_event_bridge_access = [
+            this.create_activity,
+            this.update_activity,
+            this.update_activity_event,
+        ]
+
+        this.functions_need_event_bridge_access.forEach((function_lambda) => {
+            function_lambda.addToRolePolicy(
+                new iam.PolicyStatement({
+                    actions: [
+                        "events:PutRule",
+                        "events:PutTargets",
+                        "events:RemoveTargets",
+                        "events:DeleteRule",
+                    ],
+                    resources: ["*"],
+                }))
+        });
 
         this.functions_need_event_bridge_access = [
             this.create_activity,
