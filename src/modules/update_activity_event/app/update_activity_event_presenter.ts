@@ -12,7 +12,7 @@ export const handler = async (event: any, context: any) => {
     const resp = await repository.ActivityRepo.update_activity_status(body.activity_id, body.status_activity);
     if (resp) {
         console.log("Activity updated successfully");
-        let event_name = body.status_activity === ActivityStatusEnum.ACTIVE ? "START_" : "END_";
+        let event_name = body.status_activity === ActivityStatusEnum.ACTIVE ? "START_COIL_" : "END_COIL_";
         await event_bridge.delete_trigger(event_name + body.activity_id.substring(0, 8), "Update_Activity_Event");
     } else {
         console.log("Activity not found");
