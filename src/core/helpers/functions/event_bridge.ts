@@ -46,7 +46,7 @@ export class EventBridgeManager {
             FunctionName: lambda_function,
             Principal: "events.amazonaws.com",
             StatementId: rule_name,
-            SourceArn: "arn:aws:events:" + this.aws_region + ":" + this.aws_account_id + ":rule/" + rule_name,
+            SourceArn: "arn:aws:events:" + this.aws_region + ":" + this.aws_account_id + ":rule/*",
         }).promise();
 
         // Create CloudWatch Events rule
