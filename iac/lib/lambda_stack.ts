@@ -272,6 +272,11 @@ export class LambdaStack extends Construct {
                     ],
                     resources: ["*"],
                 }))
+            function_lambda.addPermission("EventBridgePermission", {
+                principal: new iam.ServicePrincipal("events.amazonaws.com"),
+                sourceArn: "arn:aws:events:us-east-1:123456789012:rule/*",
+                action: "lambda:InvokeFunction",
+            });
         });
 
         this.functions_need_event_bridge_access = [
