@@ -215,7 +215,7 @@ export class CreateActivityUsecase {
         let end_date = activity.end_date;
         end_date.setHours(end_date.getHours() + 3);
         await this.event_bridge.create_trigger(
-          "START_ACTIVITY_" + activity.id,
+          "START_" + activity.id.substring(0, 8),
           "Update_Activity_Event",
           start_date,
           {
@@ -227,7 +227,7 @@ export class CreateActivityUsecase {
         );
 
         await this.event_bridge.create_trigger(
-          "END_ACTIVITY_" + activity.id,
+          "END_" + activity.id.substring(0, 8),
           "Update_Activity_Event",
           end_date,
           {

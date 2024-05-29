@@ -264,11 +264,11 @@ export class UpdateActivityUsecase {
           start_date.setHours(start_date.getHours() + 3);
           // Delete the previous trigger and create a new one
           await this.event_bridge.delete_trigger(
-            "START_ACTIVITY_" + activity.id,
+            "START_" + activity.id.substring(0, 8),
             "Update_Activity_Event"
           );
           await this.event_bridge.create_trigger(
-            "START_ACTIVITY_" + activity.id,
+            "START_" + activity.id.substring(0, 8),
             "Update_Activity_Event",
             start_date,
             {
@@ -284,11 +284,11 @@ export class UpdateActivityUsecase {
           end_date.setHours(end_date.getHours() + 3);
           // Delete the previous trigger and create a new one
           await this.event_bridge.delete_trigger(
-            "END_ACTIVITY_" + activity.id,
+            "END_" + activity.id.substring(0, 8),
             "Update_Activity_Event"
           );
           await this.event_bridge.create_trigger(
-            "END_ACTIVITY_" + activity.id,
+            "END_" + activity.id.substring(0, 8),
             "Update_Activity_Event",
             end_date,
             {
