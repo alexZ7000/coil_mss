@@ -444,10 +444,8 @@ export class ActivityRepo implements IActivityRepo {
                 status: !user.status
             }, {
                 where: {
-                    [Op.and]: [
-                        { activity_id: activity_id },
-                        { user_id: user.user_id }
-                    ]
+                    activity_id: activity_id,
+                    user_id: user.user_id
                 }
             });
             if (response_user[0] === 0) {
