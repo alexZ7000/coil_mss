@@ -1,5 +1,6 @@
 import { UpdateUsersActivityUsecase } from "./update_users_activity_usecase";
 import {
+  ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
@@ -16,6 +17,7 @@ import {
   OK,
   ParameterError,
   Unauthorized,
+  Unprocessable_Entity,
 } from "../../../core/helpers/http/http_codes";
 import { EntityError } from "../../../core/helpers/errors/EntityError";
 
@@ -53,6 +55,9 @@ export class UpdateUsersActivityController {
       }
       if (error instanceof NotfoundError) {
         return new NotFound(error.message);
+      }
+      if (error instanceof ConflictError) {
+        return new Unprocessable_Entity(error.message);
       }
       if (error instanceof EntityError) {
         return new ParameterError(error.message);

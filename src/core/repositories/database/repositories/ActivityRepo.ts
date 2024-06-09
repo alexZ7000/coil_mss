@@ -437,8 +437,10 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean> {
-        for (let user of users) {
-            const response = await ActivityApplication.update({
+        let response = true;
+
+        for (const user of users) {
+            const [affectedCount] = await ActivityApplication.update({
                 status: user.status
             }, {
                 where: {
@@ -446,11 +448,13 @@ export class ActivityRepo implements IActivityRepo {
                     user_id: user.user_id
                 }
             });
-            if (response[0] === 0) {
-                return false;
+
+            if (affectedCount === 0) {
+                response = false;
             }
         }
-        return true;
+
+        return response;
     }
 
     async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
