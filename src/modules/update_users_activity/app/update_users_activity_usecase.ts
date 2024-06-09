@@ -96,13 +96,6 @@ export class UpdateUsersActivityUsecase {
       throw new NotfoundError("Applicants not found");
     }
 
-    applicants_db.forEach((applicant: { user_id: string, status: boolean }) => {
-      return {
-        user_id: applicant.user_id,
-        status: !applicant.status,
-      };
-    });
-
     const updateStatusResult = await this.activity_repo.update_users_activity_status(body.activity_id, body.applicants);
     if (!updateStatusResult) {
       throw new ConflictError("Error updating activity status");

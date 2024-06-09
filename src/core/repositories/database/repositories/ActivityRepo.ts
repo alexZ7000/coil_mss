@@ -441,7 +441,7 @@ export class ActivityRepo implements IActivityRepo {
 
         users.forEach(async user => {
             const response_user = await ActivityApplication.update({
-                status: user.status
+                status: !user.status
             }, {
                 where: {
                     [Op.and]: [
