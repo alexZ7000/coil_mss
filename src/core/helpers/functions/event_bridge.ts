@@ -59,6 +59,17 @@ export class EventBridgeManager {
                 },
             ],
         }).promise();
+
+        // Add permission to Lambda function
+        await this.lambda.addPermission({
+            FunctionName: lambda_function,
+            StatementId: rule_name,
+            Action: "lambda:InvokeFunction",
+            Principal: "events.amazonaws.com",
+            SourceArn: "arn:aws:events:" + process.env.AWS_REGION + ":" + process.env.AWS_ACCOUNT_ID + ":rule/" + rule_name,
+        }).promise();
+
+        return true;
     }
 
     public async delete_trigger(rule_name: string, lambda_function: string): Promise<boolean> {
