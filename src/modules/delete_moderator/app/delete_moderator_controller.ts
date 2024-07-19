@@ -1,6 +1,4 @@
-import { UpdateUsersActivityUsecase } from "./update_users_activity_usecase";
 import {
-  ConflictError,
   InvalidParameter,
   InvalidRequest,
   MissingParameter,
@@ -12,23 +10,23 @@ import {
   BadRequest,
   Forbidden,
   HttpRequest,
+  HttpResponse,
   InternalServerError,
   NotFound,
   OK,
   ParameterError,
   Unauthorized,
-  Unprocessable_Entity,
 } from "../../../core/helpers/http/http_codes";
-import { EntityError } from "../../../core/helpers/errors/EntityError";
+import { DeleteModeratorUsecase } from "./delete_moderator_usecase";
 
-export class UpdateUsersActivityController {
-  public usecase: UpdateUsersActivityUsecase;
+export class DeleteModeratorController {
+  public usecase: DeleteModeratorUsecase;
 
-  constructor(usecase: UpdateUsersActivityUsecase) {
+  constructor(usecase: DeleteModeratorUsecase) {
     this.usecase = usecase;
   }
 
-  public async execute(request: HttpRequest) {
+  public async execute(request: HttpRequest): Promise<HttpResponse> {
     try {
       if (!request) {
         throw new InvalidRequest();
@@ -40,12 +38,16 @@ export class UpdateUsersActivityController {
         throw new InvalidRequest("Body");
       }
 
-      const updatedUser = await this.usecase.execute(request.headers, request.body.body);
-      return new OK({}, "User activity updated successfully");
+      const body = request.body.body;
 
+      let response = await this.usecase.execute(request.headers, body);
+      return new OK(response, "Moderator deleted successfully");
     } catch (error: any) {
       if (error instanceof InvalidRequest) {
         return new BadRequest(error.message);
+      }
+      if (error instanceof InvalidParameter) {
+        return new ParameterError(error.message);
       }
       if (error instanceof UserNotAuthenticated) {
         return new Unauthorized(error.message);
@@ -53,20 +55,11 @@ export class UpdateUsersActivityController {
       if (error instanceof UserNotAllowed) {
         return new Forbidden(error.message);
       }
-      if (error instanceof NotfoundError) {
-        return new NotFound(error.message);
-      }
-      if (error instanceof ConflictError) {
-        return new Unprocessable_Entity(error.message);
-      }
-      if (error instanceof EntityError) {
-        return new ParameterError(error.message);
-      }
-      if (error instanceof InvalidParameter) {
-        return new ParameterError(error.message);
-      }
       if (error instanceof MissingParameter) {
         return new ParameterError(error.message);
+      }
+      if (error instanceof NotfoundError) {
+        return new NotFound(error.message);
       }
       return new InternalServerError(error.message);
     }

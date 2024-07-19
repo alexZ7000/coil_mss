@@ -6,14 +6,16 @@ export class LambdaStack extends Construct {
     private get_user: lambda_js.NodejsFunction;
     private auth_user: lambda_js.NodejsFunction;
     private create_moderator: lambda_js.NodejsFunction;
-    
+    private get_all_moderators: lambda_js.NodejsFunction;
+    private delete_moderator: lambda_js.NodejsFunction;
+
     private get_institution: lambda_js.NodejsFunction;
     private create_institution: lambda_js.NodejsFunction;
     private update_institution: lambda_js.NodejsFunction;
     private get_all_institutions: lambda_js.NodejsFunction;
     private get_institution_requirements: lambda_js.NodejsFunction;
 
-    private assign_user: lambda_js.NodejsFunction; 
+    private assign_user: lambda_js.NodejsFunction;
     private get_activity: lambda_js.NodejsFunction;
     private create_activity: lambda_js.NodejsFunction;
     private update_activity: lambda_js.NodejsFunction;
@@ -21,9 +23,11 @@ export class LambdaStack extends Construct {
     private update_users_activity: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
     private get_activity_requirements: lambda_js.NodejsFunction;
+    private get_catalog: lambda_js.NodejsFunction;
     private get_all_activities_enrolled: lambda_js.NodejsFunction;
 
     public functions_need_s3_access: lambda.Function[] = [];
+    public function_need_event_bridge_access: lambda.Function[] = [];
     public functions_need_event_bridge_access: lambda.Function[] = [];
 
     private create_lambda(
@@ -57,9 +61,9 @@ export class LambdaStack extends Construct {
 
         restapi_resource.addResource(function_name.replace(/_/g, "-"), {
             defaultCorsPreflightOptions: {
-            allowOrigins: origins,
-            allowMethods: [method],
-            allowHeaders: ["*"],
+                allowOrigins: origins,
+                allowMethods: [method],
+                allowHeaders: ["*"],
             }
         }).addMethod(method, new apigw.LambdaIntegration(function_lambda));
 
@@ -98,6 +102,14 @@ export class LambdaStack extends Construct {
 
         this.get_user = this.create_lambda(
             "get_user",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        );
+
+        this.delete_moderator = this.create_lambda(
+            "delete_moderator",
             environment_variables,
             "GET",
             restapi_resource,
@@ -222,6 +234,22 @@ export class LambdaStack extends Construct {
             origins
         )
 
+        this.get_catalog = this.create_lambda(
+            "get_catalog",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        )
+
+        this.get_all_moderators = this.create_lambda(
+            "get_all_moderators",
+            environment_variables,
+            "GET",
+            restapi_resource,
+            origins
+        )
+
         this.functions_need_s3_access = [
             this.create_institution,
             this.update_institution,
@@ -230,6 +258,25 @@ export class LambdaStack extends Construct {
         this.functions_need_event_bridge_access = [
             this.create_activity,
             this.update_activity,
+            this.update_activity_event,
         ]
+
+        this.functions_need_event_bridge_access.forEach((function_lambda) => {
+            function_lambda.addToRolePolicy(
+                new iam.PolicyStatement({
+                    actions: [
+                        "events:PutRule",
+                        "events:PutTargets",
+                        "events:RemoveTargets",
+                        "events:DeleteRule",
+                    ],
+                    resources: ["*"],
+                }))
+            function_lambda.addPermission("EventBridgePermission", {
+                principal: new iam.ServicePrincipal("events.amazonaws.com"),
+                sourceArn: "arn:aws:events:us-east-1:123456789012:rule/*",
+                action: "lambda:InvokeFunction",
+            });
+        });
     }
 }

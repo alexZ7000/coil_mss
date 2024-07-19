@@ -25,6 +25,7 @@ import {
     Country,
     SocialMedia
 } from "../models/Models";
+import { a } from "vitest/dist/suite-IbNSsUWN";
 
 
 export class ActivityRepo implements IActivityRepo {
@@ -157,8 +158,6 @@ export class ActivityRepo implements IActivityRepo {
         if (!activities) {
             return null;
         }
-
-        console.log(activities.map((activity) => activity.toJSON()));
 
         return activities.map((activity) => this.ActivityDTO.to_entity(activity.toJSON()));
     }
@@ -354,7 +353,7 @@ export class ActivityRepo implements IActivityRepo {
                 id: activity.id
             }
         });
-        
+
         await ActivityPartnerInstitution.destroy({
             where: {
                 activity_id: activity.id
@@ -438,19 +437,96 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean> {
-        for (let user of users) {
-            const response = await ActivityApplication.update({
-                status: user.status
+        let response = true;
+
+        users.forEach(async user => {
+            const response_user = await ActivityApplication.update({
+                status: !user.status
             }, {
                 where: {
                     activity_id: activity_id,
                     user_id: user.user_id
                 }
             });
-            if (response[0] === 0) {
-                return false;
+            if (response_user[0] === 0) {
+                response = false;
             }
-        }
-        return true;
+        });
+
+        return response;
+    }
+
+    async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
+        const response_project = await ActivityDB.findAll({
+            include: [{
+                model: ActivityPartnerInstitution, as: 'partner_institutions',
+                include: [{
+                    model: Institution,
+                    as: 'institution',
+                    include: [{
+                        model: InstitutionImageDB, as: 'images',
+                        limit: 1,
+                        order: [['id', 'ASC']]
+                    }]
+                }]
+            }],
+            where: {
+                status_id: {
+                    [Op.or]: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+                },
+                type_id: ActivityTypeEnum.PROJECT
+            },
+            order: [
+                ['start_date', 'ASC']
+            ],
+            limit: 5
+        });
+
+        const response_mobility = await ActivityDB.findAll({
+            include: [{
+                model: ActivityPartnerInstitution, as: 'partner_institutions',
+                include: [{
+                    model: Institution,
+                    as: 'institution',
+                    include: [{
+                        model: InstitutionImageDB, as: 'images',
+                        limit: 1,
+                        order: [['id', 'ASC']]
+                    }]
+                }]
+            }],
+            where: {
+                status_id: {
+                    [Op.or]: [ActivityStatusEnum.ACTIVE, ActivityStatusEnum.TO_START]
+                },
+                type_id: ActivityTypeEnum.ACADEMIC_MOBILITY
+            },
+            order: [
+                ['start_date', 'ASC']
+            ],
+            limit: 5
+        });
+
+        let activities = response_project.concat(response_mobility);
+
+        let activities_json: {
+            title: string;
+            partner_institutions: {
+                institution: {
+                    images: { image: string }[];
+                };
+            }[];
+            type_id: ActivityTypeEnum;
+        }[] = activities.map(activity => activity.toJSON());
+
+        activities_json = activities_json.map(activity => (
+            activity = activity.partner_institutions.length > 0 ? activity : { ...activity, partner_institutions: [{ institution: { images: [{ image: "" }] } }] }
+        ));
+
+        return activities_json.map(activity => ({
+            title: activity.title,
+            logo: activity.partner_institutions[0].institution.images[0].image,
+            type_activity: activity.type_id
+        }));
     }
 }

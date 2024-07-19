@@ -269,6 +269,39 @@ async function createOrUpdateUser(user: UserEntity): Promise<void> {
     }
 }
 
+async function createOrUpdateStatusActivity(status: ActivityStatusEnum) {
+    try {
+        let existing = await ActivityStatus.findOne({ where: { id: status } });
+        let name: string;
+        switch (status) {
+            case ActivityStatusEnum.ACTIVE:
+                name = "Apply Now";
+                break;
+            case ActivityStatusEnum.CANCELED:
+                name = "Canceled";
+                break;
+            case ActivityStatusEnum.ENDED:
+                name = "Ended";
+                break;
+            case ActivityStatusEnum.ON_HOLD:
+                name = "Under Analysis";
+                break;
+            case ActivityStatusEnum.TO_START:
+                name = "Coming Soon";
+                break;
+        }
+        if (!existing) {
+            await ActivityStatus.create({ name: name });
+            console.log(`Activity status ${status} created`);
+        } else {
+            await ActivityStatus.update({ name: name }, { where: { id: status } });
+            console.log(`Activity status ${status} updated`);
+        }
+    } catch (error) {
+        console.error(`Error creating or updating activity status ${status}:`, error);
+    }
+}
+
 (async () => {
     try {
         await handleDatabaseCreation();
@@ -278,12 +311,17 @@ async function createOrUpdateUser(user: UserEntity): Promise<void> {
         await handleLanguagesCreation();
 
         await handleCountriesCreation();
-        
+
         await handleCriteriasCreation();
 
-        await createOrUpdateSocialMedia();
+        await createOrUpdateSocialMedia();  
 
-        await createOrUpdateEnumItems(ActivityStatus, activityStatuses, ActivityStatusEnum);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ACTIVE);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.CANCELED);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ENDED);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.ON_HOLD);
+        await createOrUpdateStatusActivity(ActivityStatusEnum.TO_START);
+
         await createOrUpdateEnumItems(ActivityType, activityTypes, ActivityTypeEnum);
         await createOrUpdateEnumItems(UserType, userTypes, UserTypeEnum);
 

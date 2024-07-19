@@ -73,7 +73,11 @@ export class CreateActivityUsecase {
     if (!body.type_activity) {
       throw new MissingParameter("Type Activity");
     }
-    if (new Date(body.start_date) < new Date()) {
+
+    let time_now: Date = new Date();
+    time_now.setHours(time_now.getHours() - 3);
+
+    if (new Date(body.start_date) < time_now) {
       throw new InvalidParameter("StartDate", "Start Date must be in the future");
     }
     if (new Date(body.start_date) >= new Date(body.end_date)) {
@@ -206,10 +210,14 @@ export class CreateActivityUsecase {
 
     await this.activity_repo.create_activity(activity).then(async (response) => {
       if (response && process.env.STAGE !== 'test') {
+        let start_date = activity.start_date;
+        start_date.setHours(start_date.getHours() + 3);
+        let end_date = activity.end_date;
+        end_date.setHours(end_date.getHours() + 3);
         await this.event_bridge.create_trigger(
-          "START_ACTIVITY_" + activity.id,
+          "START_COIL_" + activity.id.substring(0, 8),
           "Update_Activity_Event",
-          activity.start_date,
+          start_date,
           {
             "body": {
               activity_id: activity.id,
@@ -219,9 +227,9 @@ export class CreateActivityUsecase {
         );
 
         await this.event_bridge.create_trigger(
-          "END_ACTIVITY_" + activity.id,
+          "END_COIL_" + activity.id.substring(0, 8),
           "Update_Activity_Event",
-          activity.end_date,
+          end_date,
           {
             "body": {
               activity_id: activity.id,

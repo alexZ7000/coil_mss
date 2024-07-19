@@ -165,4 +165,12 @@ export class ActivityRepoMock implements IActivityRepo {
         });
     }
 
+    async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
+        return this.activity_mock.activities.map(activity => ({
+            title: activity.title,
+            logo: activity.partner_institutions[0].institution?.images[0] || "",
+            type_activity: activity.type_activity
+        }));
+    }
+
 }

@@ -19,8 +19,7 @@ export class IacStack extends cdk.Stack {
         allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allowHeaders: ["*"],
       }
-    }
-    );
+    });
 
     const bucket = new Bucket(this, "Coil_Bucket", {
       bucketName: "coil-bucket",
