@@ -2,23 +2,18 @@ import {
   HttpRequest,
   HttpResponse,
   OK,
-  BadRequest,
-  Unauthorized,
-  ParameterError,
   InternalServerError,
 } from "../../../core/helpers/http/http_codes";
 import {
   InvalidRequest,
-  MissingParameter,
-  UserNotAuthenticated,
 } from "../../../core/helpers/errors/ModuleError";
-import { GetAllActivitiesCatalogUsecase } from "./get_all_activities_catalog_usecase";
+import { GetCatalogUsecase } from "./get_catalog_usecase";
 
 
-export class GetAllActivitiesCatalogController {
-  public usecase: GetAllActivitiesCatalogUsecase;
+export class GetCatalogController {
+  public usecase: GetCatalogUsecase;
 
-  constructor(usecase: GetAllActivitiesCatalogUsecase) {
+  constructor(usecase: GetCatalogUsecase) {
     this.usecase = usecase;
   }
 
@@ -27,7 +22,7 @@ export class GetAllActivitiesCatalogController {
       if (!request) {
         throw new InvalidRequest();
       }
-      
+
       const response = await this.usecase.execute();
       return new OK(response, "Activities found successfully");
 
