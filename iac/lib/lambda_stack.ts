@@ -23,7 +23,7 @@ export class LambdaStack extends Construct {
     private update_users_activity: lambda_js.NodejsFunction;
     private update_activity_event: lambda_js.NodejsFunction;
     private get_activity_requirements: lambda_js.NodejsFunction;
-    private get_all_activities_catalog: lambda_js.NodejsFunction;
+    private get_catalog: lambda_js.NodejsFunction;
     private get_all_activities_enrolled: lambda_js.NodejsFunction;
 
     public functions_need_s3_access: lambda.Function[] = [];
@@ -234,8 +234,8 @@ export class LambdaStack extends Construct {
             origins
         )
 
-        this.get_all_activities_catalog = this.create_lambda(
-            "get_all_activities_catalog",
+        this.get_catalog = this.create_lambda(
+            "get_catalog",
             environment_variables,
             "GET",
             restapi_resource,
@@ -255,7 +255,7 @@ export class LambdaStack extends Construct {
             this.update_institution,
         ]
 
-        this.function_need_event_bridge_access = [
+        this.functions_need_event_bridge_access = [
             this.create_activity,
             this.update_activity,
             this.update_activity_event,
@@ -278,11 +278,5 @@ export class LambdaStack extends Construct {
                 action: "lambda:InvokeFunction",
             });
         });
-
-        this.functions_need_event_bridge_access = [
-            this.create_activity,
-            this.update_activity,
-            this.update_activity_event,
-        ]
     }
 }
