@@ -42,7 +42,6 @@ export class LambdaStack extends Construct {
             return string.toLowerCase().split("_").map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join("_");
         }
 
-        let layers: lambda.ILayerVersion[]
         let function_lambda: lambda.Function;
 
         function_lambda = new lambda_js.NodejsFunction(
@@ -80,9 +79,6 @@ export class LambdaStack extends Construct {
         super(scope, id);
 
         let origins = ["*"];
-        if (environment_variables["STAGE"] === "prod") {
-            origins = [environment_variables["DOMAIN"]];
-        }
 
         this.create_moderator = this.create_lambda(
             "create_moderator",
