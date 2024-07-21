@@ -66,7 +66,7 @@ export class HttpRequest {
         } else {
             body["queryStringParameters"] = event.queryStringParameters;
         }
-        
+
         return body;
     }
 }
@@ -111,7 +111,7 @@ export class Unprocessable_Entity extends HttpResponse {
     constructor(message: string) {
         super(422, null, message);
     }
-} 
+}
 
 export class Conflict extends HttpResponse {
     constructor(message: string) {
