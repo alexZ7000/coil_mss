@@ -100,7 +100,7 @@ export class ActivityDTO {
                     created_at: application.user.created_at,
                     updated_at: application.user.updated_at
                 }) : undefined,
-                status: application.status === 1
+                status: application.status == 1 
             })) : []
         });
     }

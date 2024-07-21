@@ -437,23 +437,22 @@ export class ActivityRepo implements IActivityRepo {
     }
 
     async update_users_activity_status(activity_id: string, users: { user_id: string, status: boolean }[]): Promise<boolean> {
-        let response = true;
-
-        users.forEach(async user => {
+        const updatePromises = users.map(async (user) => {
+            const status = user.status == true ? false : true;
             const response_user = await ActivityApplication.update({
-                status: !user.status
+                status: status
             }, {
                 where: {
                     activity_id: activity_id,
                     user_id: user.user_id
                 }
             });
-            if (response_user[0] === 0) {
-                response = false;
-            }
+            return response_user[0] !== 0;
         });
 
-        return response;
+        const results = await Promise.all(updatePromises);
+
+        return results.every(result => result === true);
     }
 
     async get_all_activities_catalog(): Promise<{ title: string; logo: string; type_activity: ActivityTypeEnum; }[]> {
