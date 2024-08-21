@@ -36,6 +36,7 @@ export class Institution {
         return {
             id: this.id,
             name: this.name,
+            description: this.description,
             email: this.email,
             countries: this.countries,
             images: this.images,
